@@ -1,9 +1,17 @@
 package com.uet.book_a_book.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-import com.uet.book_a_book.model.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.uet.book_a_book.domain.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
-	Role findByRoleName(String roleName);
+	@Query("SELECT r FROM Role r")
+	List<Role> findAll();
+	
+	@Query("SELECT r FROM Role r WHERE r.roleName = :roleName")
+	Role findByRoleName(@Param("roleName") String roleName);
 }

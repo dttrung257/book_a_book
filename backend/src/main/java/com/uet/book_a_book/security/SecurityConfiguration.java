@@ -19,11 +19,9 @@ import com.uet.book_a_book.security.provider.CustomAuthenticationProvider;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
-	@Autowired
-	private CustomAuthenticationProvider customAuthenticationProvider;
 	
-	@Autowired
-	private JwtFilter jwtFilter;
+	private @Autowired CustomAuthenticationProvider customAuthenticationProvider;
+	private @Autowired JwtFilter jwtFilter;
 	
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {

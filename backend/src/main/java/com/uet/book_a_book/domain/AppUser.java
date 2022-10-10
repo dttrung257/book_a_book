@@ -1,20 +1,24 @@
-package com.uet.book_a_book.model;
+package com.uet.book_a_book.domain;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,13 +30,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "email" }))
+@Table(name = "users", 
+		uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone" }))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,6 +53,7 @@ public class AppUser implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type = "uuid-char")
+	@Column(updatable = false)
 	private UUID id;
 
 	private String firstName;
@@ -56,8 +64,11 @@ public class AppUser implements UserDetails {
 	@Column(nullable = false)
 	private String email;
 
+	@Column
+	private String emailVerificationCode;
+
 	@Column(nullable = false)
-	//@JsonIgnore
+	@JsonIgnore
 	private String password;
 
 	private String gender;
@@ -70,21 +81,57 @@ public class AppUser implements UserDetails {
 	@Lob
 	private String avatar;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<Role> roles = new HashSet<>();
-	
 	@Column(nullable = false)
-	@Temporal(value = TemporalType.DATE)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date createdAt;
-	
-	@Temporal(value = TemporalType.DATE)
+
+	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date updatedAt;
+	
+	private String createdBy;
 
 	@Column(nullable = false)
 	private boolean locked = false;
 
 	@Column(nullable = false)
-	private boolean isEmailVerified = false;
+	private boolean emailVerified = false;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "users_roles", 
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), 
+			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+	private Set<Role> roles;
+
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	private List<Comment> comments;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Order> orders;
+	
+	public AppUser(String firstName, String lastName, String email, String emailVerificationCode,
+			String password, String gender, String phoneNumber, String address, String avatar, Date createdAt,
+			Date updatedAt, boolean locked, boolean emailVerified, String createdBy, Set<Role> roles) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.emailVerificationCode = emailVerificationCode;
+		this.password = password;
+		this.gender = gender;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+		this.avatar = avatar;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.locked = locked;
+		this.emailVerified = emailVerified;
+		this.createdBy = createdBy;
+		this.roles = roles;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -114,6 +161,7 @@ public class AppUser implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return isEmailVerified;
+		return emailVerified;
 	}
+
 }

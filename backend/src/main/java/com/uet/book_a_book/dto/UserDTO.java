@@ -1,6 +1,7 @@
-package com.uet.book_a_book.dto.response;
+package com.uet.book_a_book.dto;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -13,9 +14,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
+public class UserDTO {
 	private String firstName;
 	private String lastName;
-	private String accessToken;
+	private String email;
+	private String gender;
+	private String phoneNumber;
+	private String address;
+	private String avatar;
+	private Date createdAt;
+	private Date updatedAt;
+	private boolean locked;
+	private boolean emailVerified;
 	private Collection<? extends GrantedAuthority> authorities;
 }

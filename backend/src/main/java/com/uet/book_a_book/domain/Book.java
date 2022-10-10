@@ -1,19 +1,23 @@
-package com.uet.book_a_book.model;
+package com.uet.book_a_book.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,26 +40,35 @@ public class Book {
 	private String name;
 	
 	@Column(nullable = false)
+	private String category;
+	
+	@Column(nullable = false)
 	private String author;
 	
-	@Column(name = "buyPrice", nullable = false)
+	@Column(nullable = false)
 	private double buyPrice;
 	
-	@Column(name = "sellingPrice", nullable = false)
+	@Column(nullable = false)
 	private double sellingPrice;
 	
 	private String description;
 	
-	@Column(name = "quantityInStock", nullable = false)
+	@Column(nullable = false)
 	private Long quantityInStock;
 	
-	@Column(name = "quantitySold", nullable = false)
+	@Column(nullable = false)
 	private Long quantitySold;
 	
-	private double rating;
-	private Long numberOfReviews;
+	@Column(nullable = false)
+	private boolean stopSelling = false;
 	
-	@OneToMany
-	@JoinColumn(name = "book_id")
-	private List<Comment> comments  = new ArrayList<>();
+	private double rating;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "book_id", referencedColumnName = "id")
+	private List<Comment> comments;
+	
+	@JsonIgnore
+	@OneToOne(mappedBy = "book")
+	private Orderdetail orderdetail;
 }

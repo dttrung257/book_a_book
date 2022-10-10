@@ -15,17 +15,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.uet.book_a_book.model.AppUser;
+import com.uet.book_a_book.domain.AppUser;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-	@Autowired
-	private JwtUtil jwtUtil;
 
-	@Autowired
-	private UserRepository userRepository;
+	private @Autowired JwtUtil jwtUtil;
+	private @Autowired UserRepository userRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,15 +34,21 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 		String jwtToken = header.substring(7).trim();
-		
+
 		if (!jwtUtil.verifyJwtToken(jwtToken)) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 		String email = jwtUtil.getEmailFromToken(jwtToken);
-		AppUser user = userRepository.findByEmail(email).orElse(null);
+		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
+		}
+		if (!user.isEmailVerified()) {
+			throw new IllegalStateException("Account not activated");
+		}
+		if (user.isLocked()) {
+			throw new IllegalStateException("Account is locked");
 		}
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null,
 				user.getAuthorities());

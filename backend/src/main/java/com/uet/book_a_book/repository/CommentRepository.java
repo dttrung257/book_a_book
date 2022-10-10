@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.uet.book_a_book.model.Comment;
+import com.uet.book_a_book.domain.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
 

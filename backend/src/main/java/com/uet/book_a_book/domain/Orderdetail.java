@@ -1,6 +1,5 @@
-package com.uet.book_a_book.model;
+package com.uet.book_a_book.domain;
 
-import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -11,11 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,29 +23,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "orderdetails")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment {
+public class Orderdetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type = "uuid-char")
 	private UUID id;
 	
 	@Column(nullable = false)
-	private String content;
+	private Long quantityOrdered;
 	
-	@Column(name = "createdAt", nullable = false)
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date createdAt;
+	@Column(nullable = false)
+	private double priceEach;
 	
-	@Column(name = "updatedAt")
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date updatedAt;
-	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private AppUser user;
+	private Order order;
+	
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "book_id", nullable = false)
+	private Book book;
 }
