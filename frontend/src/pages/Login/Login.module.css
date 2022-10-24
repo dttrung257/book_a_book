@@ -1,0 +1,117 @@
+.container {
+	width: 1164px;
+	margin: 164px auto;
+	margin-bottom: 240px;
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+}
+
+.left,
+.right {
+	position: relative;
+	width: 584px;
+	max-width: 49.99%;
+}
+
+.img1,
+.img2 {
+	position: relative;
+	width: 100%;
+}
+
+.img1 {
+	top: -0;
+}
+
+.img2 {
+	top: 0;
+	left: -0;
+}
+
+.block {
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #ddd;
+}
+
+.formField {
+	position: relative;
+}
+
+.formField > button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	outline: none;
+	border: none;
+	background-color: transparent;
+	padding: 12px;
+	color: #666;
+}
+
+.formLabel {
+	font-size: 1.5rem;
+	font-weight: 400;
+}
+
+.formInput {
+	height: 56px;
+	border-radius: 12px;
+}
+
+.btn {
+	width: 100%;
+	border-radius: 40px;
+	padding: 16px;
+}
+
+.divider {
+	align-items: center;
+	border-bottom: 1px solid #dadde1;
+	display: flex;
+	margin: 20px 16px;
+	text-align: center;
+}
+
+/* Tablet - big */
+@media screen and (max-width: 1119px) {
+	.container {
+		width: 1000px;
+		margin: 60px auto;
+		margin-bottom: 160px;
+	}
+}
+
+/* Tablet - medium */
+@media screen and (max-width: 991px) {
+	.container {
+		max-width: 100%;
+		justify-content: center;
+		padding: 0 20px;
+	}
+}
+
+/* Tablet - small */
+@media screen and (max-width: 767px) {
+	.formLabel {
+		font-size: calc(1rem + 0.95vw);
+	}
+
+	.left {
+		display: none;
+	}
+
+	.right {
+		max-width: 100%;
+	}
+}
+
+/* Mobile */
+@media screen and (max-width: 479px) {
+	.container {
+		margin-top: 20px;
+		padding: 0;
+	}
+}

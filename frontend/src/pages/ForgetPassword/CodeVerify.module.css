@@ -1,0 +1,16 @@
+/* .container {
+	width: 100%;
+} */
+
+.character {
+	border-radius: 8px;
+	background-color: white;
+	border: 2px solid transparent;
+	box-shadow: 0 0 2px rgb(131, 131, 131);
+	color: var(--primary-color);
+}
+
+.characterSelected {
+	border: 2px solid var(--primary-color);
+	outline: none;
+}
