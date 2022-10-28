@@ -1,4 +1,4 @@
-package com.uet.book_a_book.dto.response;
+package com.uet.book_a_book.dto;
 
 import java.util.Collection;
 

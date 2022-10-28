@@ -1,15 +1,12 @@
-package com.uet.book_a_book.domain;
+package com.uet.book_a_book.entity;
 
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,28 +20,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "orderdetails")
+@Table(name = "reset_password_tokens")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Orderdetail {
+public class ResetPasswordToken {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type = "uuid-char")
 	private UUID id;
 	
 	@Column(nullable = false)
-	private Long quantityOrdered;
+	private String resetToken;
 	
 	@Column(nullable = false)
-	private double priceEach;
+	private String verificationCode;
 	
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Order order;
-	
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "book_id", nullable = false)
-	private Book book;
+	@OneToOne(mappedBy = "resetPasswordToken")
+	private AppUser user;
 }

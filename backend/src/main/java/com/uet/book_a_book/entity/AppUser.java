@@ -1,11 +1,10 @@
-package com.uet.book_a_book.domain;
+package com.uet.book_a_book.entity;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,10 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,7 +38,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "users", 
-		uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone" }))
+	uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone" }))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -64,7 +63,6 @@ public class AppUser implements UserDetails {
 	@Column(nullable = false)
 	private String email;
 
-	@Column
 	private String emailVerificationCode;
 
 	@Column(nullable = false)
@@ -87,7 +85,7 @@ public class AppUser implements UserDetails {
 
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date updatedAt;
-	
+
 	private String createdBy;
 
 	@Column(nullable = false)
@@ -95,26 +93,27 @@ public class AppUser implements UserDetails {
 
 	@Column(nullable = false)
 	private boolean emailVerified = false;
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "users_roles", 
-			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), 
-			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private Set<Role> roles;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "role_id", referencedColumnName = "id")
+	private Role role;
 
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private List<Comment> comments;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Order> orders;
 	
-	public AppUser(String firstName, String lastName, String email, String emailVerificationCode,
-			String password, String gender, String phoneNumber, String address, String avatar, Date createdAt,
-			Date updatedAt, boolean locked, boolean emailVerified, String createdBy, Set<Role> roles) {
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "reset_password_token_id", referencedColumnName = "id")
+	private ResetPasswordToken resetPasswordToken;
+
+	public AppUser(String firstName, String lastName, String email, String emailVerificationCode, String password,
+			String gender, String phoneNumber, String address, String avatar, Date createdAt, Date updatedAt,
+			boolean locked, boolean emailVerified, String createdBy, Role role) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -130,13 +129,12 @@ public class AppUser implements UserDetails {
 		this.locked = locked;
 		this.emailVerified = emailVerified;
 		this.createdBy = createdBy;
-		this.roles = roles;
+		this.role = role;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName()))
-				.collect(Collectors.toList());
+		return Collections.singleton(new SimpleGrantedAuthority(this.role.getRoleName()));
 	}
 
 	@Override

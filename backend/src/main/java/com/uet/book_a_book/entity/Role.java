@@ -1,6 +1,6 @@
-package com.uet.book_a_book.domain;
+package com.uet.book_a_book.entity;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,9 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.NaturalId;
@@ -38,12 +36,8 @@ public class Role {
 	private String roleName;
 	
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "users_roles", 
-			joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-	private Set<AppUser> users;
+	@OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+	private List<AppUser> users;
 
 	public Role(String roleName) {
 		this.roleName = roleName;

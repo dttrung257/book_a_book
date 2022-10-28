@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.uet.book_a_book.domain.AppUser;
+import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.repository.UserRepository;
 
 @Component

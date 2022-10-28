@@ -8,13 +8,13 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.uet.book_a_book.domain.AppUser;
-import com.uet.book_a_book.domain.Status;
 import com.uet.book_a_book.dto.UserDTO;
 import com.uet.book_a_book.email.EmailSenderService;
-import com.uet.book_a_book.exception.StatusNotFoundException;
+import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.entity.util.RoleName;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -24,6 +24,8 @@ public class UserServiceImpl implements UserSevice {
 	private UserRepository userRepository;
 	@Autowired
 	private EmailSenderService emailSenderService;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public List<UserDTO> findAllUsers() {
@@ -48,65 +50,109 @@ public class UserServiceImpl implements UserSevice {
 
 	@Override
 	@Transactional
-	public AppUser changeUserStatus(String email, String statusName, boolean status) {
+	public AppUser confirmEmailVerification(String email, String code) {
+		if (!userRepository.existsByEmail(email)) {
+			throw new UsernameNotFoundException("Not found user with email: " + email);
+		}
+		AppUser user = userRepository.findUserByEmailAndVerificationCode(email, code).orElse(null);
+		if (user == null || user.isLocked() || user.isEmailVerified()) {
+			return user;
+		}
+		user.setEmailVerified(true);
+		user.setEmailVerificationCode(null);
+		return user;
+	}
+
+	@Override
+	@Transactional
+	public AppUser resendEmailVerification(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
-		if (statusName.equalsIgnoreCase(Status.STATUS_USER_LOCKED)) {
-			user.setLocked(status);
-			user.setUpdatedAt(new Date());
-		} else if (statusName.equalsIgnoreCase(Status.STATUS_USER_EMAIL_VERIFIED)) {
-			user.setEmailVerified(status);
-			user.setUpdatedAt(new Date());
-		} else {
-			throw new StatusNotFoundException("User status: " + statusName + " not found");
+		if (user.isLocked() || user.isEmailVerified()) {
+			return user;
+		}
+		String verificationCode = emailSenderService.generateVerificationCode();
+		if (!verificationCode.equals(user.getEmailVerificationCode())) {
+			user.setEmailVerificationCode(verificationCode);
+			String builder = emailSenderService.buildEmailVerificationAccount(email,
+					user.getFirstName() + " " + user.getLastName(), verificationCode);
+			emailSenderService.sendEmail(email, builder);
 		}
 		return user;
 	}
 
 	@Override
 	@Transactional
-	public String confirmEmailVerification(String email, String code) {
-		if (!userRepository.existsByEmail(email)) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
-		}
-		AppUser user = userRepository.findUserByEmailAndVerificationCode(email, code).orElse(null);
-		if (user == null) {
-			return "WRONG_CODE";
-		}
-		if (user.isLocked()) {
-			return "LOCKED_ACCOUNT";
-		}
-		if (user.isEmailVerified()) {
-			return "VERIFIED";
-		}
-		user.setEmailVerified(true);
-		return "SUCCESS";
-	}
-
-	@Override
-	@Transactional
-	public String resendEmailVerification(String email) {
+	public boolean changePassword(String email, String oldPassword, String newPassword) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
-			return "LOCKED_ACCOUNT";
+			throw new IllegalStateException("Account has been locked");
+		}
+		if (!user.isEmailVerified()) {
+			throw new IllegalStateException("Account is not activated");
+		}
+		if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+			user.setPassword(newPassword);
+			user.setUpdatedAt(new Date());
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	@Transactional
+	public AppUser lockAccount(String email) {
+		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		if (user == null) {
+			throw new UsernameNotFoundException("Not found user with email: " + email);
+		}
+		if (user.getAuthorities().stream()
+				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
+			return user;
+		}
+		if (user.isLocked()) {
+			return user;
+		}
+		user.setLocked(true);
+		return user;
+	}
+	
+	@Override
+	public AppUser unlockAccount(String email) {
+		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		if (user == null) {
+			throw new UsernameNotFoundException("Not found user with email: " + email);
+		}
+		if (user.getAuthorities().stream()
+				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
+			return user;
+		}
+		if (!user.isLocked()) {
+			return user;
+		}
+		user.setLocked(false);
+		return user;
+	}
+
+	@Override
+	public AppUser activeAccount(String email) {
+		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		if (user == null) {
+			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (user.isEmailVerified()) {
-			return "VERIFIED";
+			return user;
 		}
-		String verificationCode = emailSenderService.generateVerificationCode();
-		if (!verificationCode.equals(user.getEmailVerificationCode())) {
-			user.setEmailVerificationCode(verificationCode);
-			String builder = emailSenderService.buildEmail(email,
-					user.getFirstName() + " " + user.getLastName(), verificationCode);
-			emailSenderService.sendEmail(email, builder);
-		}
-		return "SUCCESS";
+		user.setEmailVerified(true);
+		return user;
 	}
+
+	
 	
 	
 }

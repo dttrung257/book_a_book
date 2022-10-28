@@ -3,7 +3,6 @@ package com.uet.book_a_book.email;
 import java.util.Random;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class EmailSenderService {
 		try {
 		MimeMessage mailMessage = mailSender.createMimeMessage();
 		MimeMessageHelper messageHelper = new MimeMessageHelper(mailMessage, "UTF-8");
-		messageHelper.setFrom(new InternetAddress("noreply@bookabook.com"));
+		messageHelper.setFrom("BookABook <noreply@bookabook.com>");
 		messageHelper.setTo(toEmail);
 		messageHelper.setSubject("[BookABook] Please verify your email address.");
 		messageHelper.setText(body, true);
@@ -34,7 +33,7 @@ public class EmailSenderService {
 		}
 	}
 	
-	public String buildEmail(String email, String fullName, String verificationCode) {
+	public String buildEmailVerificationAccount(String email, String fullName, String verificationCode) {
 		return "<div>"
 				+ "<b style=\"color:black\">Dear, " + fullName + "</b>\n"
 				+ "<p style=\"color:black\">Almost done! To complete your BookABook sign up, we just need to verify your email address:\n"
@@ -44,6 +43,14 @@ public class EmailSenderService {
 				+ verificationCode
 				+ "</p>\n"
 				+ "<p style=\"color:black\">Once verified, you can start making purchases at bookabook shop.</p>"
+				+ "</div>";
+	}
+	
+	public String buildEmailForgotPassword(String fullName, String verificationCode) {
+		return "<div>"
+				+ "<b style=\"color:black\">Dear, " + fullName + "</b>\n"
+				+ "<p style=\"color:black\">The confirmation code to change your password is: \n"
+				+ verificationCode
 				+ "</div>";
 	}
 	

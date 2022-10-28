@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.ValidationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,9 +27,9 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UsernameNotFoundException.class)
 	ResponseEntity<Object> notFoundEmailExceptionHandler(UsernameNotFoundException e) {
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Not found account",
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not found account",
 				List.of(e.getMessage()));
-		return ResponseEntity.badRequest().body(errorDetails);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
@@ -56,6 +58,12 @@ public class GlobalExceptionHandler {
 	ResponseEntity<Object> statusNotFoundExceptionHandler(StatusNotFoundException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not Found Status",
 				List.of(e.getMessage()));
+		return ResponseEntity.badRequest().body(errorDetails);
+	}
+	
+	@ExceptionHandler(ValidationException.class)
+	ResponseEntity<Object> validationExceptionHandler(ValidationException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Validation Error", List.of(e.getMessage()));
 		return ResponseEntity.badRequest().body(errorDetails);
 	}
 }

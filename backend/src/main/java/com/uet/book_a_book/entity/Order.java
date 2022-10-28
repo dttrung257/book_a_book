@@ -1,4 +1,4 @@
-package com.uet.book_a_book.domain;
+package com.uet.book_a_book.entity;
 
 import java.util.Date;
 import java.util.List;

@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.uet.book_a_book.service.RoleService;
 
 @RestController
-@RequestMapping("/api/role")
+@RequestMapping("/api/roles")
 public class RoleController {
 	
 	private @Autowired RoleService roleService;
 	
-	@GetMapping("/all-roles")
+	@GetMapping("/all_roles")
 	public ResponseEntity<Object> fetchAllRoles() {
 		return ResponseEntity.ok(roleService.findAll());
 	}

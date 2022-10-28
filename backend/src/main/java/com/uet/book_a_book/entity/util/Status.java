@@ -1,4 +1,4 @@
-package com.uet.book_a_book.domain;
+package com.uet.book_a_book.entity.util;
 
 public class Status {
 	public static final String STATUS_USER_LOCKED = "LOCKED";

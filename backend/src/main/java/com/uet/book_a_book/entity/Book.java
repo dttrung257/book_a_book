@@ -1,7 +1,6 @@
-package com.uet.book_a_book.domain;
+package com.uet.book_a_book.entity;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,12 +9,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -32,18 +29,35 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Book {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Type(type = "uuid-char")
-	private UUID id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	
 	@Column(nullable = false)
 	private String name;
+	
+	@Lob
+	private String image;
 	
 	@Column(nullable = false)
 	private String category;
 	
 	@Column(nullable = false)
 	private String author;
+	
+	@Column(nullable = true)
+	private double width;
+	
+	@Column(nullable = true)
+	private double height;
+	
+	private String isbn;
+	private String publisher;
+	
+	@Column(nullable = true)
+	private int numberOfPages;
+	
+	@Column(nullable = true)
+	private int yearOfPublication;
 	
 	@Column(nullable = false)
 	private double buyPrice;
@@ -64,8 +78,8 @@ public class Book {
 	
 	private double rating;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "book_id", referencedColumnName = "id")
+	@JsonIgnore
+	@OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Comment> comments;
 	
 	@JsonIgnore
