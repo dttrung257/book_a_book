@@ -15,6 +15,8 @@ import com.uet.book_a_book.dto.UserDTO;
 import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.util.RoleName;
+import com.uet.book_a_book.exception.AccountNotActivatedException;
+import com.uet.book_a_book.exception.LockedAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -55,8 +57,14 @@ public class UserServiceImpl implements UserSevice {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		AppUser user = userRepository.findUserByEmailAndVerificationCode(email, code).orElse(null);
-		if (user == null || user.isLocked() || user.isEmailVerified()) {
-			return user;
+		if (user == null) {
+			throw new UsernameNotFoundException("Not found user with email: " + email);
+		}
+		if (user.isLocked()) {
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
+		}
+		if (!user.isEmailVerified()) {
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		user.setEmailVerified(true);
 		user.setEmailVerificationCode(null);
@@ -70,8 +78,11 @@ public class UserServiceImpl implements UserSevice {
 		if (user == null) {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
-		if (user.isLocked() || user.isEmailVerified()) {
-			return user;
+		if (user.isLocked()) {
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
+		}
+		if (!user.isEmailVerified()) {
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		String verificationCode = emailSenderService.generateVerificationCode();
 		if (!verificationCode.equals(user.getEmailVerificationCode())) {
@@ -91,10 +102,10 @@ public class UserServiceImpl implements UserSevice {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
-			throw new IllegalStateException("Account has been locked");
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (!user.isEmailVerified()) {
-			throw new IllegalStateException("Account is not activated");
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		if (passwordEncoder.matches(oldPassword, user.getPassword())) {
 			user.setPassword(newPassword);

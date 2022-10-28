@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.exception.AccountNotActivatedException;
+import com.uet.book_a_book.exception.LockedAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 
 @Component
@@ -30,15 +32,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (!user.isEmailVerified()) {
-			throw new IllegalStateException("Account not activated");
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		if (user.isLocked()) {
-			throw new IllegalStateException("Account is locked");
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (user != null && passwordEncoder.matches(password, user.getPassword())) {
 			return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		}
-		throw new BadCredentialsException("Wrong password");
+		throw new BadCredentialsException("Incorrect password");
 	}
 
 	@Override

@@ -11,6 +11,8 @@ import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.util.ResetPasswordUtil;
+import com.uet.book_a_book.exception.AccountNotActivatedException;
+import com.uet.book_a_book.exception.LockedAccountException;
 import com.uet.book_a_book.repository.ResetPasswordTokenRepository;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
@@ -41,10 +43,10 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
-			throw new IllegalStateException("Account has been locked");
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (!user.isEmailVerified()) {
-			throw new IllegalStateException("Account is not activated");
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findByUserEmail(email).orElse(null);
 		if (resetPasswordToken == null) {
@@ -74,10 +76,10 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
-			throw new IllegalStateException("Account has been locked");
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (!user.isEmailVerified()) {
-			throw new IllegalStateException("Account is not activated");
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		ResetPasswordToken token = resetPasswordTokenRepository.findByUserEmail(email).orElse(null);
 		return token;
@@ -91,10 +93,10 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
-			throw new IllegalStateException("Account has been locked");
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (!user.isEmailVerified()) {
-			throw new IllegalStateException("Account is not activated");
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		ResetPasswordToken token = resetPasswordTokenRepository.findByUserEmail(email).orElse(null);
 		if (token.getResetToken().equals(resetToken) && !passwordEncoder.matches(newPassword, user.getPassword())) {

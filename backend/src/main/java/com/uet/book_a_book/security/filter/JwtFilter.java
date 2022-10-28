@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.exception.AccountNotActivatedException;
+import com.uet.book_a_book.exception.LockedAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 
@@ -45,10 +47,10 @@ public class JwtFilter extends OncePerRequestFilter {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}
 		if (!user.isEmailVerified()) {
-			throw new IllegalStateException("Account not activated");
+			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		if (user.isLocked()) {
-			throw new IllegalStateException("Account is locked");
+			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null,
 				user.getAuthorities());

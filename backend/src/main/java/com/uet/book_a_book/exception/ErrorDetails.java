@@ -1,7 +1,6 @@
 package com.uet.book_a_book.exception;
 
 import java.util.Date;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +15,5 @@ public class ErrorDetails {
 	private Date timestamp;
 	private int status;
 	private String message;
-	private List<Object> details;
+	private Object details;
 }

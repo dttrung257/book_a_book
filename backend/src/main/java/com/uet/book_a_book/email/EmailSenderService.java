@@ -10,10 +10,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
+import com.uet.book_a_book.exception.EmailSendingErrorException;
 
 @Service
-@Slf4j
 public class EmailSenderService {
 
 	private @Autowired JavaMailSender mailSender;
@@ -28,8 +27,7 @@ public class EmailSenderService {
 		messageHelper.setText(body, true);
 		mailSender.send(mailMessage);
 		} catch (MessagingException e) {
-			log.error("Fail to send email", e);
-			throw new IllegalStateException("Fail to send email");
+			throw new EmailSendingErrorException("Fail to send email");
 		}
 	}
 	
