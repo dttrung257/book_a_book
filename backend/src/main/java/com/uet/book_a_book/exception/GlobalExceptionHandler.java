@@ -38,6 +38,7 @@ public class GlobalExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not found account",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+		
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
@@ -71,14 +72,14 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AccountNotActivatedException.class)
 	ResponseEntity<Object> accountNotActivatedExceptionHandler(AccountNotActivatedException e) {
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Account not activated", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(LockedAccountException.class)
 	ResponseEntity<Object> lockedAccountExceptionHandler(LockedAccountException e) {
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Account has been locked", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
