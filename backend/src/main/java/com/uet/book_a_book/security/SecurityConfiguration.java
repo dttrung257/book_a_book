@@ -19,9 +19,10 @@ import com.uet.book_a_book.security.provider.CustomAuthenticationProvider;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
-	
-	private @Autowired CustomAuthenticationProvider customAuthenticationProvider;
-	private @Autowired JwtFilter jwtFilter;
+	@Autowired
+	private CustomAuthenticationProvider customAuthenticationProvider;
+	@Autowired
+	private JwtFilter jwtFilter;
 	
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -36,7 +37,7 @@ public class SecurityConfiguration {
 			.authorizeHttpRequests(
 				requests -> {requests.antMatchers("/api/authen/**").permitAll()
 					.antMatchers("/api/user/forgot_password/**").permitAll()
-//					.antMatchers("/**").permitAll().
+//					.antMatchers("/**").permitAll()
 					.anyRequest().authenticated();
 					})
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -11,8 +11,8 @@ import com.uet.book_a_book.service.RoleService;
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
-	
-	private @Autowired RoleService roleService;
+	@Autowired
+	private RoleService roleService;
 	
 	@GetMapping("/all_roles")
 	public ResponseEntity<Object> fetchAllRoles() {

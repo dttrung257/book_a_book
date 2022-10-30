@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +26,7 @@ import com.uet.book_a_book.email.EmailValidator;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.util.RoleName;
+import com.uet.book_a_book.exception.AccountAlreadyExistsException;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -34,14 +34,20 @@ import com.uet.book_a_book.service.UserSevice;
 @RestController
 @RequestMapping("/api/authen")
 public class AuthenticationController {
-
-	private @Autowired UserSevice userSevice;
-	private @Autowired RoleService roleService;
-	private @Autowired AuthenticationManager authenticationManager;
-	private @Autowired PasswordEncoder passwordEncoder;
-	private @Autowired JwtUtil jwtUtil;
-	private @Autowired EmailValidator emailValidator;
-	private @Autowired EmailSenderService emailSenderService;
+	@Autowired
+	private UserSevice userSevice;
+	@Autowired
+	private RoleService roleService;
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private JwtUtil jwtUtil;
+	@Autowired
+	private EmailValidator emailValidator;
+	@Autowired
+	private EmailSenderService emailSenderService;
 
 	@PostMapping("/sign_in")
 	public ResponseEntity<Object> signIn(@Valid @RequestBody AuthenticationRequest request) {
@@ -57,7 +63,7 @@ public class AuthenticationController {
 	@PostMapping("/register")
 	public ResponseEntity<Object> register(@Valid @RequestBody RegisterRequest request) {
 		if (userSevice.findByEmail(request.getEmail()) != null) {
-			throw new BadCredentialsException(String.format("User with email %s already exists", request.getEmail()));
+			throw new AccountAlreadyExistsException(String.format("User with email %s already exists", request.getEmail()));
 		}
 		if (!emailValidator.validateEmail(request.getEmail())) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -85,28 +91,13 @@ public class AuthenticationController {
 	@GetMapping("{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmVerification(@PathVariable("email") String email,
 			@PathVariable("code") String code) {
-		AppUser user = userSevice.confirmEmailVerification(email, code);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong code");
-		}
-		if (user.isEmailVerified()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account has been activated");
-		}
-		if (user.isLocked()) {
-			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Account has been locked");
-		}
+		userSevice.confirmEmailVerification(email, code);
 		return ResponseEntity.status(HttpStatus.OK).body("Account activation success");
 	}
 
 	@GetMapping("/resend_email/{email}")
 	public ResponseEntity<Object> resendEmailVerification(@PathVariable("email") String email) {
-		AppUser user = userSevice.resendEmailVerification(email);
-		if (user.isLocked()) {
-			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Account has been locked");
-		}
-		if (user.isEmailVerified()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account has been activated");
-		}
+		userSevice.resendEmailVerification(email);
 		return ResponseEntity.status(HttpStatus.OK).body("Resend email to " + email + " successfully");
 	}
 }

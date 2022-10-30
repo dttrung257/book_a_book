@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +14,11 @@ import com.uet.book_a_book.dto.UserDTO;
 import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.util.RoleName;
+import com.uet.book_a_book.exception.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.AccountNotActivatedException;
+import com.uet.book_a_book.exception.IncorrectEmailVerificationCodeException;
 import com.uet.book_a_book.exception.LockedAccountException;
+import com.uet.book_a_book.exception.NotFoundAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -52,37 +54,36 @@ public class UserServiceImpl implements UserSevice {
 
 	@Override
 	@Transactional
-	public AppUser confirmEmailVerification(String email, String code) {
-		if (!userRepository.existsByEmail(email)) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
-		}
-		AppUser user = userRepository.findUserByEmailAndVerificationCode(email, code).orElse(null);
+	public void confirmEmailVerification(String email, String code) {
+		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException(String.format("Not found user with email: %s", email));
 		}
 		if (user.isLocked()) {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
-		if (!user.isEmailVerified()) {
-			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
+		if (user.isEmailVerified()) {
+			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
+		}
+		if (!user.getEmailVerificationCode().equals(code)) {
+			throw new IncorrectEmailVerificationCodeException(String.format("Incorrect code to activate account with email: %s", email));
 		}
 		user.setEmailVerified(true);
 		user.setEmailVerificationCode(null);
-		return user;
 	}
 
 	@Override
 	@Transactional
-	public AppUser resendEmailVerification(String email) {
+	public void resendEmailVerification(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
-		if (!user.isEmailVerified()) {
-			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
+		if (user.isEmailVerified()) {
+			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
 		}
 		String verificationCode = emailSenderService.generateVerificationCode();
 		if (!verificationCode.equals(user.getEmailVerificationCode())) {
@@ -91,7 +92,6 @@ public class UserServiceImpl implements UserSevice {
 					user.getFirstName() + " " + user.getLastName(), verificationCode);
 			emailSenderService.sendEmail(email, builder);
 		}
-		return user;
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserSevice {
 	public boolean changePassword(String email, String oldPassword, String newPassword) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserSevice {
 	public AppUser lockAccount(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
@@ -134,10 +134,11 @@ public class UserServiceImpl implements UserSevice {
 	}
 	
 	@Override
+	@Transactional
 	public AppUser unlockAccount(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
@@ -151,16 +152,26 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	@Override
-	public AppUser activeAccount(String email) {
+	@Transactional
+	public void activeAccount(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isEmailVerified()) {
-			return user;
+			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
 		}
 		user.setEmailVerified(true);
-		return user;
+		user.setEmailVerificationCode(null);
+	}
+
+	@Override
+	public void deleteUser(String email) {
+		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		if (user == null) {
+			throw new NotFoundAccountException("Not found user with email: " + email);
+		}
+		userRepository.delete(user);
 	}
 
 	

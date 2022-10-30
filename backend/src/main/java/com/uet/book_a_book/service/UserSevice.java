@@ -13,7 +13,8 @@ public interface UserSevice {
 	AppUser lockAccount(String email);
 	AppUser unlockAccount(String email);
 	
-	AppUser activeAccount(String email);
-	AppUser confirmEmailVerification(String email, String code);
-	AppUser resendEmailVerification(String email);
+	void activeAccount(String email);
+	void confirmEmailVerification(String email, String code);
+	void resendEmailVerification(String email);
+	void deleteUser(String email);
 }

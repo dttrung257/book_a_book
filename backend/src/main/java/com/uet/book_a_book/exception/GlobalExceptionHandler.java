@@ -32,6 +32,13 @@ public class GlobalExceptionHandler {
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
+	
+	@ExceptionHandler(NotFoundAccountException.class)
+	ResponseEntity<Object> notFoundAccountExceptionHandler(NotFoundAccountException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not found account",
+				e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+	}
 
 	@ExceptionHandler(BadCredentialsException.class)
 	ResponseEntity<Object> badCredentialsExceptionHandler(BadCredentialsException e) {
@@ -84,9 +91,25 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(AccountAlreadyExistsException.class)
-	ResponseEntity<Object> ExceptionHandler(AccountAlreadyExistsException e) {
+	ResponseEntity<Object> accountAlreadyExistsExceptionHandler(AccountAlreadyExistsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Account already exists", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
+	
+	@ExceptionHandler(AccountAlreadyActivatedException.class)
+	ResponseEntity<Object> accountAlreadyActivatedExceptionHandler(AccountAlreadyActivatedException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Account already activated", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(IncorrectEmailVerificationCodeException.class)
+	ResponseEntity<Object> incorrectEmailVerificationCodeExceptionHandler(IncorrectEmailVerificationCodeException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Incorrect email verification code", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	
 }

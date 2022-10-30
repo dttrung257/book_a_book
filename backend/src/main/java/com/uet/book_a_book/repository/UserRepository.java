@@ -19,9 +19,9 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
 	@Query("SELECT u FROM AppUser u JOIN FETCH u.role WHERE u.email = :email")
 	Optional<AppUser> findByUserEmail(@Param("email") String email);
 	
-	@Query("SELECT u FROM AppUser u JOIN FETCH u.role WHERE u.email = :email AND u.emailVerificationCode = :code ")
-	Optional<AppUser> findUserByEmailAndVerificationCode(@Param("email") String email, @Param("code") String code);
+//	@Query("SELECT u FROM AppUser u JOIN FETCH u.role WHERE u.email = :email AND u.emailVerificationCode = :code ")
+//	Optional<AppUser> findUserByEmailAndVerificationCode(@Param("email") String email, @Param("code") String code);
 	
-	boolean existsByEmail(String email);
+	//boolean existsByEmail(String email);
 	
 }

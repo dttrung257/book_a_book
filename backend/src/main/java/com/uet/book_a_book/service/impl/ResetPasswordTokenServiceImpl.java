@@ -3,7 +3,6 @@ package com.uet.book_a_book.service.impl;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,7 @@ import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.util.ResetPasswordUtil;
 import com.uet.book_a_book.exception.AccountNotActivatedException;
 import com.uet.book_a_book.exception.LockedAccountException;
+import com.uet.book_a_book.exception.NotFoundAccountException;
 import com.uet.book_a_book.repository.ResetPasswordTokenRepository;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
@@ -40,7 +40,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 	public void forgotPassword(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
@@ -73,7 +73,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 	public ResetPasswordToken getResetPasswordToken(String email, String code) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
@@ -90,7 +90,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 	public ResetPasswordToken resetPassword(String email, String resetToken, String newPassword) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isLocked()) {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
