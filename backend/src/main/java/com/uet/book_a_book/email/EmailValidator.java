@@ -1,22 +1,25 @@
 package com.uet.book_a_book.email;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 @Service
-@Slf4j
 public class EmailValidator {
-	public boolean validateEmail(String email) {
-		try {
-			InternetAddress internetAddress = new InternetAddress(email);
-			internetAddress.validate();
+	@Value("${my.server.mailcheckApiKey}")
+	private String apikey;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	public boolean checkEmailExists(String email) {
+		String url = "https://emailvalidation.abstractapi.com/v1/?api_key="+ apikey +"&email=" + email;
+		EmailChecker checker = restTemplate.getForObject(url, EmailChecker.class);
+		if (checker.getIs_valid_format().isValue()
+				&& checker.getIs_mx_found().isValue()
+				&& checker.getIs_smtp_valid().isValue()) {
 			return true;
-		} catch (AddressException e) {
-			log.error(String.format("Email %s does not exists on the Internet", email));
 		}
 		return false;
 	}

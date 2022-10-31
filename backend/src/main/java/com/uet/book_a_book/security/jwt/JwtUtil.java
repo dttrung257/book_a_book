@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 //@ConfigurationPropertiesScan(basePackageClasses = MyServerProperties.class)
 public class JwtUtil {
-	@Value("${my.server.security.secretKey}")
+	@Value("${my.server.secretKey}")
 	private String secretKey;
 	
 	private static final long jwtExpiredTimeMs = 24 * 60 * 60 * 1000;

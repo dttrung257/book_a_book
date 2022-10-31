@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.uet.book_a_book.dto.UserDTO;
 import com.uet.book_a_book.email.EmailSenderService;
+import com.uet.book_a_book.email.EmailValidator;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.util.RoleName;
 import com.uet.book_a_book.exception.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.AccountNotActivatedException;
+import com.uet.book_a_book.exception.EmailNotExistsOnTheInternetException;
 import com.uet.book_a_book.exception.IncorrectEmailVerificationCodeException;
 import com.uet.book_a_book.exception.LockedAccountException;
 import com.uet.book_a_book.exception.NotFoundAccountException;
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserSevice {
 	private EmailSenderService emailSenderService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private EmailValidator emailValidator;
 
 	@Override
 	public List<UserDTO> findAllUsers() {
@@ -74,7 +78,7 @@ public class UserServiceImpl implements UserSevice {
 
 	@Override
 	@Transactional
-	public void resendEmailVerification(String email) {
+	public void sendEmailVerification(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user with email: " + email);
@@ -84,6 +88,9 @@ public class UserServiceImpl implements UserSevice {
 		}
 		if (user.isEmailVerified()) {
 			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
+		}
+		if (!emailValidator.checkEmailExists(email)) {
+			throw new EmailNotExistsOnTheInternetException(String.format("Email %s does not exist on the internet", email));
 		}
 		String verificationCode = emailSenderService.generateVerificationCode();
 		if (!verificationCode.equals(user.getEmailVerificationCode())) {

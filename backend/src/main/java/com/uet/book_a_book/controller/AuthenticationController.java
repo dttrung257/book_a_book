@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.uet.book_a_book.dto.AuthenticationRequest;
 import com.uet.book_a_book.dto.AuthenticationResponse;
 import com.uet.book_a_book.dto.RegisterRequest;
-import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.email.EmailValidator;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.util.RoleName;
 import com.uet.book_a_book.exception.AccountAlreadyExistsException;
+import com.uet.book_a_book.exception.EmailNotExistsOnTheInternetException;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -46,8 +46,8 @@ public class AuthenticationController {
 	private JwtUtil jwtUtil;
 	@Autowired
 	private EmailValidator emailValidator;
-	@Autowired
-	private EmailSenderService emailSenderService;
+//	@Autowired
+//	private EmailSenderService emailSenderService;
 
 	@PostMapping("/sign_in")
 	public ResponseEntity<Object> signIn(@Valid @RequestBody AuthenticationRequest request) {
@@ -65,9 +65,8 @@ public class AuthenticationController {
 		if (userSevice.findByEmail(request.getEmail()) != null) {
 			throw new AccountAlreadyExistsException(String.format("User with email %s already exists", request.getEmail()));
 		}
-		if (!emailValidator.validateEmail(request.getEmail())) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(String.format("Email %s does not exists on the Internet", request.getEmail()));
+		if (!emailValidator.checkEmailExists(request.getEmail())) {
+			throw new EmailNotExistsOnTheInternetException(String.format("Email %s does not exist on the internet", request.getEmail()));
 		}
 		AppUser user = new AppUser();
 		user.setEmail(request.getEmail());
@@ -78,11 +77,11 @@ public class AuthenticationController {
 		Role roleUser = roleService.findByRoleName(RoleName.ROLE_USER);
 		user.setRole(roleUser);
 
-		String verificationCode = emailSenderService.generateVerificationCode();
-		user.setEmailVerificationCode(verificationCode);
-		String emailBody = emailSenderService.buildEmailVerificationAccount(request.getEmail(),
-				request.getFirstName() + " " + request.getLastName(), verificationCode);
-		emailSenderService.sendEmail(request.getEmail(), emailBody);
+//		String verificationCode = emailSenderService.generateVerificationCode();
+//		user.setEmailVerificationCode(verificationCode);
+//		String emailBody = emailSenderService.buildEmailVerificationAccount(request.getEmail(),
+//				request.getFirstName() + " " + request.getLastName(), verificationCode);
+//		emailSenderService.sendEmail(request.getEmail(), emailBody);
 
 		userSevice.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account");
@@ -95,9 +94,9 @@ public class AuthenticationController {
 		return ResponseEntity.status(HttpStatus.OK).body("Account activation success");
 	}
 
-	@GetMapping("/resend_email/{email}")
+	@GetMapping("/send_email/{email}")
 	public ResponseEntity<Object> resendEmailVerification(@PathVariable("email") String email) {
-		userSevice.resendEmailVerification(email);
-		return ResponseEntity.status(HttpStatus.OK).body("Resend email to " + email + " successfully");
+		userSevice.sendEmailVerification(email);
+		return ResponseEntity.status(HttpStatus.OK).body("Send email to " + email + " successfully");
 	}
 }

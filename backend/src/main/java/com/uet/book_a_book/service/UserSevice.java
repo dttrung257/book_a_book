@@ -15,6 +15,6 @@ public interface UserSevice {
 	
 	void activeAccount(String email);
 	void confirmEmailVerification(String email, String code);
-	void resendEmailVerification(String email);
+	void sendEmailVerification(String email);
 	void deleteUser(String email);
 }

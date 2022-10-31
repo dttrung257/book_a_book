@@ -27,14 +27,14 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(UsernameNotFoundException.class)
-	ResponseEntity<Object> notFoundEmailExceptionHandler(UsernameNotFoundException e) {
+	ResponseEntity<Object> handleNotFoundEmailException(UsernameNotFoundException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Incorrect email address or password",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotFoundAccountException.class)
-	ResponseEntity<Object> notFoundAccountExceptionHandler(NotFoundAccountException e) {
+	ResponseEntity<Object> handleNotFoundAccountException(NotFoundAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not found account",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
@@ -42,14 +42,14 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
-	ResponseEntity<Object> badCredentialsExceptionHandler(BadCredentialsException e) {
+	ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Incorrect email address or password",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	ResponseEntity<Object> validationExceptionHandler(MethodArgumentNotValidException e) {
+	ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Validation Error",
 				e.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage())
 						.collect(Collectors.toList()));
@@ -57,56 +57,63 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(IllegalStateException.class)
-	ResponseEntity<Object> illegalStateExceptionHandler(IllegalStateException e) {
+	ResponseEntity<Object> handleIllegalStateException(IllegalStateException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Illegal State",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 
 	@ExceptionHandler(ValidationException.class)
-	ResponseEntity<Object> validationExceptionHandler(ValidationException e) {
+	ResponseEntity<Object> handleValidationException(ValidationException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Validation Error",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 
 	@ExceptionHandler(AccountNotActivatedException.class)
-	ResponseEntity<Object> accountNotActivatedExceptionHandler(AccountNotActivatedException e) {
+	ResponseEntity<Object> handleAccountNotActivatedException(AccountNotActivatedException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Account not activated", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(LockedAccountException.class)
-	ResponseEntity<Object> lockedAccountExceptionHandler(LockedAccountException e) {
+	ResponseEntity<Object> handleLockedAccountException(LockedAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Account has been locked", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(EmailSendingErrorException.class)
-	ResponseEntity<Object> emailSendingErrorExceptionHandler(EmailSendingErrorException e) {
+	ResponseEntity<Object> handleEmailSendingErrorException(EmailSendingErrorException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Fail to send email", e.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
 	}
 	
+	@ExceptionHandler(EmailNotExistsOnTheInternetException.class)
+	ResponseEntity<Object> handleEmailNotExistsOnTheInternetException(EmailNotExistsOnTheInternetException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				"Email does not exist on the internet", e.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
+	}
+	
 	@ExceptionHandler(AccountAlreadyExistsException.class)
-	ResponseEntity<Object> accountAlreadyExistsExceptionHandler(AccountAlreadyExistsException e) {
+	ResponseEntity<Object> handleAccountAlreadyExistsException(AccountAlreadyExistsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Account already exists", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(AccountAlreadyActivatedException.class)
-	ResponseEntity<Object> accountAlreadyActivatedExceptionHandler(AccountAlreadyActivatedException e) {
+	ResponseEntity<Object> handleAccountAlreadyActivatedException(AccountAlreadyActivatedException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Account already activated", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(IncorrectEmailVerificationCodeException.class)
-	ResponseEntity<Object> incorrectEmailVerificationCodeExceptionHandler(IncorrectEmailVerificationCodeException e) {
+	ResponseEntity<Object> handleIncorrectEmailVerificationCodeException(IncorrectEmailVerificationCodeException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Incorrect email verification code", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);

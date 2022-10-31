@@ -37,7 +37,7 @@ public class SecurityConfiguration {
 			.authorizeHttpRequests(
 				requests -> {requests.antMatchers("/api/authen/**").permitAll()
 					.antMatchers("/api/user/forgot_password/**").permitAll()
-//					.antMatchers("/**").permitAll()
+					.antMatchers("/**").permitAll()
 					.anyRequest().authenticated();
 					})
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
