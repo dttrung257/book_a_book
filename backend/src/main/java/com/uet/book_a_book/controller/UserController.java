@@ -28,6 +28,9 @@ import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.util.ResetPasswordUtil;
 import com.uet.book_a_book.entity.util.RoleName;
+import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
+import com.uet.book_a_book.exception.account.IncorrectResetPasswordCodeException;
+import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -60,10 +63,10 @@ public class UserController {
 			@PathVariable("code") @NotBlank(message = "Varification code cannot be blank") String code) {
 		ResetPasswordToken token = resetPasswordTokenService.getResetPasswordToken(email, code);
 		if (token == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reset token does not exist");
+			throw new NotFoundResetPasswordTokenException("Reset password token of account with email: " + email + " does not exists");
 		}
 		if (!token.getVerificationCode().equals(code)) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong code");
+			throw new IncorrectResetPasswordCodeException("Incorrect reset password verification code of account with email: " + email);
 		}
 		return ResponseEntity.ok(token.getResetToken());
 	}
@@ -73,10 +76,10 @@ public class UserController {
 		ResetPasswordToken token = resetPasswordTokenService.resetPassword(resetPassword.getEmail(),
 				resetPassword.getResetToken(), resetPassword.getNewPassword());
 		if (token == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reset token does not exist");
+			throw new NotFoundResetPasswordTokenException("Reset password token of account with email: " + resetPassword.getEmail() + " does not exists");
 		}
 		if (!token.getResetToken().equals(resetPassword.getResetToken())) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong reset token");
+			throw new IncorrectResetPasswordCodeException("Incorrect reset password token of account with email: " + resetPassword.getEmail());
 		}
 		token.setResetToken(resetPasswordUtil.generateResetToken());
 		token.setVerificationCode(resetPasswordUtil.generateVerificationCode());
@@ -89,7 +92,7 @@ public class UserController {
 		if (userSevice.changePassword(request.getEmail(), request.getOldPassword(), request.getNewPassword())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Change password successful");
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong old password");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect old password");
 	}
 
 	@PostMapping("/manage_user/create_account")
@@ -109,7 +112,7 @@ public class UserController {
 		user.setEmailVerified(true);
 
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account");
+		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account. Please verify your email!");
 	}
 
 	@GetMapping("manage_user/all_users")
@@ -126,7 +129,7 @@ public class UserController {
 		if (!user.isLocked()) {
 			if (user.getAuthorities().stream()
 					.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Cannot lock admin account");
+				throw new CannotLockAdminAccountException("Cannot lock admin account");
 			}
 		}
 		return ResponseEntity.status(HttpStatus.OK).body("Account lock successful");

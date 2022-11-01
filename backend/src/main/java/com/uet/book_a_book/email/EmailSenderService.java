@@ -10,7 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.uet.book_a_book.exception.EmailSendingErrorException;
+import com.uet.book_a_book.exception.account.EmailSendingErrorException;
 
 @Service
 public class EmailSenderService {

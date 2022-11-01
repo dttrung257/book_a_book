@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.exception.AccountNotActivatedException;
-import com.uet.book_a_book.exception.LockedAccountException;
+import com.uet.book_a_book.exception.account.AccountNotActivatedException;
+import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 

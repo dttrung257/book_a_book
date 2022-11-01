@@ -1,4 +1,4 @@
-package com.uet.book_a_book.exception;
+package com.uet.book_a_book.exception.account;
 
 public class AccountAlreadyExistsException extends RuntimeException {
 	

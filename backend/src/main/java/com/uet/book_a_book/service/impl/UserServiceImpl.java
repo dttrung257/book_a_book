@@ -15,12 +15,12 @@ import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.email.EmailValidator;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.util.RoleName;
-import com.uet.book_a_book.exception.AccountAlreadyActivatedException;
-import com.uet.book_a_book.exception.AccountNotActivatedException;
-import com.uet.book_a_book.exception.EmailNotExistsOnTheInternetException;
-import com.uet.book_a_book.exception.IncorrectEmailVerificationCodeException;
-import com.uet.book_a_book.exception.LockedAccountException;
-import com.uet.book_a_book.exception.NotFoundAccountException;
+import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
+import com.uet.book_a_book.exception.account.AccountNotActivatedException;
+import com.uet.book_a_book.exception.account.EmailNotExistsOnTheInternetException;
+import com.uet.book_a_book.exception.account.IncorrectEmailVerificationCodeException;
+import com.uet.book_a_book.exception.account.LockedAccountException;
+import com.uet.book_a_book.exception.account.NotFoundAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 

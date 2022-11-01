@@ -11,8 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.exception.AccountNotActivatedException;
-import com.uet.book_a_book.exception.LockedAccountException;
+import com.uet.book_a_book.exception.account.AccountNotActivatedException;
+import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 
 @Component

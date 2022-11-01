@@ -15,6 +15,19 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
+import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
+import com.uet.book_a_book.exception.account.AccountNotActivatedException;
+import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
+import com.uet.book_a_book.exception.account.EmailNotExistsOnTheInternetException;
+import com.uet.book_a_book.exception.account.EmailSendingErrorException;
+import com.uet.book_a_book.exception.account.IncorrectEmailVerificationCodeException;
+import com.uet.book_a_book.exception.account.IncorrectResetPasswordCodeException;
+import com.uet.book_a_book.exception.account.IncorrectResetTokenException;
+import com.uet.book_a_book.exception.account.LockedAccountException;
+import com.uet.book_a_book.exception.account.NotFoundAccountException;
+import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -119,5 +132,31 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
+	@ExceptionHandler(IncorrectResetPasswordCodeException.class)
+	ResponseEntity<Object> handleIncorrectResetPasswordCodeException(IncorrectResetPasswordCodeException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Incorrect reset password verification code", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
 	
+	@ExceptionHandler(IncorrectResetTokenException.class)
+	ResponseEntity<Object> handleIncorrectResetTokenException(IncorrectResetTokenException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Incorrect reset password token", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(NotFoundResetPasswordTokenException.class)
+	ResponseEntity<Object> handleNotFoundResetPasswordTokenException(NotFoundResetPasswordTokenException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
+				"Reset password token does not exists", e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotLockAdminAccountException.class)
+	ResponseEntity<Object> handleCannotLockAdminAccountException(CannotLockAdminAccountException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
+				"Cannot lock admin account", e.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+	}
 }
