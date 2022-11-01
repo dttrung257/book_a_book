@@ -112,7 +112,7 @@ public class UserController {
 		user.setEmailVerified(true);
 
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account. Please verify your email!");
+		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account");
 	}
 
 	@GetMapping("manage_user/all_users")

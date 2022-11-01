@@ -84,7 +84,7 @@ public class AuthenticationController {
 //		emailSenderService.sendEmail(request.getEmail(), emailBody);
 
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account");
+		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account. Please verify your email!");
 	}
 
 	@GetMapping("{email}/confirm_verification/{code}")

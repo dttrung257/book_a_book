@@ -89,9 +89,6 @@ public class UserServiceImpl implements UserSevice {
 		if (user.isEmailVerified()) {
 			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
 		}
-		if (!emailValidator.checkEmailExists(email)) {
-			throw new EmailNotExistsOnTheInternetException(String.format("Email %s does not exist on the internet", email));
-		}
 		String verificationCode = emailSenderService.generateVerificationCode();
 		if (!verificationCode.equals(user.getEmailVerificationCode())) {
 			user.setEmailVerificationCode(verificationCode);
