@@ -1,20 +1,47 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Form, Button } from "react-bootstrap";
 import validator from "validator";
 import { BiHide } from "react-icons/bi";
-import AuthInfo from "../../models/authInfo.model";
-import axios from "../../apis/axios";
+import { AiOutlineEye } from "react-icons/ai";
+import axios, { isAxiosError } from "../../apis/axios";
 import style from "./SignUp.module.css";
 import { checkPassword } from "../../utils/checkPassword";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import Loading from "../../components/Loading";
+import { emailVerifyActions } from "../../store/emailVerifySlice";
+
+interface AuthInfo {
+	firstName: string;
+	lastName: string;
+	email: string;
+	address?: string;
+	password: string;
+	confirmPassword: string;
+	gender: string;
+	acceptPrivacy: boolean;
+}
+
+interface PassType {
+	type: "text" | "password";
+	text: "Hide" | "Show";
+}
+
+const Show: PassType = {
+	type: "text",
+	text: "Hide",
+};
+
+const Hide: PassType = {
+	type: "password",
+	text: "Show",
+};
 
 interface AuthError {
 	firstName?: string;
 	lastName?: string;
 	email?: string;
-	phone?: string;
-	address?: string;
 	password?: string;
 	confirmPassword?: string;
 	gender?: string;
@@ -35,11 +62,6 @@ const authValidator = (info: AuthInfo): AuthError => {
 	if (!info.email) error.email = "Email address is required";
 	else if (!validator.isEmail(info.email)) error.email = "Please enter a valid email";
 
-	if (!info.phone) error.phone = "Phone number is required";
-	else if (!validator.isMobilePhone(info.phone)) error.phone = "Please enter a valid phone number";
-
-	if (!info.address) error.address = "Address is required";
-
 	const passwordError = checkPassword(info.password, info.confirmPassword);
 	if (passwordError.password) error.password = passwordError.password;
 	if (passwordError.confirmPassword) error.confirmPassword = passwordError.confirmPassword;
@@ -53,11 +75,9 @@ const authValidator = (info: AuthInfo): AuthError => {
 };
 
 const Wrapper = styled.div`
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	position: relative;
+	width: 100vw;
+	height: 100vh;
 	background-image: url("/images/bg.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -69,18 +89,20 @@ const Login = () => {
 		firstName: "",
 		lastName: "",
 		email: "",
-		phone: "",
-		address: "",
 		password: "",
 		confirmPassword: "",
 		gender: "",
 		acceptPrivacy: false,
 	});
 	const [error, setError] = useState<AuthError>({});
-	const [passType, setPassType] = useState<"text" | "password">("password");
-	const [confirmPassType, setConfirmPassType] = useState<"text" | "password">("password");
+	const [passType, setPassType] = useState<PassType>(Hide);
+	const [confirmPassType, setConfirmPassType] = useState<PassType>(Hide);
+	const [isSending, setIsSending] = useState<boolean>(false);
+	const [errMessage, setErrMessage] = useState<string>("");
 	const firstInput = useRef<HTMLInputElement>(null);
+	const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		firstInput.current?.focus();
@@ -88,40 +110,46 @@ const Login = () => {
 		return () => {};
 	}, []);
 
+	if (isLoggedIn) return <Navigate to='/' />;
+
 	const onFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		try {
 			e.preventDefault();
 
 			const err = authValidator(info);
 			if (err && Object.keys(err).length !== 0) return setError(err);
+			setError({});
 
-			//TODO: change req body, handle error
-			const response = await axios.post(
-				"https://identitytoolkit.googleapis.com/v1/accounts:signUp",
-				{
-					email: info.email,
-					password: info.password,
-					returnSecureToken: true,
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-					},
-					params: {
-						key: "AIzaSyDvI7V7DImXkf2rol7UJLJOQU7wq_4i-qQ",
-					},
-				}
-			);
+			setIsSending(true);
+			const response = await axios.post("/authen/register", {
+				firstName: info.firstName,
+				lastName: info.lastName,
+				email: info.email,
+				password: info.password,
+			});
 
 			console.log(response);
-			return navigate("/login");
+			setErrMessage("");
+			dispatch(emailVerifyActions.setEmail({ email: info.email }));
+			console.log("navigate from singup");
+			return navigate("/verify-email");
 		} catch (error) {
-			console.log(error);
+			if (isAxiosError(error)) {
+				const data = error.response?.data;
+				setErrMessage(data?.message);
+			} else {
+				setErrMessage("Unknow error!!!");
+				console.log(error);
+			}
+		} finally {
+			setIsSending(false);
 		}
 	};
 
 	return (
 		<Wrapper>
+			<Loading isSending={isSending} />
+
 			<div className={`${style.container}`}>
 				<div className='bg-white rounded-4 d-flex flex-column p-md-5 p-4'>
 					<h1 className='text-center mb-4'>
@@ -179,44 +207,12 @@ const Login = () => {
 							{error?.email ? <Form.Text className='text-danger'>{error.email}</Form.Text> : null}
 						</Form.Group>
 
-						<Form.Group className='mb-3' controlId='phone'>
-							<div className={`${style.formField}`}>
-								<Form.Label>Phone number</Form.Label>
-								<Form.Control
-									className={`${style.formInput}`}
-									type='text'
-									value={info.phone}
-									onChange={(e: React.ChangeEvent) =>
-										setInfo({ ...info, phone: (e.target as HTMLInputElement).value })
-									}
-								/>
-							</div>
-							{error?.phone ? <Form.Text className='text-danger'>{error.phone}</Form.Text> : null}
-						</Form.Group>
-
-						<Form.Group className='mb-3' controlId='address'>
-							<div className={`${style.formField}`}>
-								<Form.Label>Address</Form.Label>
-								<Form.Control
-									className={`${style.formInput}`}
-									type='text'
-									value={info.address}
-									onChange={(e: React.ChangeEvent) =>
-										setInfo({ ...info, address: (e.target as HTMLInputElement).value })
-									}
-								/>
-							</div>
-							{error?.address ? (
-								<Form.Text className='text-danger'>{error.address}</Form.Text>
-							) : null}
-						</Form.Group>
-
 						<Form.Group className='mb-3' controlId='password'>
 							<div className={`${style.formField}`}>
 								<Form.Label>Password</Form.Label>
 								<Form.Control
 									className={`${style.formInput}`}
-									type={passType}
+									type={passType.type}
 									value={info.password}
 									onChange={(e: React.ChangeEvent) =>
 										setInfo({ ...info, password: (e.target as HTMLInputElement).value })
@@ -226,12 +222,17 @@ const Login = () => {
 									type='button'
 									onClick={() =>
 										setPassType((prev) => {
-											return prev === "text" ? "password" : "text";
+											return prev.type === "text" ? Hide : Show;
 										})
 									}
+									tabIndex={-1}
 								>
-									<BiHide className='me-2' />
-									Hide
+									{passType.type === "text" ? (
+										<BiHide className='me-2' />
+									) : (
+										<AiOutlineEye className='me-2' />
+									)}
+									{passType.text}
 								</button>
 							</div>
 							{error?.password ? (
@@ -244,7 +245,7 @@ const Login = () => {
 								<Form.Label>Confirm password</Form.Label>
 								<Form.Control
 									className={`${style.formInput}`}
-									type={confirmPassType}
+									type={confirmPassType.type}
 									value={info.confirmPassword}
 									onChange={(e: React.ChangeEvent) =>
 										setInfo({ ...info, confirmPassword: (e.target as HTMLInputElement).value })
@@ -254,12 +255,17 @@ const Login = () => {
 									type='button'
 									onClick={() =>
 										setConfirmPassType((prev) => {
-											return prev === "text" ? "password" : "text";
+											return prev.type === "text" ? Hide : Show;
 										})
 									}
+									tabIndex={-1}
 								>
-									<BiHide className='me-2' />
-									Hide
+									{confirmPassType.type === "text" ? (
+										<BiHide className='me-2' />
+									) : (
+										<AiOutlineEye className='me-2' />
+									)}
+									{confirmPassType.text}
 								</button>
 							</div>
 							{error?.confirmPassword ? (
@@ -305,8 +311,10 @@ const Login = () => {
 							) : null}
 						</Form.Group>
 
+						{errMessage ? <p className='text-danger'>{errMessage}</p> : null}
+
 						<div className='d-flex align-items-center flex-wrap'>
-							<Button className={`${style.btn} me-5`} variant='primary' type='submit'>
+							<Button className={`${style.submitBtn} me-5`} variant='primary' type='submit'>
 								Submit
 							</Button>
 							<div>

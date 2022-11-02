@@ -25,6 +25,7 @@ const initialState: AuthState = {
 		firstName: "",
 		lastName: "",
 		role: [],
+		avatar: "",
 	},
 };
 
@@ -43,7 +44,7 @@ const authSlice = createSlice({
 		logout(state) {
 			state.isLoggedIn = false;
 			state.accessToken = "";
-			state.user = { firstName: "", lastName: "", role: [] };
+			state.user = { firstName: "", lastName: "", role: [], avatar: "" };
 
 			Cookies.remove("token");
 			Cookies.remove("user");
@@ -59,7 +60,7 @@ const authSlice = createSlice({
 			Cookies.set("token", state.accessToken);
 		});
 		builder.addCase(login.rejected, (state, action) => {
-			console.log(action.payload, " hi hi eror");
+			throw action.payload;
 		});
 	},
 });

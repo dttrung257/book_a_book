@@ -1,6 +1,6 @@
 .container {
 	width: 1164px;
-	margin: 164px auto;
+	margin: 152px auto;
 	margin-bottom: 240px;
 	display: flex;
 	justify-content: space-between;
@@ -37,12 +37,16 @@
 }
 
 .formField {
+	--height: 56px;
+	--btn-width: 56px;
 	position: relative;
 }
 
 .formField > button {
+	height: var(--height);
+	width: var(--btn-width);
 	position: absolute;
-	top: 0;
+	bottom: 0;
 	right: 0;
 	outline: none;
 	border: none;
@@ -57,14 +61,28 @@
 }
 
 .formInput {
-	height: 56px;
+	height: var(--height);
 	border-radius: 12px;
+	padding-right: var(--btn-width);
 }
 
 .btn {
 	width: 100%;
 	border-radius: 40px;
-	padding: 16px;
+	padding: 1rem;
+}
+
+.btn.verify {
+	border-color: var(--primary-color);
+	margin-bottom: 1rem;
+}
+
+.btn.verify:hover {
+	background-color: #eeeeee;
+}
+
+.btn.verify > svg {
+	color: var(--primary-color);
 }
 
 .divider {

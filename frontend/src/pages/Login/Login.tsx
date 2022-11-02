@@ -1,13 +1,18 @@
 import React, { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { BiHide } from "react-icons/bi";
+import { AiOutlineEye } from "react-icons/ai";
+import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import styled from "styled-components";
 
 import style from "./Login.module.css";
 import { login } from "../../actions/authActions";
-import { useAppDispatch } from "../../store/hook";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 import Footer from "./Footer";
+import { isAxiosError } from "../../apis/axios";
+import { emailVerifyActions } from "../../store/emailVerifySlice";
+import Loading from "../../components/Loading";
 
 const Wrapper = styled.div`
 	background-color: #f8f8f8;
@@ -23,24 +28,44 @@ const Login = () => {
 	const [passType, setPassType] = useState<"text" | "password">("password");
 	const [errMessage, setErrMessage] = useState<string>("");
 	const dispatch = useAppDispatch();
-
+	const [showPass, setShowPass] = useState<boolean>(false);
+	const [verified, setVerified] = useState<boolean>(true);
+	const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+	const [isSending, setIsSending] = useState<boolean>(false);
 	const navigate = useNavigate();
+
+	if (isLoggedIn) return <Navigate to='/' />;
 
 	const onFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		try {
 			e.preventDefault();
+			setIsSending(true);
+			dispatch(emailVerifyActions.clearEmail());
 
 			await dispatch(login({ email: email.trim(), password: password.trim() }));
 
 			return navigate("/");
 		} catch (error: unknown) {
+			if (isAxiosError(error)) {
+				const data = error.response?.data;
+				setErrMessage(data?.message);
+				if (data.status === 401) {
+					// account not active
+					dispatch(emailVerifyActions.setEmail({ email }));
+					setVerified(false);
+				}
+			} else {
+				setErrMessage("Unknow error!!!");
+			}
 			console.log(error);
-			setErrMessage("*Incorrect email address or password");
+		} finally {
+			setIsSending(false);
 		}
 	};
 
 	return (
 		<Wrapper>
+			<Loading isSending={isSending} />
 			<div className={`${style.container}`}>
 				<div className={`${style.left}`}>
 					{/* <img className={`${style.img1}`} src='/images/bg_login_1.png' alt='img1' />
@@ -82,22 +107,41 @@ const Login = () => {
 								/>
 								<button
 									type='button'
-									onClick={() =>
+									onClick={() => {
 										setPassType((prev) => {
 											return prev === "text" ? "password" : "text";
-										})
-									}
+										});
+										setShowPass(!showPass);
+									}}
+									tabIndex={-1}
 								>
-									<BiHide className='me-2' />
-									Hide
+									{showPass ? (
+										<AiOutlineEye size={22} className='me-2' />
+									) : (
+										<BiHide size={22} className='me-2' />
+									)}
 								</button>
 							</Form.Group>
 
 							{errMessage ? <p className='text-danger text-center'>{errMessage}</p> : null}
 
-							<Button className={`${style.btn} fs-5`} variant='primary' type='submit'>
-								Log in
-							</Button>
+							<div>
+								{!verified && (
+									<Button
+										className={`${style.btn} ${style.verify} fs-5`}
+										variant='light'
+										type='button'
+										onClick={() => navigate("/verify-email")}
+									>
+										Active account
+										<BsFillArrowRightCircleFill className='ms-3' />
+									</Button>
+								)}
+
+								<Button className={`${style.btn} fs-5`} variant='primary' type='submit'>
+									Log in
+								</Button>
+							</div>
 						</Form>
 						<div className={`${style.divider}`}></div>
 

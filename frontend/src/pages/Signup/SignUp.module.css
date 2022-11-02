@@ -6,18 +6,20 @@
 .container::before,
 .container::after {
 	content: "";
-	height: 100px;
+	height: 5vh;
 	width: inherit;
 	display: block;
 }
 
-.btn {
-	padding: 20px 72px;
+.submitBtn {
+	padding: 1rem 4rem;
 	border-radius: 40px;
-	font-size: 22px;
+	font-size: 1.375rem;
 }
 
 .formField {
+	--height: 56px;
+	--btn-width: 100px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -26,12 +28,15 @@
 
 .formField > input {
 	width: 544px;
-	height: 56px;
+	height: var(--height);
 	border-radius: 12px;
 	padding: 0 1rem;
+	padding-right: var(--btn-width);
 }
 
 .formField > button {
+	height: var(--height);
+	width: var(--btn-width);
 	position: absolute;
 	right: 0;
 	outline: none;

@@ -4,8 +4,9 @@ import { Form, Button } from "react-bootstrap";
 import { AxiosResponse } from "axios";
 import VerificationInput from "react-verification-input";
 import { IoReload } from "react-icons/io5";
-import axios from "../../apis/axios";
+import axios, { isAxiosError } from "../../apis/axios";
 import style from "./CodeVerify.module.css";
+import Loading from "../../components/Loading";
 
 interface ContextType {
 	sendForgetPassword: () => Promise<AxiosResponse>;
@@ -24,6 +25,7 @@ const CodeVerify = () => {
 	const { sendForgetPassword, email } = useOutletContext<ContextType>();
 	const [errMessage, setErrMessage] = useState<string>("");
 	const [verifyCode, setVerifyCode] = useState<string>("");
+	const [isSending, setIsSending] = useState<boolean>(false);
 
 	if (!email) return <Navigate to='/forget-password' />;
 
@@ -33,36 +35,55 @@ const CodeVerify = () => {
 		characterSelected: `${style.characterSelected}`,
 	};
 
-	console.log("Code: 1234567");
 	const onVerifyCodeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		try {
 			e.preventDefault();
+			setIsSending(true);
 
-			//TODO: send verifyCode to server, redirect to set new password route
-			if (verifyCode !== "1234567")
-				setErrMessage("The verification code you entered is incorrect. Please try again!");
+			const response = await axios.get(
+				`/user/forgot_password/${email}/confirm_verification/${verifyCode}`
+			);
 
-			const resetId = "randomHIhiHIhi";
-			return navigate(`../reset/${resetId}`);
+			const resetToken = response.data;
+			return navigate(`../reset/${resetToken}`);
 		} catch (error) {
-			setErrMessage("");
+			console.log(error);
+			if (isAxiosError(error)) {
+				const data = error.response?.data;
+				setErrMessage(data?.message);
+			} else {
+				setErrMessage("Unknow error!!!");
+				console.log(error);
+			}
+		} finally {
+			setIsSending(false);
 		}
 	};
 
 	const onResendCode = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		try {
 			e.preventDefault();
+			setIsSending(true);
 
 			const response = await sendForgetPassword();
 			console.log(response);
 		} catch (error) {
-			setErrMessage("");
-			console.log(error);
+			if (isAxiosError(error)) {
+				const data = error.response?.data;
+				setErrMessage(data?.message);
+			} else {
+				setErrMessage("Unknow error!!!");
+				console.log(error);
+			}
+		} finally {
+			setIsSending(false);
 		}
 	};
 
 	return (
 		<div>
+			<Loading isSending={isSending} />
+
 			<h3>Enter the Code</h3>
 			<Form onSubmit={onVerifyCodeSubmit} className='pt-3 border-top'>
 				<Form.Group className={`mb-md-4 mb-3`} controlId='email'>

@@ -14,6 +14,7 @@ import CodeVerify from "./pages/ForgetPassword/CodeVerify";
 import ForgetPasswordLayout from "./pages/ForgetPassword/Layout";
 import Forget from "./pages/ForgetPassword/Forget";
 import Reset from "./pages/ForgetPassword/Reset";
+import AuthVerify from "./pages/VerifyEmail/AuthVerify";
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -41,10 +42,11 @@ const App = () => {
 			<Route path='test' element={<Test />} />
 			<Route path='login' element={<Login />} />
 			<Route path='signup' element={<SignUp />} />
+			<Route path='verify-email' element={<AuthVerify />} />
 			<Route path='forget-password' element={<ForgetPasswordLayout />}>
 				<Route index element={<Forget />} />
 				<Route path='verify' element={<CodeVerify />} />
-				<Route path='reset/:resetId' element={<Reset />} />
+				<Route path='reset/:resetToken' element={<Reset />} />
 			</Route>
 			{/* <Route path='*' element={<Home />} /> */}
 		</Routes>

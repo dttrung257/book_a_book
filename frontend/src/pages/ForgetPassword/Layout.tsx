@@ -59,19 +59,7 @@ const Layout = () => {
 	if (isLoggedIn) return <Navigate to='/' />;
 
 	const sendForgetPassword = async () => {
-		//TODO: change api url
-		return await axios.post(
-			"/accounts:sendOobCode",
-			{
-				requestType: "PASSWORD_RESET",
-				email: email.trim(),
-			},
-			{
-				params: {
-					key: "AIzaSyDvI7V7DImXkf2rol7UJLJOQU7wq_4i-qQ",
-				},
-			}
-		);
+		return await axios.get(`/user/forgot_password/${email}`);
 	};
 
 	return (

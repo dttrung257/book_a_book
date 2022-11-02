@@ -1,39 +1,64 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams, Navigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { FaCheckCircle } from "react-icons/fa";
 import PasswordError, { checkPassword } from "../../utils/checkPassword";
+import axios, { isAxiosError } from "../../apis/axios";
+import Loading from "../../components/Loading";
+
+interface ContextType {
+	email: string;
+}
 
 const Reset = () => {
-	const { resetId } = useParams();
+	const { resetToken } = useParams();
+	const { email } = useOutletContext<ContextType>();
 	const navigate = useNavigate();
 	const [err, setErr] = useState<PasswordError>({});
+	const [isSending, setIsSending] = useState<boolean>(false);
+	const [errMessage, setErrMessage] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [passwordChange, setPasswordChange] = useState<boolean>(false);
 
+	if (!email) return <Navigate to='/forget-password' />;
+
 	const onFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		try {
 			e.preventDefault();
+			setIsSending(true);
 
 			const passwordError = checkPassword(password, confirmPassword);
 			if (passwordError && Object.keys(passwordError).length !== 0) return setErr(passwordError);
 
-			//TODO: send new password to server
+			await axios.post("/user/forgot_password/reset_password", {
+				email,
+				resetToken,
+				newPassword: password,
+			});
 
 			setPasswordChange(true);
 		} catch (error) {
-			console.log(error);
+			if (isAxiosError(error)) {
+				const data = error.response?.data;
+				setErrMessage(data?.message);
+			} else {
+				setErrMessage("Unknow error!!!");
+				console.log(error);
+			}
+		} finally {
+			setIsSending(false);
 		}
 	};
 
 	return (
 		<div>
+			<Loading isSending={isSending} />
 			{!passwordChange ? (
 				<div>
 					<h3>Enter Your New Password</h3>
 					<Form onSubmit={onFormSubmit} className='pt-3 border-top'>
-						<Form.Group className={`mb-md-4 mb-3`} controlId='password'>
+						<Form.Group className={`mb-md-3 mb-2`} controlId='password'>
 							<Form.Label className={``}>Password:</Form.Label>
 							<Form.Control
 								className={`py-2 px-3`}
@@ -46,7 +71,7 @@ const Reset = () => {
 							{err?.password ? <Form.Text className='text-danger'>{err.password}</Form.Text> : null}
 						</Form.Group>
 
-						<Form.Group className={`mb-md-4 mb-3`} controlId='confirmPassword'>
+						<Form.Group className={`mb-md-3 mb-2`} controlId='confirmPassword'>
 							<Form.Label className={`py-2 px-3`}>Confirm password:</Form.Label>
 							<Form.Control
 								className={``}
@@ -60,6 +85,7 @@ const Reset = () => {
 								<Form.Text className='text-danger'>{err.confirmPassword}</Form.Text>
 							) : null}
 						</Form.Group>
+						{errMessage ? <p className='text-danger'>{errMessage}</p> : null}
 
 						<div className='d-flex justify-content-end flex-fill'>
 							<Button

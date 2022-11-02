@@ -24,7 +24,7 @@ const Home = () => {
 				<ul>
 					<li>{user.firstName}</li>
 					<li>{user.lastName}</li>
-					<li>{user.role}</li>
+					<li>{JSON.stringify(user.role)}</li>
 					<li>{accessToken}</li>
 				</ul>
 			</div>

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import axios from "../../apis/axios";
+import { AxiosResponse } from "axios";
+import { isAxiosError } from "../../apis/axios";
+import Loading from "../../components/Loading";
 
 interface ContextType {
+	sendForgetPassword: () => Promise<AxiosResponse>;
 	email: string;
 	setEmail: (email: string) => void;
 }
@@ -11,40 +14,34 @@ interface ContextType {
 const Forget = () => {
 	const navigate = useNavigate();
 	const [errMessage, setErrMessage] = useState<string>("");
-	const { email, setEmail } = useOutletContext<ContextType>();
-
-	const sendForgetPassword = async () => {
-		//TODO: change api url
-		return await axios.post(
-			"/accounts:sendOobCode",
-			{
-				requestType: "PASSWORD_RESET",
-				email: email.trim(),
-			},
-			{
-				params: {
-					key: "AIzaSyDvI7V7DImXkf2rol7UJLJOQU7wq_4i-qQ",
-				},
-			}
-		);
-	};
+	const [isSending, setIsSending] = useState<boolean>(false);
+	const { sendForgetPassword, email, setEmail } = useOutletContext<ContextType>();
 
 	const onFindAccountSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		try {
 			e.preventDefault();
+			setIsSending(true);
 
 			const response = await sendForgetPassword();
 			console.log(response);
 
 			return navigate("verify");
 		} catch (error) {
-			console.log(error);
-			setErrMessage("*Email not found");
+			if (isAxiosError(error)) {
+				const data = error.response?.data;
+				setErrMessage(data?.message);
+			} else {
+				setErrMessage("Unknow error!!!");
+				console.log(error);
+			}
+		} finally {
+			setIsSending(false);
 		}
 	};
 
 	return (
 		<div>
+			<Loading isSending={isSending} />
 			<h3>Find Your Account</h3>
 			<Form onSubmit={onFindAccountSubmit} className='pt-3 border-top'>
 				<Form.Group className={`mb-md-4 mb-3`} controlId='email'>
