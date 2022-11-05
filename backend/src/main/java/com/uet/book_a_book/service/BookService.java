@@ -13,6 +13,7 @@ public interface BookService {
 	Page<Book> findByCategory(String category, Integer page, Integer size);
 	Page<Book> findByPrice(Double fromPrice, Double toPrice, Integer page, Integer size);
 	Page<Book> findByRating(Integer rating, Integer page, Integer size);
+	Page<Book> findByBestSelling(Integer page, Integer size);
 	Book addBook(NewBook newBook);
 	Book updateBook(UpdateBook updateBook);
 	void deleteBook(Long id);

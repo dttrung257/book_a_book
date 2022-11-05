@@ -32,6 +32,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query("SELECT b FROM Book b WHERE b.rating IS NOT NULL")
 	Page<Book> findByHighestRating(Pageable pageable);
 	
+	@Query("SELECT b FROM Book b")
+	Page<Book> findByBestSelling(Pageable pageable);
+	
 	@Query("SELECT b FROM Book b WHERE b.name = :name AND b.author = :author")
 	Optional<Book> findByNameAndAuthor(@Param("name") String name, @Param("author") String author);
 	

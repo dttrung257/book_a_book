@@ -88,6 +88,15 @@ public class BookController {
 		return ResponseEntity.ok(bookService.findByRating(Integer.parseInt(rating), Integer.parseInt(page), Integer.parseInt(size)));
 	}
 	
+	@GetMapping("/book/fetch_by_best_selling")
+	ResponseEntity<Object> findByBestSelling(
+			@RequestParam(name = "page", required = false, defaultValue = "0") 
+			@Min(value = 0, message = "Page must be in integer format greater than or equal to 0") String page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") 
+			@Min(value = 1, message = "Size must be in integer format greater than or equal to 1") String size) {
+		return ResponseEntity.ok(bookService.findByBestSelling(Integer.parseInt(page), Integer.parseInt(size)));
+	}
+	
 	@PostMapping("/manage_book/add_book")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> addBook(@Valid @RequestBody NewBook newBook) {

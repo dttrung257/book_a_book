@@ -31,6 +31,7 @@ import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.exception.comment.CommentAlreadyExistsException;
+import com.uet.book_a_book.exception.comment.NotFoundCommentException;
 import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
 import com.uet.book_a_book.exception.jwt.InvalidJwtTokenException;
 
@@ -213,5 +214,12 @@ public class GlobalExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"User has not commented yet", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(NotFoundCommentException.class)
+	ResponseEntity<Object> handleNotFoundCommentException(NotFoundCommentException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
+				"Not found comment", e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 }

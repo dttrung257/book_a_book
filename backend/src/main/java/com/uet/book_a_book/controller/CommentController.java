@@ -1,7 +1,10 @@
 package com.uet.book_a_book.controller;
 
+import java.util.UUID;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +61,18 @@ public class CommentController {
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
 			@Min(value = 1, message = "Book id must be in integer format greater than or equal to 1") String bookId) {
 		commentService.deleteComment(Long.parseLong(bookId));
-		return ResponseEntity.ok("Delete successfully");
+		return ResponseEntity.ok("Delete comment successfully");
 	}
 	
-	
+	@GetMapping("/manage_comment/delete_comment")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	ResponseEntity<Object> deleteCommentFromAdmin(
+			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
+			@Min(value = 1, message = "Book id must be in integer format greater than or equal to 1") String bookId,
+			@RequestParam(name = "comment_id", required = false, defaultValue = "") 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", message = "Comment id must in UUID format") 
+			String commentId) {
+		commentService.deleteCommentFromAdmin(UUID.fromString(commentId), Long.parseLong(bookId));
+		return ResponseEntity.ok("Delete comment successfully");
+	}
 }

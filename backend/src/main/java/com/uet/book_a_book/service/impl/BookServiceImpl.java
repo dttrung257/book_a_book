@@ -71,6 +71,13 @@ public class BookServiceImpl implements BookService {
 		Pageable pageable = PageRequest.of(page, size);
 		return bookRepository.findByRating(rating, pageable);
 	}
+	
+	@Override
+	public Page<Book> findByBestSelling(Integer page, Integer size) {
+		Sort sort = Sort.by("quantitySold").descending();
+		Pageable pageable = PageRequest.of(page, size, sort);
+		return bookRepository.findByBestSelling(pageable);
+	}
 
 	@Override
 	public Book addBook(NewBook newBook) {

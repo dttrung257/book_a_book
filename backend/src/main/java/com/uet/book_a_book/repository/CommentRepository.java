@@ -3,7 +3,10 @@ package com.uet.book_a_book.repository;
 import java.util.List;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -18,4 +21,11 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 	
 	@Query("SELECT AVG(c.star) FROM Comment c WHERE c.book.id = :bookId")
 	Double calculateRateOfBook(@Param("bookId") Long bookId);
+	
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM Comment c WHERE c.id = :commentId AND c.book.id = :bookId")
+	void deleteCommentFromAdmin(@Param("commentId") UUID commentId, @Param("bookId") Long bookId);
+	
+	boolean existsById(UUID commentId);
 }

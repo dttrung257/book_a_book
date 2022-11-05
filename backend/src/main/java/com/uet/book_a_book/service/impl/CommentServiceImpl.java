@@ -2,6 +2,7 @@ package com.uet.book_a_book.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.entity.Comment;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.exception.comment.CommentAlreadyExistsException;
+import com.uet.book_a_book.exception.comment.NotFoundCommentException;
 import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
 import com.uet.book_a_book.repository.BookRepository;
 import com.uet.book_a_book.repository.CommentRepository;
@@ -127,5 +129,25 @@ public class CommentServiceImpl implements CommentService {
 		bookRepository.save(book);
 	}
 
+	@Override
+	public void deleteCommentFromAdmin(UUID commentId, Long bookId) {
+		Book book = bookRepository.findById(bookId).orElse(null);
+		if (book == null) {    
+			throw new NotFoundBookException("Not found book with id: " + bookId);
+		}
+		if (!commentRepository.existsById(commentId)) {
+			throw new NotFoundCommentException("Not found comment with id: " + commentId.toString());
+		}
+		commentRepository.deleteCommentFromAdmin(commentId, bookId);
+		Long numComment = bookRepository.countComment(book.getId());
+		if (numComment == 0) {
+			book.setRating(null);
+		} else {
+			double newRating = commentRepository.calculateRateOfBook(bookId);
+			book.setRating(Math.ceil(newRating * 10) / 10);
+		}
+		bookRepository.save(book);
+		
+	}
 	
 }
