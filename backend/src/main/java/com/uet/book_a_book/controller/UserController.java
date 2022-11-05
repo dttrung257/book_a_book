@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uet.book_a_book.dto.NewPassword;
 import com.uet.book_a_book.dto.RegisterRequest;
-import com.uet.book_a_book.dto.ResetPassword;
+import com.uet.book_a_book.dto.user.NewPassword;
+import com.uet.book_a_book.dto.user.ResetPassword;
+import com.uet.book_a_book.dto.user.UpdateUser;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.Role;
@@ -84,7 +85,7 @@ public class UserController {
 		token.setResetToken(resetPasswordUtil.generateResetToken());
 		token.setVerificationCode(resetPasswordUtil.generateVerificationCode());
 		resetPasswordTokenService.save(token);
-		return ResponseEntity.ok("Reset password success");
+		return ResponseEntity.ok("Reset password successful");
 	}
 
 	@PostMapping("/user/change_password")
@@ -93,6 +94,18 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).body("Change password successful");
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect old password");
+	}
+	
+	@GetMapping("/user/user_information")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+	public ResponseEntity<Object> viewUserInformation() {
+		return ResponseEntity.ok(userSevice.viewInformation());
+	}
+	
+	@PostMapping("/user/update_user")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+	public ResponseEntity<Object> updateUser(@Valid @RequestBody UpdateUser updateUser) {
+		return ResponseEntity.ok(userSevice.updateUser(updateUser));
 	}
 
 	@PostMapping("/manage_user/create_account")
@@ -151,6 +164,11 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body("Account activation success");
 	}
 	
-//	@GetMapping("/manage_user/delete_user/{email}")
-//	@PreAuthorize("hasAuthority('ADMIN')")
+	@GetMapping("/manage_user/delete_user/{email}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	ResponseEntity<Object> deleteUser(
+			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
+		userSevice.deleteUser(email);
+		return ResponseEntity.ok("Delete user with email " + email + " successfully");
+	}
 }

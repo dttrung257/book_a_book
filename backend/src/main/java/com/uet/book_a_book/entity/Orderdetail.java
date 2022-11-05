@@ -38,7 +38,7 @@ public class Orderdetail {
 	private Long quantityOrdered;
 	
 	@Column(nullable = false)
-	private double priceEach;
+	private Double priceEach;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)

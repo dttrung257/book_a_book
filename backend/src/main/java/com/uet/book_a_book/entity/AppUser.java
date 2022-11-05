@@ -38,7 +38,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "users", 
-	uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone" }))
+	uniqueConstraints = @UniqueConstraint(columnNames = { "email"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -55,38 +55,43 @@ public class AppUser implements UserDetails {
 	@Column(updatable = false)
 	private UUID id;
 
+	@Column(nullable = false)
 	private String firstName;
 
+	@Column(nullable = false)
 	private String lastName;
 
 	@NaturalId
 	@Column(nullable = false)
 	private String email;
 
+	@Column(nullable = true)
 	private String emailVerificationCode;
 
 	@Column(nullable = false)
 	@JsonIgnore
 	private String password;
 
+	@Column(nullable = true)
 	private String gender;
 
-	@Column(name = "phone")
+	@Column(nullable = true)
 	private String phoneNumber;
 
+	@Column(nullable = true)
 	private String address;
 
 	@Lob
+	@Column(nullable = true)
 	private String avatar;
 
 	@Column(nullable = false)
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date createdAt;
 
+	@Column(nullable = true)
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date updatedAt;
-
-	private String createdBy;
 
 	@Column(nullable = false)
 	private boolean locked = false;
@@ -99,7 +104,7 @@ public class AppUser implements UserDetails {
 	private Role role;
 
 	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Comment> comments;
 
 	@JsonIgnore
@@ -113,7 +118,7 @@ public class AppUser implements UserDetails {
 
 	public AppUser(String firstName, String lastName, String email, String emailVerificationCode, String password,
 			String gender, String phoneNumber, String address, String avatar, Date createdAt, Date updatedAt,
-			boolean locked, boolean emailVerified, String createdBy, Role role) {
+			boolean locked, boolean emailVerified, Role role) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -128,7 +133,6 @@ public class AppUser implements UserDetails {
 		this.updatedAt = updatedAt;
 		this.locked = locked;
 		this.emailVerified = emailVerified;
-		this.createdBy = createdBy;
 		this.role = role;
 	}
 

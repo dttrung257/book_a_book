@@ -23,21 +23,25 @@ public class SecurityConfiguration {
 	private CustomAuthenticationProvider customAuthenticationProvider;
 	@Autowired
 	private JwtFilter jwtFilter;
+	@Autowired
+	private JwtAuthenEntryPoint jwtAuthenEntryPoint;
 	
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-		AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
-		AuthenticationManager authenticationManager  = builder.authenticationProvider(customAuthenticationProvider).build();
-		return authenticationManager;
+		return http.getSharedObject(AuthenticationManagerBuilder.class)
+				.authenticationProvider(customAuthenticationProvider)
+				.build();
 	}
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable()
+			.exceptionHandling().authenticationEntryPoint(jwtAuthenEntryPoint)
+			.and()
 			.authorizeHttpRequests(
 				requests -> {requests.antMatchers("/api/authen/**").permitAll()
 					.antMatchers("/api/user/forgot_password/**").permitAll()
-					.antMatchers("/**").permitAll()
+					.antMatchers("/api/book/**").permitAll()
 					.anyRequest().authenticated();
 					})
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

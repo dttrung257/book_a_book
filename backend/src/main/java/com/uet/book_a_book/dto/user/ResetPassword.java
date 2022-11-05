@@ -1,5 +1,6 @@
-package com.uet.book_a_book.dto;
+package com.uet.book_a_book.dto.user;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -12,9 +13,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewPassword {
+public class ResetPassword {
+	@Email(message = "Email is not valid")
 	private String email;
-	private String oldPassword;
+	
+	@NotBlank(message = "Reset token cannot be blank")
+	private String resetToken;
 	
 	@NotBlank(message = "Password cannot be blank")
 	@Size(min = 8, max = 100, message = "Password should have at least 8 characters")

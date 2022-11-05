@@ -10,14 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.exception.account.AccountNotActivatedException;
-import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 
@@ -31,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String header = request.getHeader("Authorization");
-		if (header == null || !header.startsWith("Bearer")) {
+		if (header == null || !header.startsWith("Bearer") || header.length() <= 8) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -44,13 +41,19 @@ public class JwtFilter extends OncePerRequestFilter {
 		String email = jwtUtil.getEmailFromToken(jwtToken);
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
 		if (user == null) {
-			throw new UsernameNotFoundException("Not found user with email: " + email);
+			//throw new UsernameNotFoundException("Not found user with email: " + email);
+			filterChain.doFilter(request, response);
+			return;
 		}
 		if (!user.isEmailVerified()) {
-			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
+			//throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
+			filterChain.doFilter(request, response);
+			return;
 		}
 		if (user.isLocked()) {
-			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
+			//throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
+			filterChain.doFilter(request, response);
+			return;
 		}
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null,
 				user.getAuthorities());

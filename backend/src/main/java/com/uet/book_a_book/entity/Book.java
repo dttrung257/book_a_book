@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "books")
@@ -27,6 +28,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,7 @@ public class Book {
 	private String name;
 	
 	@Lob
+	@Column(nullable = false)
 	private String image;
 	
 	@Column(nullable = false)
@@ -45,30 +48,37 @@ public class Book {
 	private String author;
 	
 	@Column(nullable = true)
-	private double width;
+	private Double width;
 	
 	@Column(nullable = true)
-	private double height;
+	private Double height;
 	
+	@Column(nullable = true)
 	private String isbn;
+
+	@Column(nullable = true)
 	private String publisher;
 	
 	@Column(nullable = true)
-	private int numberOfPages;
+	private Integer numberOfPages;
 	
 	@Column(nullable = true)
-	private int yearOfPublication;
+	private Integer yearOfPublication;
 	
 	@Column(nullable = false)
-	private double buyPrice;
+	private Double buyPrice;
 	
 	@Column(nullable = false)
-	private double sellingPrice;
+	private Double sellingPrice;
 	
+	@Column(nullable = true)
 	private String description;
 	
 	@Column(nullable = false)
 	private Long quantityInStock;
+	
+	@Column(nullable = false)
+	private Long availableQuantity;
 	
 	@Column(nullable = false)
 	private Long quantitySold;
@@ -76,13 +86,43 @@ public class Book {
 	@Column(nullable = false)
 	private boolean stopSelling = false;
 	
-	private double rating;
+	@Column(nullable = true)
+	private Double rating;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Comment> comments;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy = "book")
+	@OneToOne(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Orderdetail orderdetail;
+
+	public Book(String name, String image, String category, String author, Double width, Double height, String isbn,
+			String publisher, Integer numberOfPages, Integer yearOfPublication, double buyPrice, double sellingPrice,
+			String description, Long quantityInStock, Long availableQuantity, Long quantitySold, boolean stopSelling,
+			Double rating, List<Comment> comments, Orderdetail orderdetail) {
+		super();
+		this.name = name;
+		this.image = image;
+		this.category = category;
+		this.author = author;
+		this.width = width;
+		this.height = height;
+		this.isbn = isbn;
+		this.publisher = publisher;
+		this.numberOfPages = numberOfPages;
+		this.yearOfPublication = yearOfPublication;
+		this.buyPrice = buyPrice;
+		this.sellingPrice = sellingPrice;
+		this.description = description;
+		this.quantityInStock = quantityInStock;
+		this.availableQuantity = availableQuantity;
+		this.quantitySold = quantitySold;
+		this.stopSelling = stopSelling;
+		this.rating = rating;
+		this.comments = comments;
+		this.orderdetail = orderdetail;
+	}
+	
+	
 }

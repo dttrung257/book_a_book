@@ -1,7 +1,6 @@
 package com.uet.book_a_book.exception;
 
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.ValidationException;
@@ -9,6 +8,7 @@ import javax.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
+import com.uet.book_a_book.exception.account.CannotDeleteAdminAccountException;
 import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
 import com.uet.book_a_book.exception.account.EmailNotExistsOnTheInternetException;
 import com.uet.book_a_book.exception.account.EmailSendingErrorException;
@@ -27,6 +28,11 @@ import com.uet.book_a_book.exception.account.IncorrectResetTokenException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
 import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException;
+import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
+import com.uet.book_a_book.exception.book.NotFoundBookException;
+import com.uet.book_a_book.exception.comment.CommentAlreadyExistsException;
+import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
+import com.uet.book_a_book.exception.jwt.InvalidJwtTokenException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,9 +40,23 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	ResponseEntity<ErrorDetails> handleGlobalException(Exception e, WebRequest webRequest) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
-				e.getMessage(), List.of(webRequest.getDescription(false)));
+				e.getMessage(), webRequest.getDescription(false));
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("Description", "Error")
 				.body(errorDetails);
+	}
+	
+	@ExceptionHandler(AuthenticationException.class)
+	ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
+				"Unauthorized", e.getMessage());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+	}
+	
+	@ExceptionHandler(InvalidJwtTokenException.class)
+	ResponseEntity<Object> handleInvalidJwtTokenException(InvalidJwtTokenException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
+				"Unauthorized", e.getMessage());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 
 	@ExceptionHandler(UsernameNotFoundException.class)
@@ -63,7 +83,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException e) {
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Validation Error",
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Incorrect format of request",
 				e.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage())
 						.collect(Collectors.toList()));
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
@@ -78,7 +98,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ValidationException.class)
 	ResponseEntity<Object> handleValidationException(ValidationException e) {
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Validation Error",
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Incorrect format of request",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
@@ -158,5 +178,40 @@ public class GlobalExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Cannot lock admin account", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotDeleteAdminAccountException.class)
+	ResponseEntity<Object> handleCannotDeleteAdminAccountException(CannotDeleteAdminAccountException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
+				"Cannot delete admin account", e.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+	}
+	
+	@ExceptionHandler(NotFoundBookException.class)
+	ResponseEntity<Object> handleNotFoundBookException(NotFoundBookException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
+				"Not found book", e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+	}
+	
+	@ExceptionHandler(BookAlreadyExistsException.class)
+	ResponseEntity<Object> handleBookAlreadyExistsException(BookAlreadyExistsException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Book already exists", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CommentAlreadyExistsException.class) 
+	ResponseEntity<Object> handleCommentAlreadyExistsException(CommentAlreadyExistsException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"User have already commented on this book", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(UserHasNotCommentedYetException.class) 
+	ResponseEntity<Object> handleUserHasNotCommentedYetException(UserHasNotCommentedYetException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"User has not commented yet", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 }

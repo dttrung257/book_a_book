@@ -7,17 +7,19 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.uet.book_a_book.dto.UserDTO;
+import com.uet.book_a_book.dto.user.UpdateUser;
+import com.uet.book_a_book.dto.user.UserDTO;
+import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.email.EmailSenderService;
-import com.uet.book_a_book.email.EmailValidator;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.util.RoleName;
 import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
-import com.uet.book_a_book.exception.account.EmailNotExistsOnTheInternetException;
+import com.uet.book_a_book.exception.account.CannotDeleteAdminAccountException;
 import com.uet.book_a_book.exception.account.IncorrectEmailVerificationCodeException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
@@ -32,16 +34,13 @@ public class UserServiceImpl implements UserSevice {
 	private EmailSenderService emailSenderService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private EmailValidator emailValidator;
 
 	@Override
 	public List<UserDTO> findAllUsers() {
 		List<UserDTO> users = userRepository.findAllUsers().stream()
-				.map(user -> new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(),
-						user.getGender(), user.getPhoneNumber(), user.getAddress(), user.getAvatar(),
-						user.getCreatedAt(), user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(),
-						user.getAuthorities()))
+				.map(user -> new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
+						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
+						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), user.getAuthorities()))
 				.collect(Collectors.toList());
 		return users;
 	}
@@ -67,10 +66,12 @@ public class UserServiceImpl implements UserSevice {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (user.isEmailVerified()) {
-			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
+			throw new AccountAlreadyActivatedException(
+					String.format("Account with email: %s already activated", email));
 		}
 		if (!user.getEmailVerificationCode().equals(code)) {
-			throw new IncorrectEmailVerificationCodeException(String.format("Incorrect code to activate account with email: %s", email));
+			throw new IncorrectEmailVerificationCodeException(
+					String.format("Incorrect code to activate account with email: %s", email));
 		}
 		user.setEmailVerified(true);
 		user.setEmailVerificationCode(null);
@@ -87,7 +88,8 @@ public class UserServiceImpl implements UserSevice {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 		}
 		if (user.isEmailVerified()) {
-			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
+			throw new AccountAlreadyActivatedException(
+					String.format("Account with email: %s already activated", email));
 		}
 		String verificationCode = emailSenderService.generateVerificationCode();
 		if (!verificationCode.equals(user.getEmailVerificationCode())) {
@@ -120,6 +122,42 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	@Override
+	public UserInfo viewInformation() {
+		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		UserInfo userInfo = new UserInfo();
+		userInfo.setFirstName(user.getFirstName());
+		userInfo.setLastName(user.getLastName());
+		userInfo.setEmail(user.getEmail());
+		userInfo.setGender(user.getGender());
+		userInfo.setPhoneNumber(user.getPhoneNumber());
+		userInfo.setAddress(user.getAddress());
+		userInfo.setAvatar(user.getAvatar());
+		return userInfo;
+	}
+
+	@Override
+	public UserInfo updateUser(UpdateUser updateUser) {
+		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		user.setFirstName(updateUser.getFirstName());
+		user.setLastName(updateUser.getLastName());
+		user.setGender(updateUser.getGender().toUpperCase());
+		user.setPhoneNumber(updateUser.getPhoneNumber());
+		user.setAddress(updateUser.getAddress());
+		user.setAvatar(updateUser.getAvatar());
+		user.setUpdatedAt(new Date());
+		userRepository.save(user);
+		UserInfo userInfo = new UserInfo();
+		userInfo.setFirstName(user.getFirstName());
+		userInfo.setLastName(user.getLastName());
+		userInfo.setEmail(user.getEmail());
+		userInfo.setGender(user.getGender());
+		userInfo.setPhoneNumber(user.getPhoneNumber());
+		userInfo.setAddress(user.getAddress());
+		userInfo.setAvatar(user.getAvatar());
+		return userInfo;
+	}
+
+	@Override
 	@Transactional
 	public AppUser lockAccount(String email) {
 		AppUser user = userRepository.findByUserEmail(email).orElse(null);
@@ -136,7 +174,7 @@ public class UserServiceImpl implements UserSevice {
 		user.setLocked(true);
 		return user;
 	}
-	
+
 	@Override
 	@Transactional
 	public AppUser unlockAccount(String email) {
@@ -163,7 +201,8 @@ public class UserServiceImpl implements UserSevice {
 			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
 		if (user.isEmailVerified()) {
-			throw new AccountAlreadyActivatedException(String.format("Account with email: %s already activated", email));
+			throw new AccountAlreadyActivatedException(
+					String.format("Account with email: %s already activated", email));
 		}
 		user.setEmailVerified(true);
 		user.setEmailVerificationCode(null);
@@ -175,10 +214,11 @@ public class UserServiceImpl implements UserSevice {
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
+		if (user.getAuthorities().stream()
+				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
+			throw new CannotDeleteAdminAccountException("Cannot delete admin account");
+		}
 		userRepository.delete(user);
 	}
 
-	
-	
-	
 }

@@ -46,13 +46,13 @@ public class JwtUtil {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (SignatureException e) {
-			log.error("The jwt token is not valid");
+			log.error("The jwt token is invalid");
 		} catch (MalformedJwtException e) {
 			log.error("The jwt token is malformed");
 		} catch (ExpiredJwtException e) {
 			log.error("The jwt token has expired");
 		} catch (IllegalArgumentException e) {
-			log.error("The jwt token is not valid");
+			log.error("The jwt token is invalid");
 		} catch (UnsupportedJwtException e) {
 			log.error("The jwt token is not supported");
 		}

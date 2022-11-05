@@ -43,10 +43,12 @@ public class Comment {
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
+	@Column(nullable = true)
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
-	private int star;
+	@Column(nullable = false)
+	private Integer star;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)

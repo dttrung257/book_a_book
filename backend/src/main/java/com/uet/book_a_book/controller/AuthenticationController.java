@@ -56,17 +56,19 @@ public class AuthenticationController {
 		Authentication authentication = authenticationManager.authenticate(token);
 		AppUser user = (AppUser) authentication.getPrincipal();
 		String jwtToken = jwtUtil.generateJwtToken(request.getEmail());
-		return ResponseEntity.ok().body(
+		return ResponseEntity.ok(
 				new AuthenticationResponse(user.getFirstName(), user.getLastName(), jwtToken, user.getAuthorities()));
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<Object> register(@Valid @RequestBody RegisterRequest request) {
 		if (userSevice.findByEmail(request.getEmail()) != null) {
-			throw new AccountAlreadyExistsException(String.format("User with email %s already exists", request.getEmail()));
+			throw new AccountAlreadyExistsException(
+					String.format("User with email %s already exists", request.getEmail()));
 		}
 		if (!emailValidator.checkEmailExists(request.getEmail())) {
-			throw new EmailNotExistsOnTheInternetException(String.format("Email %s does not exist on the internet", request.getEmail()));
+			throw new EmailNotExistsOnTheInternetException(
+					String.format("Email %s does not exist on the internet", request.getEmail()));
 		}
 		AppUser user = new AppUser();
 		user.setEmail(request.getEmail());
@@ -84,19 +86,20 @@ public class AuthenticationController {
 //		emailSenderService.sendEmail(request.getEmail(), emailBody);
 
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account. Please verify your email!");
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body("You have successfully created an account. Please verify your email!");
 	}
 
 	@GetMapping("{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmVerification(@PathVariable("email") String email,
 			@PathVariable("code") String code) {
 		userSevice.confirmEmailVerification(email, code);
-		return ResponseEntity.status(HttpStatus.OK).body("Account activation success");
+		return ResponseEntity.ok("Account activation successful");
 	}
 
 	@GetMapping("/send_email/{email}")
 	public ResponseEntity<Object> resendEmailVerification(@PathVariable("email") String email) {
 		userSevice.sendEmailVerification(email);
-		return ResponseEntity.status(HttpStatus.OK).body("Send email to " + email + " successfully");
+		return ResponseEntity.ok("Send email to " + email + " successfully");
 	}
 }
