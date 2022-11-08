@@ -19,7 +19,7 @@ const Home = () => {
   };
 
   if (!isLoggedIn) return <Navigate to="/login" />;
-  console.log(user.role)
+  console.log(user.role);
 
   return (
     <div>

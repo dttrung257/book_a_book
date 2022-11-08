@@ -37,13 +37,13 @@ export interface AuthError {
 }
 
 export interface UserInfo {
-    avatar?: string;
-    firstName: string;
-    lastName: string;
-    role: string[];
-  }
-  
- export interface LoginInfo {
-    accessToken: string;
-    user: UserInfo;
-  }
+  avatar?: string;
+  firstName: string;
+  lastName: string;
+  role: string[];
+}
+
+export interface LoginInfo {
+  accessToken: string;
+  user: UserInfo;
+}

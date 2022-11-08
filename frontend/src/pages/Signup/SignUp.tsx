@@ -106,12 +106,14 @@ const Login = () => {
 
       setIsSending(true);
 
-      signUp({firstName: info.firstName,
+      signUp({
+        firstName: info.firstName,
         lastName: info.lastName,
         email: info.email,
-        password: info.password}).then((res) => {
-          console.log(res);
-        })
+        password: info.password,
+      }).then((res) => {
+        console.log(res);
+      });
       // const response = await axios.post("/authen/register", {
       //   firstName: info.firstName,
       //   lastName: info.lastName,
