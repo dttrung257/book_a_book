@@ -1,94 +1,94 @@
 .container {
-	width: 1100px;
-	margin: auto;
+  width: 1100px;
+  margin: auto;
 }
 
 .container::before,
 .container::after {
-	content: "";
-	height: 5vh;
-	width: inherit;
-	display: block;
+  content: "";
+  height: 5vh;
+  width: inherit;
+  display: block;
 }
 
 .submitBtn {
-	padding: 1rem 4rem;
-	border-radius: 40px;
-	font-size: 1.375rem;
+  padding: 1rem 4rem;
+  border-radius: 40px;
+  font-size: 1.375rem;
 }
 
 .formField {
-	--height: 56px;
-	--btn-width: 100px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	position: relative;
+  --height: 56px;
+  --btn-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
 
 .formField > input {
-	width: 544px;
-	height: var(--height);
-	border-radius: 12px;
-	padding: 0 1rem;
-	padding-right: var(--btn-width);
+  width: 544px;
+  height: var(--height);
+  border-radius: 12px;
+  padding: 0 1rem;
+  padding-right: var(--btn-width);
 }
 
 .formField > button {
-	height: var(--height);
-	width: var(--btn-width);
-	position: absolute;
-	right: 0;
-	outline: none;
-	border: none;
-	background-color: transparent;
-	padding: 12px;
-	color: #666;
+  height: var(--height);
+  width: var(--btn-width);
+  position: absolute;
+  right: 0;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  padding: 12px;
+  color: #666;
 }
 
 /* Tablet - big */
 @media screen and (max-width: 1119px) {
-	.container {
-		width: 900px;
-	}
+  .container {
+    width: 900px;
+  }
 }
 
 /* Tablet - medium */
 @media screen and (max-width: 991px) {
-	.container {
-		width: 700px;
-	}
+  .container {
+    width: 700px;
+  }
 
-	.formField > input {
-		width: 440px;
-		height: 52px;
-	}
+  .formField > input {
+    width: 440px;
+    height: 52px;
+  }
 
-	.btn {
-		padding: 16px 44px;
-		font-size: 18px;
-	}
+  .btn {
+    padding: 16px 44px;
+    font-size: 18px;
+  }
 }
 
 /* Tablet - small */
 @media screen and (max-width: 767px) {
-	.container {
-		width: 100%;
-	}
+  .container {
+    width: 100%;
+  }
 
-	.formField {
-		flex-direction: column;
-		align-items: flex-start;
-	}
+  .formField {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-	.formField > input {
-		width: 100%;
-	}
+  .formField > input {
+    width: 100%;
+  }
 
-	.formField > button {
-		padding-top: 4px;
-		padding-bottom: 4px;
-	}
+  .formField > button {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
 }
 
 /* Mobile */

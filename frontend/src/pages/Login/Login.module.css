@@ -1,135 +1,135 @@
 .container {
-	width: 1164px;
-	margin: 152px auto;
-	margin-bottom: 240px;
-	display: flex;
-	justify-content: space-between;
-	gap: 20px;
+  width: 1164px;
+  margin: 152px auto;
+  margin-bottom: 240px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .left,
 .right {
-	position: relative;
-	width: 584px;
-	max-width: 49.99%;
+  position: relative;
+  width: 584px;
+  max-width: 49.99%;
 }
 
 .img1,
 .img2 {
-	position: relative;
-	width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .img1 {
-	top: -0;
+  top: -0;
 }
 
 .img2 {
-	top: 0;
-	left: -0;
+  top: 0;
+  left: -0;
 }
 
 .block {
-	background-color: white;
-	display: flex;
-	flex-direction: column;
-	border: 1px solid #ddd;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
 }
 
 .formField {
-	--height: 56px;
-	--btn-width: 56px;
-	position: relative;
+  --height: 56px;
+  --btn-width: 56px;
+  position: relative;
 }
 
 .formField > button {
-	height: var(--height);
-	width: var(--btn-width);
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	outline: none;
-	border: none;
-	background-color: transparent;
-	padding: 12px;
-	color: #666;
+  height: var(--height);
+  width: var(--btn-width);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  padding: 12px;
+  color: #666;
 }
 
 .formLabel {
-	font-size: 1.5rem;
-	font-weight: 400;
+  font-size: 1.5rem;
+  font-weight: 400;
 }
 
 .formInput {
-	height: var(--height);
-	border-radius: 12px;
-	padding-right: var(--btn-width);
+  height: var(--height);
+  border-radius: 12px;
+  padding-right: var(--btn-width);
 }
 
 .btn {
-	width: 100%;
-	border-radius: 40px;
-	padding: 1rem;
+  width: 100%;
+  border-radius: 40px;
+  padding: 1rem;
 }
 
 .btn.verify {
-	border-color: var(--primary-color);
-	margin-bottom: 1rem;
+  border-color: var(--primary-color);
+  margin-bottom: 1rem;
 }
 
 .btn.verify:hover {
-	background-color: #eeeeee;
+  background-color: #eeeeee;
 }
 
 .btn.verify > svg {
-	color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .divider {
-	align-items: center;
-	border-bottom: 1px solid #dadde1;
-	display: flex;
-	margin: 20px 16px;
-	text-align: center;
+  align-items: center;
+  border-bottom: 1px solid #dadde1;
+  display: flex;
+  margin: 20px 16px;
+  text-align: center;
 }
 
 /* Tablet - big */
 @media screen and (max-width: 1119px) {
-	.container {
-		width: 1000px;
-		margin: 60px auto;
-		margin-bottom: 160px;
-	}
+  .container {
+    width: 1000px;
+    margin: 60px auto;
+    margin-bottom: 160px;
+  }
 }
 
 /* Tablet - medium */
 @media screen and (max-width: 991px) {
-	.container {
-		max-width: 100%;
-		justify-content: center;
-		padding: 0 20px;
-	}
+  .container {
+    max-width: 100%;
+    justify-content: center;
+    padding: 0 20px;
+  }
 }
 
 /* Tablet - small */
 @media screen and (max-width: 767px) {
-	.formLabel {
-		font-size: calc(1rem + 0.95vw);
-	}
+  .formLabel {
+    font-size: calc(1rem + 0.95vw);
+  }
 
-	.left {
-		display: none;
-	}
+  .left {
+    display: none;
+  }
 
-	.right {
-		max-width: 100%;
-	}
+  .right {
+    max-width: 100%;
+  }
 }
 
 /* Mobile */
 @media screen and (max-width: 479px) {
-	.container {
-		margin-top: 20px;
-		padding: 0;
-	}
+  .container {
+    margin-top: 20px;
+    padding: 0;
+  }
 }

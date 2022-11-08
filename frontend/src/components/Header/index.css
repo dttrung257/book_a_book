@@ -1,0 +1,72 @@
+.header,
+.logo,
+.nav,
+.search,
+.account {
+  display: flex;
+  align-items: center;
+}
+
+.header {
+  height: 70px;
+  font-weight: 500;
+  justify-content: space-between;
+}
+
+.search {
+  width: 500px;
+  padding-top: 10px;
+}
+.logo {
+  width: 250px;
+  justify-content: center;
+}
+.nav {
+  justify-content: flex-start;
+  width: 600px;
+}
+.account {
+  font-size: 22px;
+  margin-right: 40px;
+}
+
+.header > .logo > p {
+  font-size: 30px !important;
+  margin: 0;
+}
+.header > .logo > p > span {
+  color: #008b8b;
+  font-weight: bolder;
+  font-size: 30;
+}
+
+.nav > div {
+  height: 70px;
+  padding-top: 10px;
+  font-size: 20px !important;
+  font-weight: 700;
+}
+
+.nav > div:hover {
+  background-color: #efefef;
+  border-bottom: 5px solid #008b8b;
+}
+
+.nav > div > a {
+  margin: 0 30px;
+  position: relative;
+  top: 30%;
+}
+
+.account > span {
+  font-weight: 400;
+  margin-right: 10px;
+}
+
+.account > a {
+  margin-right: 10px;
+}
+
+#home {
+  border-bottom: 5px solid #008b8b;
+}

@@ -3,10 +3,10 @@ import authReducer from "./authSlice";
 import emailVerifyReducer from "./emailVerifySlice";
 
 const store = configureStore({
-	reducer: {
-		auth: authReducer,
-		emailVerify: emailVerifyReducer,
-	},
+  reducer: {
+    auth: authReducer,
+    emailVerify: emailVerifyReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
