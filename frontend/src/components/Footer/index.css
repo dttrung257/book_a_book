@@ -18,17 +18,17 @@
 }
 
 #container h3 {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bolder;
 }
 
 #container p {
   margin-bottom: 0;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 #logo {
-  font-size: 26px !important;
+  font-size: 22px !important;
   margin: 0;
   font-weight: 500;
 }
@@ -55,9 +55,20 @@
   background-color: #008b8b;
   color: white;
   font-weight: 500;
-  font-size: 18px;
-  height: 35px;
-  line-height: 35px;
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+}
+
+#searchBar {
+  padding-right: 100px !important;
+}
+
+#subscribe {
+  height: 33px;
+  position: absolute;
+  right: 0px;
+  font-size: 12px !important;
 }
 
 @media screen and (max-width: 680px) {

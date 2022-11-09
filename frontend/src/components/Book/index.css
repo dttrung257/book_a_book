@@ -1,0 +1,43 @@
+#text {
+  max-width: 320px;
+  margin-left: 30px;
+}
+
+h3,
+h4 {
+  font-weight: 400;
+}
+h3 {
+  font-size: 30;
+}
+h4 {
+  font-size: larger;
+}
+
+#cart {
+  position: absolute;
+  right: 30px;
+  bottom: 0px;
+}
+
+.frame {
+  width: 320px;
+  border: 1px solid #f0f0f0;
+  height: 470px;
+}
+
+#info {
+  position: relative;
+  top: 20px;
+}
+
+#text > p {
+  font-size: larger;
+  color: #008b8b;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

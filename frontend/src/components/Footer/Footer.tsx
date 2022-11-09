@@ -46,7 +46,7 @@ const Footer = () => {
             </a>
           </span>
           <h3 style={{ marginTop: "20px" }}>SIGN UP FOR NEWS</h3>
-          <TextField
+          {/* <TextField
             id="outlined-basic"
             variant="outlined"
             size="small"
@@ -67,7 +67,13 @@ const Footer = () => {
                 </InputAdornment>
               ),
             }}
-          />
+          /> */}
+          <div style={{ position: "relative" }}>
+            <input id="searchBar" placeholder="Your email address..." />
+            <Button variant="contained" color="primary" id="subscribe">
+              Subcribe
+            </Button>
+          </div>
         </div>
         <div id="intro" style={{ marginRight: "5%" }}>
           <p id="logo">

@@ -11,6 +11,13 @@
     sans-serif;
 }
 
+body {
+  width: 100%;
+  max-width: 1756px;
+  overflow-x: hidden;
+  margin: auto;
+}
+
 .btn-primary {
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;

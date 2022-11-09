@@ -1,0 +1,9 @@
+#content {
+  max-width: 90%;
+  margin-left: 60px;
+  margin-top: 30px;
+}
+#books {
+  display: flex;
+  justify-content: space-between;
+}

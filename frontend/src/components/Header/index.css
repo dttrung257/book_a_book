@@ -1,72 +1,118 @@
 .header,
-.logo,
-.nav,
-.search,
-.account {
+.account,
+.search {
   display: flex;
   align-items: center;
 }
 
+.search,
+.logo,
+.account,
+.navAddr {
+  cursor: pointer;
+}
+
+.navAddr {
+  height: 50px;
+  font-size: 16px !important;
+  font-weight: 700;
+  display: inline-block;
+  line-height: 50px;
+  padding-top: 4px;
+}
+
 .header {
-  height: 70px;
+  height: 50px;
   font-weight: 500;
   justify-content: space-between;
+  width: 99%;
 }
 
 .search {
-  width: 500px;
-  padding-top: 10px;
-}
-.logo {
-  width: 250px;
-  justify-content: center;
-}
-.nav {
-  justify-content: flex-start;
-  width: 600px;
-}
-.account {
-  font-size: 22px;
-  margin-right: 40px;
+  width: 28%;
+  position: relative;
 }
 
-.header > .logo > p {
-  font-size: 30px !important;
-  margin: 0;
+.account {
+  justify-content: space-between;
+  font-size: 17px;
 }
-.header > .logo > p > span {
+
+.logo {
+  margin: auto 20px;
+}
+
+#headerLeft {
+  display: flex;
+  width: 50%;
+  justify-content: space-around;
+}
+.logo a {
+  text-decoration: none;
+}
+
+.logo p {
+  font-size: 26px !important;
+  margin: 0;
+  color: black;
+  font-weight: 500;
+}
+.logo p span {
   color: #008b8b;
   font-weight: bolder;
-  font-size: 30;
+  font-size: 26;
 }
 
-.nav > div {
-  height: 70px;
-  padding-top: 10px;
-  font-size: 20px !important;
-  font-weight: 700;
-}
-
-.nav > div:hover {
+.navAddr:hover {
   background-color: #efefef;
-  border-bottom: 5px solid #008b8b;
+  border-bottom: 3.5px solid #008b8b;
+  margin-bottom: -2px;
 }
 
-.nav > div > a {
-  margin: 0 30px;
+.navAddr > a {
+  margin: 0 20px;
   position: relative;
-  top: 30%;
 }
 
 .account > span {
   font-weight: 400;
-  margin-right: 10px;
+  margin: 0 10px;
 }
 
-.account > a {
-  margin-right: 10px;
+#searchBar {
+  border: 2px solid #d9d9d9;
+  border-radius: 5px;
+  width: 99%;
+  outline: none;
+  font-size: 12px;
+  padding-top: 7px;
+  padding-bottom: 5px;
+  padding-left: 14px;
+  padding-right: 35px;
 }
 
-#home {
-  border-bottom: 5px solid #008b8b;
+#searchIcon {
+  position: absolute;
+  right: 10px;
+  font-size: 18px;
+}
+
+#searchBar:focus {
+  border: 2px solid #008b8b;
+}
+
+#searchBar:hover {
+  border: 2px solid #999;
+}
+
+#searchBar::placeholder {
+  color: #999;
+  font-weight: 600;
+  font-family: "system-ui";
+  font-size: 12px;
+}
+@media screen and (max-width: 1200px) {
+  .navAddr > a {
+    margin: 0 10px;
+  }
 }

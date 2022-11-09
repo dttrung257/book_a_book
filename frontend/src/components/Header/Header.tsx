@@ -4,6 +4,7 @@ import { VscTriangleDown } from "react-icons/vsc";
 import "./index.css";
 import { Avatar, Badge, InputAdornment, TextField } from "@material-ui/core";
 import { useAppSelector } from "../../store/hook";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
@@ -21,69 +22,55 @@ const Header = () => {
 
   return (
     <div className="header">
-      <div className="logo">
-        <p>
-          <span>
-            <i>Book</i>
-          </span>
-          a<i>Book</i>
-        </p>
-      </div>
-      <div className="nav">
-        <div id="home">
-          <a>Home</a>
+      <div id="headerLeft">
+        <div className="logo">
+          <Link to="/">
+            <p>
+              <span>
+                <i>Book</i>
+              </span>
+              a<i>Book</i>
+            </p>
+          </Link>
         </div>
-        <div>
-          <a>
-            Collections <VscTriangleDown />
-          </a>
-        </div>
+        <div className="nav">
+          <div className="navAddr">
+            <a>Home</a>
+          </div>
+          <div className="navAddr">
+            <a>
+              Collections <VscTriangleDown />
+            </a>
+          </div>
 
-        <div>
-          <a>Blogs</a>
-        </div>
-        <div>
-          <a>About us</a>
+          <div className="navAddr">
+            <a>Blogs</a>
+          </div>
+          <div className="navAddr">
+            <a>About us</a>
+          </div>
         </div>
       </div>
       <div className="search">
-        <TextField
-          id="outlined-basic"
-          variant="outlined"
-          size="small"
-          value={searchKey}
-          onChange={onChangeSearchBox}
-          placeholder="Search product..."
-          fullWidth={true}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <FiSearch
-                  color="008B8B"
-                  onClick={handleSearch}
-                  fontSize={24}
-                  style={{ marginBottom: "3px" }}
-                ></FiSearch>
-              </InputAdornment>
-            ),
-          }}
-        />
+        <input id="searchBar" placeholder="Search book..." />
+        <FiSearch
+          color="008B8B"
+          onClick={handleSearch}
+          id="searchIcon"
+        ></FiSearch>
       </div>
       <div className="account">
         {isLoggedIn ? (
           <Fragment>
-            <Avatar
-              src={user.avatar}
-              style={{ maxWidth: 30, maxHeight: 30, margin: "0 20px" }}
-            />
+            <Avatar src={user.avatar} style={{ maxWidth: 25, maxHeight: 25 }} />
             <span>{`${user.firstName} ${user.lastName}`}</span>
-            <Badge badgeContent={4} color="error">
-              <FiShoppingCart fontSize={26} />
+            <Badge overlap="rectangular" badgeContent={4} color="error">
+              <FiShoppingCart fontSize={20} />
             </Badge>
           </Fragment>
         ) : (
           <Fragment>
-            <FiUser style={{ margin: "0 20px" }} fontSize={26} />
+            <FiUser style={{ margin: "0 20px" }} fontSize={20} />
             <a>Log in</a>
             <svg height="30" width="10">
               <line
@@ -91,7 +78,7 @@ const Header = () => {
                 y1="0"
                 x2="0"
                 y2="30"
-                style={{ stroke: "#999999", strokeWidth: 4 }}
+                style={{ stroke: "#999999", strokeWidth: 3 }}
               />
             </svg>
             <a>Sign up</a>
