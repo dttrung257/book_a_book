@@ -78,6 +78,8 @@ public class BookServiceImpl implements BookService {
 		Pageable pageable = PageRequest.of(page, size, sort);
 		return bookRepository.findByBestSelling(pageable);
 	}
+	
+	
 
 	@Override
 	public Book addBook(NewBook newBook) {
@@ -90,7 +92,6 @@ public class BookServiceImpl implements BookService {
 		book.setAuthor(newBook.getAuthor());
 		book.setCategory(newBook.getCategory());
 		book.setIsbn(newBook.getIsbn());
-		book.setWidth(newBook.getWidth());
 		book.setPublisher(newBook.getPublisher());
 		book.setBuyPrice(newBook.getBuyPrice());
 		book.setSellingPrice(newBook.getSellingPrice());
@@ -102,9 +103,9 @@ public class BookServiceImpl implements BookService {
 		book.setAvailableQuantity(newBook.getQuantityInStock());
 		book.setQuantitySold(0L);
 		book.setStopSelling(false);
-		book.setDescription(newBook.getDesception());
+		book.setDescription(newBook.getDescription());
 		book.setRating(null);
-		book.setOrderdetail(null);
+		book.setOrderdetails(new ArrayList<>());
 		book.setComments(new ArrayList<>());
 		bookRepository.save(book);
 		return book;
@@ -133,6 +134,17 @@ public class BookServiceImpl implements BookService {
 		bookRepository.save(book);
 		return book;
 	}
+	
+	@Override
+	public Book stopSelling(Long id, Boolean stopSelling) {
+		Book book = bookRepository.findById(id).orElse(null);
+		if (book == null) {
+			throw new NotFoundBookException("Not found book with id: " + id);
+		}
+		book.setStopSelling(stopSelling);
+		bookRepository.save(book);
+		return book;
+	}
 
 	@Override
 	public void deleteBook(Long id) {
@@ -142,5 +154,7 @@ public class BookServiceImpl implements BookService {
 		}
 		bookRepository.delete(book);
 	}
+
+	
 	
 }

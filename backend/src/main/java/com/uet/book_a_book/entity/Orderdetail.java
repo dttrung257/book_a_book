@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -42,9 +41,18 @@ public class Orderdetail {
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id", referencedColumnName = "id")
 	private Order order;
 	
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "book_id", nullable = false)
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
 	private Book book;
+
+	public Orderdetail(Long quantityOrdered, Double priceEach) {
+		super();
+		this.quantityOrdered = quantityOrdered;
+		this.priceEach = priceEach;
+	}
+	
 }

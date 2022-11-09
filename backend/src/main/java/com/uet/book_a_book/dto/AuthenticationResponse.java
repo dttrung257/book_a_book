@@ -14,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthenticationResponse {
+	private String avatar;
 	private String firstName;
 	private String lastName;
 	private String accessToken;

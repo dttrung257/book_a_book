@@ -29,6 +29,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -65,11 +66,12 @@ public class AppUser implements UserDetails {
 	@Column(nullable = false)
 	private String email;
 
+	@JsonIgnore
 	@Column(nullable = true)
 	private String emailVerificationCode;
 
-	@Column(nullable = false)
 	@JsonIgnore
+	@Column(nullable = false)	
 	private String password;
 
 	@Column(nullable = true)
@@ -87,10 +89,12 @@ public class AppUser implements UserDetails {
 
 	@Column(nullable = false)
 	@Temporal(value = TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date createdAt;
 
 	@Column(nullable = true)
 	@Temporal(value = TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date updatedAt;
 
 	@Column(nullable = false)

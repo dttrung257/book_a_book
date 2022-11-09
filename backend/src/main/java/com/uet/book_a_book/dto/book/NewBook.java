@@ -15,13 +15,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewBook {
-	@NotBlank(message = "Name cannot be blank")
+	@NotBlank(message = "Name field cannot be blank")
 	private String name;
 	
-	@NotBlank(message = "Category cannot be blank")
+	@NotBlank(message = "Category field cannot be blank")
 	private String category;
 	
-	@NotBlank(message = "Author cannot be blank")
+	@NotBlank(message = "Author field cannot be blank")
 	private String author;
 	
 	private String publisher;
@@ -32,21 +32,21 @@ public class NewBook {
 	
 	private Integer numberOfPages;
 	
-	@NotNull(message = "Buy price cannot be null")
-	@DecimalMin(value = "0.1", message = "Buy price is invalid")
+	@NotNull(message = "Buy price field cannot be null")
+	@DecimalMin(value = "0.1", message = "Buy price field is invalid")
 	private Double buyPrice;
 	
-	@NotNull(message = "Selling price cannot be null")
-	@DecimalMin(value = "0.1", message = "Selling price is invalid")
+	@NotNull(message = "Selling price field cannot be null")
+	@DecimalMin(value = "0.1", message = "Selling price field is invalid")
 	private Double sellingPrice;
 	
-	@NotNull(message = "Quantity cannot be null")
-	@Min(value = 1L, message = "Quantity is invalid")
+	@NotNull(message = "Quantity field cannot be null")
+	@Min(value = 1L, message = "Quantity field is invalid")
 	private Long quantityInStock;
 	
-	private String desception;
+	private String description;
 	
-	@NotBlank(message = "Image link cannot be blank")
+	@NotBlank(message = "Image link field cannot be blank")
 	private String image;
 	
 	private Double width;

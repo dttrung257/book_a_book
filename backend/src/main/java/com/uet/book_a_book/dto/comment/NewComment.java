@@ -15,8 +15,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewComment {
-	@NotNull(message = "Book id cannot be null")
-	@Min(value = 1L, message = "Book id is invalid")
+	@NotNull(message = "Book id field cannot be null")
+	@Min(value = 1L, message = "Book id field is invalid")
 	private Long bookId;
 	
 	@NotNull(message = "The number of stars cannot be null")
@@ -24,6 +24,6 @@ public class NewComment {
 	@Max(value = 5, message = "The number of stars must be in integer format lesser than or equal to 5")
 	private Integer star;
 	
-	@NotBlank(message = "Content of comment cannot be blank")
+	@NotBlank(message = "Content field of comment cannot be blank")
 	private String content;
 }

@@ -8,7 +8,9 @@ import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.entity.AppUser;
 
 public interface UserSevice {
-	List<UserDTO> findAllUsers();
+	List<UserDTO> fetchAllUsers();
+	List<UserDTO> fetchByEmail(String email);
+	List<UserDTO> fetchByName(String name);
 	AppUser save(AppUser user);
 	AppUser findByEmail(String email);
 	boolean changePassword(String email, String oldPassword, String newPassword);

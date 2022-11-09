@@ -34,6 +34,10 @@ import com.uet.book_a_book.exception.comment.CommentAlreadyExistsException;
 import com.uet.book_a_book.exception.comment.NotFoundCommentException;
 import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
 import com.uet.book_a_book.exception.jwt.InvalidJwtTokenException;
+import com.uet.book_a_book.exception.order.CannotCancelOrderException;
+import com.uet.book_a_book.exception.order.CannotChangeOrderStatusException;
+import com.uet.book_a_book.exception.order.NotFoundOrderException;
+import com.uet.book_a_book.exception.order.NotFoundOrderStatusException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -220,6 +224,34 @@ public class GlobalExceptionHandler {
 	ResponseEntity<Object> handleNotFoundCommentException(NotFoundCommentException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
 				"Not found comment", e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+	}
+	
+	@ExceptionHandler(NotFoundOrderException.class)
+	ResponseEntity<Object> handleNotFoundOrderException(NotFoundOrderException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
+				"Not found order", e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotCancelOrderException.class)
+	ResponseEntity<Object> handleCannotCancelOrderException(CannotCancelOrderException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Orders can only be canceled in pending status", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotChangeOrderStatusException.class)
+	ResponseEntity<Object> handleCannotChangeOrderStatusException(CannotChangeOrderStatusException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"The status cannot be changed once the order has been successfully delivered", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(NotFoundOrderStatusException.class)
+	ResponseEntity<Object> handleNotFoundOrderStatusException(NotFoundOrderStatusException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
+				"Not found order status", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 }

@@ -34,15 +34,29 @@ public class UserServiceImpl implements UserSevice {
 	private EmailSenderService emailSenderService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	@Override
-	public List<UserDTO> findAllUsers() {
-		List<UserDTO> users = userRepository.findAllUsers().stream()
+	
+	private List<UserDTO> mapUserToUserDTO(List<AppUser> users) {
+		List<UserDTO> userDTOs = users.stream()
 				.map(user -> new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
 						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
 						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), user.getAuthorities()))
 				.collect(Collectors.toList());
-		return users;
+		return userDTOs;
+	}
+
+	@Override
+	public List<UserDTO> fetchAllUsers() {
+		return mapUserToUserDTO(userRepository.fetchAllUsers());
+	}
+	
+	@Override
+	public List<UserDTO> fetchByEmail(String email) {
+		return mapUserToUserDTO(userRepository.fetchByEmail(email));
+	}
+
+	@Override
+	public List<UserDTO> fetchByName(String name) {
+		return mapUserToUserDTO(userRepository.fetchByName(name));
 	}
 
 	@Override

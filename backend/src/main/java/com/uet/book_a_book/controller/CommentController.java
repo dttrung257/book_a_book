@@ -31,7 +31,7 @@ public class CommentController {
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	ResponseEntity<Object> fetchUserComment(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
-			@Min(value = 1, message = "Book id must be in integer format greater than or equal to 1") String bookId) {
+			@Min(value = 1, message = "Book id field must be in integer format greater than or equal to 1") String bookId) {
 		return ResponseEntity.ok(commentService.fetchUserComment(Long.parseLong(bookId)));
 	}
 	
@@ -39,7 +39,7 @@ public class CommentController {
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	ResponseEntity<Object> fetchOtherComment(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
-			@Min(value = 1, message = "Book id must be in integer format greater than or equal to 1") String bookId) {
+			@Min(value = 1, message = "Book id field must be in integer format greater than or equal to 1") String bookId) {
 		return ResponseEntity.ok(commentService.fetchOtherComment(Long.parseLong(bookId)));
 	}
 	
@@ -59,7 +59,7 @@ public class CommentController {
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	ResponseEntity<Object> deleteComment(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
-			@Min(value = 1, message = "Book id must be in integer format greater than or equal to 1") String bookId) {
+			@Min(value = 1, message = "Book id field must be in integer format greater than or equal to 1") String bookId) {
 		commentService.deleteComment(Long.parseLong(bookId));
 		return ResponseEntity.ok("Delete comment successfully");
 	}
@@ -68,9 +68,9 @@ public class CommentController {
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> deleteCommentFromAdmin(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
-			@Min(value = 1, message = "Book id must be in integer format greater than or equal to 1") String bookId,
-			@RequestParam(name = "comment_id", required = false, defaultValue = "") 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", message = "Comment id must in UUID format") 
+			@Min(value = 1, message = "Book id field must be in integer format greater than or equal to 1") String bookId,
+			@RequestParam(name = "comment_id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", message = "Comment id field must in UUID format") 
 			String commentId) {
 		commentService.deleteCommentFromAdmin(UUID.fromString(commentId), Long.parseLong(bookId));
 		return ResponseEntity.ok("Delete comment successfully");

@@ -16,5 +16,6 @@ public interface BookService {
 	Page<Book> findByBestSelling(Integer page, Integer size);
 	Book addBook(NewBook newBook);
 	Book updateBook(UpdateBook updateBook);
+	Book stopSelling(Long id, Boolean stopSelling);
 	void deleteBook(Long id);
 }

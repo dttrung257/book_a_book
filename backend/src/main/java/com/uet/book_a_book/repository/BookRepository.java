@@ -17,7 +17,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query("SELECT b FROM Book b WHERE b.id = :id")
 	Optional<Book> findById(@Param("id") Long id);
 	
-	@Query("SELECT b FROM Book b WHERE b.name like :name%")
+	@Query("SELECT b FROM Book b WHERE b.name LIKE %:name%")
 	Page<Book> findByName(@Param("name") String name, Pageable pageable);
 	
 	@Query("SELECT b FROM Book b WHERE b.category = :category")

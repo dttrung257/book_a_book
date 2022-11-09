@@ -3,6 +3,8 @@ package com.uet.book_a_book.controller;
 import java.util.Date;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +36,7 @@ import com.uet.book_a_book.service.UserSevice;
 
 @RestController
 @RequestMapping("/api/authen")
+@Validated
 public class AuthenticationController {
 	@Autowired
 	private UserSevice userSevice;
@@ -57,7 +61,7 @@ public class AuthenticationController {
 		AppUser user = (AppUser) authentication.getPrincipal();
 		String jwtToken = jwtUtil.generateJwtToken(request.getEmail());
 		return ResponseEntity.ok(
-				new AuthenticationResponse(user.getFirstName(), user.getLastName(), jwtToken, user.getAuthorities()));
+				new AuthenticationResponse(user.getAvatar(), user.getFirstName(), user.getLastName(), jwtToken, user.getAuthorities()));
 	}
 
 	@PostMapping("/register")
@@ -91,14 +95,16 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("{email}/confirm_verification/{code}")
-	public ResponseEntity<Object> confirmVerification(@PathVariable("email") String email,
-			@PathVariable("code") String code) {
+	public ResponseEntity<Object> confirmVerification(
+			@PathVariable("email") @Email(message = "Email field is not valid") String email,
+			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {
 		userSevice.confirmEmailVerification(email, code);
 		return ResponseEntity.ok("Account activation successful");
 	}
 
 	@GetMapping("/send_email/{email}")
-	public ResponseEntity<Object> resendEmailVerification(@PathVariable("email") String email) {
+	public ResponseEntity<Object> resendEmailVerification(
+			@PathVariable("email") @Email(message = "Email field is not valid") String email) {
 		userSevice.sendEmailVerification(email);
 		return ResponseEntity.ok("Send email to " + email + " successfully");
 	}

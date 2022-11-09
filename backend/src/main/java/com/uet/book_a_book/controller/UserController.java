@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uet.book_a_book.dto.RegisterRequest;
@@ -53,15 +54,15 @@ public class UserController {
 
 	@GetMapping("/user/forgot_password/{email}")
 	public ResponseEntity<Object> forgotPassword(
-			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
+			@PathVariable(name = "email") @Email(message = "Email field is not valid") String email) {
 		resetPasswordTokenService.forgotPassword(email);
-		return ResponseEntity.ok("Send email success");
+		return ResponseEntity.ok("Email sent successlly");
 	}
 
 	@GetMapping("/user/forgot_password/{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmResetPassword(
-			@PathVariable("email") @Email(message = "Email is not valid") String email,
-			@PathVariable("code") @NotBlank(message = "Varification code cannot be blank") String code) {
+			@PathVariable("email") @Email(message = "Email field is not valid") String email,
+			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {
 		ResetPasswordToken token = resetPasswordTokenService.getResetPasswordToken(email, code);
 		if (token == null) {
 			throw new NotFoundResetPasswordTokenException("Reset password token of account with email: " + email + " does not exists");
@@ -85,7 +86,7 @@ public class UserController {
 		token.setResetToken(resetPasswordUtil.generateResetToken());
 		token.setVerificationCode(resetPasswordUtil.generateVerificationCode());
 		resetPasswordTokenService.save(token);
-		return ResponseEntity.ok("Reset password successful");
+		return ResponseEntity.ok("Reset password successfully");
 	}
 
 	@PostMapping("/user/change_password")
@@ -128,10 +129,24 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account");
 	}
 
-	@GetMapping("manage_user/all_users")
+	@GetMapping("manage_user/fetch_all_users")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> fetchAllUsers() {
-		return ResponseEntity.ok().body(userSevice.findAllUsers());
+		return ResponseEntity.ok(userSevice.fetchAllUsers());
+	}
+	
+	@GetMapping("manage_user/fetch_by_email")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<Object> fetchUserByEmail(
+			@RequestParam(name = "email", required = true) @NotBlank(message = "Email field cannot be blank") String email) {
+		return ResponseEntity.ok(userSevice.fetchByEmail(email));
+	}
+	
+	@GetMapping("manage_user/fetch_by_name")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<Object> fetchUserByName(
+			@RequestParam(name = "name", required = true) @NotBlank(message = "Name field cannot be blank") String name) {
+		return ResponseEntity.ok(userSevice.fetchByName(name));
 	}
 
 	@GetMapping("/manage_user/lock_account/{email}")
@@ -145,7 +160,7 @@ public class UserController {
 				throw new CannotLockAdminAccountException("Cannot lock admin account");
 			}
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("Account lock successful");
+		return ResponseEntity.ok("Account lock successful");
 	}
 
 	@GetMapping("/manage_user/unlock_account/{email}")
@@ -153,7 +168,7 @@ public class UserController {
 	public ResponseEntity<Object> unlockAccount(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
 		userSevice.unlockAccount(email);
-		return ResponseEntity.status(HttpStatus.OK).body("Account unlock successful");
+		return ResponseEntity.ok("Account unlock successful");
 	}
 
 	@GetMapping("/manage_user/active_account/{email}")
@@ -161,7 +176,7 @@ public class UserController {
 	public ResponseEntity<Object> activeAccount(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
 		userSevice.activeAccount(email);
-		return ResponseEntity.status(HttpStatus.OK).body("Account activation success");
+		return ResponseEntity.ok("Account activation success");
 	}
 	
 	@GetMapping("/manage_user/delete_user/{email}")

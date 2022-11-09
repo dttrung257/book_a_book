@@ -1,6 +1,7 @@
-package com.uet.book_a_book.exception;
+package com.uet.book_a_book.dto.order;
 
 import java.util.Date;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -13,10 +14,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorDetails {
+public class OrderDTO {
+	private UUID id;
+	private String user;
 	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
-	private Date timestamp;
-	private int status;
-	private String message;
-	private Object details;
+	private Date orderDate;
+	private String address;
+	private Long quantity;
+	private Double total;
+	private String status;
 }

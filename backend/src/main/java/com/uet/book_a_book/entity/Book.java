@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -94,13 +93,13 @@ public class Book {
 	private List<Comment> comments;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Orderdetail orderdetail;
+	@OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Orderdetail> orderdetails;
 
 	public Book(String name, String image, String category, String author, Double width, Double height, String isbn,
 			String publisher, Integer numberOfPages, Integer yearOfPublication, double buyPrice, double sellingPrice,
 			String description, Long quantityInStock, Long availableQuantity, Long quantitySold, boolean stopSelling,
-			Double rating, List<Comment> comments, Orderdetail orderdetail) {
+			Double rating, List<Comment> comments, List<Orderdetail> orderdetails) {
 		super();
 		this.name = name;
 		this.image = image;
@@ -121,7 +120,7 @@ public class Book {
 		this.stopSelling = stopSelling;
 		this.rating = rating;
 		this.comments = comments;
-		this.orderdetail = orderdetail;
+		this.orderdetails = orderdetails;
 	}
 	
 	

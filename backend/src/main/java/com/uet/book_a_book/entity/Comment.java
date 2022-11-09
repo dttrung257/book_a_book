@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -41,10 +42,12 @@ public class Comment {
 	
 	@Column(nullable = false)
 	@Temporal(value = TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date createdAt;
 	
 	@Column(nullable = true)
 	@Temporal(value = TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date updatedAt;
 	
 	@Column(nullable = false)

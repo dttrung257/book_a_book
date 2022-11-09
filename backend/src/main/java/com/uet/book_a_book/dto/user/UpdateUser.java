@@ -13,21 +13,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateUser {
-	@NotBlank(message = "First name cannot be blank")
+	@NotBlank(message = "First name field cannot be blank")
 	private String firstName;
 	
-	@NotBlank(message = "Last name cannot be blank")
+	@NotBlank(message = "Last name field cannot be blank")
 	private String lastName;
 	
-	@NotBlank(message = "Gender cannot be blank")
+	@NotBlank(message = "Gender field cannot be blank")
 	private String gender;
 	
-	@Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}", message = "Phone number is invalid")
+	@Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}", message = "Phone number field is invalid")
 	private String phoneNumber;
 	
-	@NotBlank(message = "Address cannot be blank")
+	@NotBlank(message = "Address field cannot be blank")
 	private String address;
 	
-	@NotBlank(message = "Avatar link cannot be blank")
+	@NotBlank(message = "Avatar link field cannot be blank")
 	private String avatar;
 }
