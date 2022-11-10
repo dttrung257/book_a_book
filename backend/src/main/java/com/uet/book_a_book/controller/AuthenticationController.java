@@ -24,12 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.uet.book_a_book.dto.AuthenticationRequest;
 import com.uet.book_a_book.dto.AuthenticationResponse;
 import com.uet.book_a_book.dto.RegisterRequest;
-import com.uet.book_a_book.email.EmailValidator;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.util.RoleName;
 import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
-import com.uet.book_a_book.exception.account.EmailNotExistsOnTheInternetException;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -48,8 +46,8 @@ public class AuthenticationController {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private JwtUtil jwtUtil;
-	@Autowired
-	private EmailValidator emailValidator;
+//	@Autowired
+//	private EmailValidator emailValidator;
 //	@Autowired
 //	private EmailSenderService emailSenderService;
 
@@ -70,10 +68,10 @@ public class AuthenticationController {
 			throw new AccountAlreadyExistsException(
 					String.format("User with email %s already exists", request.getEmail()));
 		}
-		if (!emailValidator.checkEmailExists(request.getEmail())) {
-			throw new EmailNotExistsOnTheInternetException(
-					String.format("Email %s does not exist on the internet", request.getEmail()));
-		}
+//		if (!emailValidator.checkEmailExists(request.getEmail())) {
+//			throw new EmailNotExistsOnTheInternetException(
+//					String.format("Email %s does not exist on the internet", request.getEmail()));
+//		}
 		AppUser user = new AppUser();
 		user.setEmail(request.getEmail());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
