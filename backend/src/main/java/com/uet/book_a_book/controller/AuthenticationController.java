@@ -1,6 +1,7 @@
 package com.uet.book_a_book.controller;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -59,7 +60,7 @@ public class AuthenticationController {
 		AppUser user = (AppUser) authentication.getPrincipal();
 		String jwtToken = jwtUtil.generateJwtToken(request.getEmail());
 		return ResponseEntity.ok(new AuthenticationResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
-				jwtToken, user.getAuthorities()));
+				jwtToken, user.getAuthorities().stream().toList().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList())));
 	}
 
 	@PostMapping("/register")

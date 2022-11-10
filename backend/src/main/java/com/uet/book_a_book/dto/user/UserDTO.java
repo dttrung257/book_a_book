@@ -3,8 +3,6 @@ package com.uet.book_a_book.dto.user;
 import java.util.Collection;
 import java.util.Date;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
@@ -30,5 +28,5 @@ public class UserDTO {
 	private Date updatedAt;
 	private boolean locked;
 	private boolean emailVerified;
-	private Collection<? extends GrantedAuthority> authorities;
+	private Collection<String> authorities;
 }

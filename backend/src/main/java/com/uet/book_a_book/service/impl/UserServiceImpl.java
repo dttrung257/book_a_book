@@ -42,12 +42,15 @@ public class UserServiceImpl implements UserSevice {
 	private EmailSenderService emailSenderService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	private List<UserDTO> mapUserToUserDTO(List<AppUser> users) {
 		List<UserDTO> userDTOs = users.stream()
 				.map(user -> new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
 						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
-						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), user.getAuthorities()))
+						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), 
+						user.getAuthorities().stream().toList()
+											.stream().map(auth -> auth.getAuthority())
+											.collect(Collectors.toList())))
 				.collect(Collectors.toList());
 		return userDTOs;
 	}
@@ -63,7 +66,7 @@ public class UserServiceImpl implements UserSevice {
 		}
 		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
 	}
-	
+
 	@Override
 	public Page<UserDTO> fetchByEmail(String email, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -150,7 +153,8 @@ public class UserServiceImpl implements UserSevice {
 			throw new LockedAccountException(String.format("Account with email: %s has been locked", user.getEmail()));
 		}
 		if (!user.isEmailVerified()) {
-			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", user.getEmail()));
+			throw new AccountNotActivatedException(
+					String.format("Account with email: %s not activated", user.getEmail()));
 		}
 		if (passwordEncoder.matches(oldPassword, user.getPassword())) {
 			user.setPassword(passwordEncoder.encode(newPassword));
@@ -158,7 +162,8 @@ public class UserServiceImpl implements UserSevice {
 			userRepository.save(user);
 			return;
 		} else {
-			throw new IncorrectOldPasswordException("The current password is incorrect, the password cannot be reversed");
+			throw new IncorrectOldPasswordException(
+					"The current password is incorrect, the password cannot be reversed");
 		}
 	}
 
