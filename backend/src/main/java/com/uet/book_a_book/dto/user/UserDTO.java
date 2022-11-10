@@ -1,6 +1,5 @@
 package com.uet.book_a_book.dto.user;
 
-import java.util.Collection;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,5 +27,5 @@ public class UserDTO {
 	private Date updatedAt;
 	private boolean locked;
 	private boolean emailVerified;
-	private Collection<String> authorities;
+	private String authority;
 }

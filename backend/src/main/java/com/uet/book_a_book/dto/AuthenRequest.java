@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationRequest {
+public class AuthenRequest {
 	@Email(message = "Email field is not valid")
 	private String email;
 	

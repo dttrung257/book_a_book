@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uet.book_a_book.dto.AuthenticationRequest;
-import com.uet.book_a_book.dto.AuthenticationResponse;
+import com.uet.book_a_book.dto.AuthenRequest;
+import com.uet.book_a_book.dto.AuthenResponse;
 import com.uet.book_a_book.dto.RegisterRequest;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Role;
@@ -36,7 +36,7 @@ import com.uet.book_a_book.service.UserSevice;
 @RestController
 @RequestMapping("/api/authen")
 @Validated
-public class AuthenticationController {
+public class AuthenController {
 	@Autowired
 	private UserSevice userSevice;
 	@Autowired
@@ -53,14 +53,14 @@ public class AuthenticationController {
 //	private EmailSenderService emailSenderService;
 
 	@PostMapping("/sign_in")
-	public ResponseEntity<Object> signIn(@Valid @RequestBody AuthenticationRequest request) {
+	public ResponseEntity<Object> signIn(@Valid @RequestBody AuthenRequest request) {
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(),
 				request.getPassword());
 		Authentication authentication = authenticationManager.authenticate(token);
 		AppUser user = (AppUser) authentication.getPrincipal();
 		String jwtToken = jwtUtil.generateJwtToken(request.getEmail());
-		return ResponseEntity.ok(new AuthenticationResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
-				jwtToken, user.getAuthorities().stream().toList().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList())));
+		return ResponseEntity.ok(new AuthenResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
+				jwtToken, user.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList()).get(0)));
 	}
 
 	@PostMapping("/register")

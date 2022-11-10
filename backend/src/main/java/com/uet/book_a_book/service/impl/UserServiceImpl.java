@@ -48,9 +48,8 @@ public class UserServiceImpl implements UserSevice {
 				.map(user -> new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
 						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
 						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), 
-						user.getAuthorities().stream().toList()
-											.stream().map(auth -> auth.getAuthority())
-											.collect(Collectors.toList())))
+						user.getAuthorities().stream().map(auth -> auth.getAuthority())
+											.collect(Collectors.toList()).get(0)))
 				.collect(Collectors.toList());
 		return userDTOs;
 	}
