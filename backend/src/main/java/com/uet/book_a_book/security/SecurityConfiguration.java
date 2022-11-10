@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,6 +26,8 @@ public class SecurityConfiguration {
 	private JwtFilter jwtFilter;
 	@Autowired
 	private JwtAuthenEntryPoint jwtAuthenEntryPoint;
+	@Autowired
+	private CustomAccessDeniedHandler customAccessDeniedHandler;
 	
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -38,17 +41,25 @@ public class SecurityConfiguration {
 		http.cors()
 			.and()
 			.csrf().disable()
-			.exceptionHandling().authenticationEntryPoint(jwtAuthenEntryPoint)
+			.exceptionHandling()
+			.authenticationEntryPoint(jwtAuthenEntryPoint)
+			.accessDeniedHandler(customAccessDeniedHandler)
 			.and()
 			.authorizeHttpRequests(
 				requests -> {requests.antMatchers("/api/authen/**").permitAll()
 					.antMatchers("/api/user/forgot_password/**").permitAll()
 					.antMatchers("/api/book/**").permitAll()
+					.antMatchers("/swagger/**").permitAll()
 					.anyRequest().authenticated();
 					})
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
+	
+	@Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/v3/api-docs/**");
+    }
 	
 }

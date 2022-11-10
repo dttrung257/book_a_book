@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -42,14 +46,15 @@ public class CommentServiceImpl implements CommentService {
 	}
 	
 	@Override
-	public List<Comment> fetchOtherComment(Long bookId) {
+	public Page<Comment> fetchOtherComment(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
 		if (book == null) {    
 			throw new NotFoundBookException("Not found book with id: " + bookId);
 		}
+		Pageable pageable = PageRequest.of(page, size);
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<Comment> comments = commentRepository.commentByOtherUser(user.getId(), bookId);
-		return comments;
+		return new PageImpl<>(comments, pageable, comments.size());
 	}
 
 	@Override

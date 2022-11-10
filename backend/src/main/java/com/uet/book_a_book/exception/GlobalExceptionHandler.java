@@ -7,6 +7,7 @@ import javax.validation.ValidationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,9 +21,11 @@ import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
 import com.uet.book_a_book.exception.account.CannotDeleteAdminAccountException;
 import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
+import com.uet.book_a_book.exception.account.CannotResetPasswordException;
 import com.uet.book_a_book.exception.account.EmailNotExistsOnTheInternetException;
 import com.uet.book_a_book.exception.account.EmailSendingErrorException;
 import com.uet.book_a_book.exception.account.IncorrectEmailVerificationCodeException;
+import com.uet.book_a_book.exception.account.IncorrectOldPasswordException;
 import com.uet.book_a_book.exception.account.IncorrectResetPasswordCodeException;
 import com.uet.book_a_book.exception.account.IncorrectResetTokenException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
@@ -55,6 +58,13 @@ public class GlobalExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Unauthorized", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
+				"Access denied", e.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	
 	@ExceptionHandler(InvalidJwtTokenException.class)
@@ -157,6 +167,13 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
+	@ExceptionHandler(IncorrectOldPasswordException.class)
+	ResponseEntity<Object> handleIncorrectOldPasswordException(IncorrectOldPasswordException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"The current password is incorrect, the password cannot be reversed", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
 	@ExceptionHandler(IncorrectResetPasswordCodeException.class)
 	ResponseEntity<Object> handleIncorrectResetPasswordCodeException(IncorrectResetPasswordCodeException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
@@ -189,6 +206,13 @@ public class GlobalExceptionHandler {
 	ResponseEntity<Object> handleCannotDeleteAdminAccountException(CannotDeleteAdminAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Cannot delete admin account", e.getMessage());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotResetPasswordException.class)
+	ResponseEntity<Object> handleCannotResetPasswordException(CannotResetPasswordException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
+				"Cannot reset password of another admin account", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	

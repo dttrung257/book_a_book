@@ -13,12 +13,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResetPassword {
+public class AdminResetPassword {
 	@Email(message = "Email is not valid")
 	private String email;
-	
-	@NotBlank(message = "Reset token field cannot be blank")
-	private String resetToken;
 	
 	@NotBlank(message = "Password field cannot be blank")
 	@Size(min = 8, max = 100, message = "Password field should have at least 8 characters")

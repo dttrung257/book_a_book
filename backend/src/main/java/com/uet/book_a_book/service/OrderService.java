@@ -1,5 +1,6 @@
 package com.uet.book_a_book.service;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -18,4 +19,7 @@ public interface OrderService {
 	void cancelOrder(UUID orderId);
 	Order updateStatus(UUID orderId, String status);
 	Page<OrderDTO> fetchAllOrders(Integer page, Integer size);
+	Page<OrderDTO> fetchOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size);
+	Page<OrderDTO> fetchOrdersByDate(Date orderDate, Integer page, Integer size);
+	Page<OrderDTO> fetchOrdersByUser(String email, Integer page, Integer size);
 }

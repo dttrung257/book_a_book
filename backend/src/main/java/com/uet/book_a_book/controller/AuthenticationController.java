@@ -60,8 +60,8 @@ public class AuthenticationController {
 		Authentication authentication = authenticationManager.authenticate(token);
 		AppUser user = (AppUser) authentication.getPrincipal();
 		String jwtToken = jwtUtil.generateJwtToken(request.getEmail());
-		return ResponseEntity.ok(
-				new AuthenticationResponse(user.getAvatar(), user.getFirstName(), user.getLastName(), jwtToken, user.getAuthorities()));
+		return ResponseEntity.ok(new AuthenticationResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
+				jwtToken, user.getAuthorities()));
 	}
 
 	@PostMapping("/register")

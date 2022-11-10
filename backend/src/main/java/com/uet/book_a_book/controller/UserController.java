@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uet.book_a_book.dto.RegisterRequest;
+import com.uet.book_a_book.dto.user.AdminResetPassword;
 import com.uet.book_a_book.dto.user.NewPassword;
 import com.uet.book_a_book.dto.user.ResetPassword;
 import com.uet.book_a_book.dto.user.UpdateUser;
@@ -90,11 +92,10 @@ public class UserController {
 	}
 
 	@PostMapping("/user/change_password")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	public ResponseEntity<Object> changePassword(@Valid @RequestBody NewPassword request) {
-		if (userSevice.changePassword(request.getEmail(), request.getOldPassword(), request.getNewPassword())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Change password successful");
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect old password");
+		userSevice.changePassword(request.getOldPassword(), request.getNewPassword());
+		return ResponseEntity.ok("Change password successfully");
 	}
 	
 	@GetMapping("/user/user_information")
@@ -131,22 +132,34 @@ public class UserController {
 
 	@GetMapping("manage_user/fetch_all_users")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> fetchAllUsers() {
-		return ResponseEntity.ok(userSevice.fetchAllUsers());
+	public ResponseEntity<Object> fetchAllUsers(
+			@RequestParam(name = "page", required = false, defaultValue = "0") 
+			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") 
+			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
+		return ResponseEntity.ok(userSevice.fetchAllUsers(Integer.parseInt(page), Integer.parseInt(size)));
 	}
 	
 	@GetMapping("manage_user/fetch_by_email")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> fetchUserByEmail(
-			@RequestParam(name = "email", required = true) @NotBlank(message = "Email field cannot be blank") String email) {
-		return ResponseEntity.ok(userSevice.fetchByEmail(email));
+			@RequestParam(name = "email", required = true) @NotBlank(message = "Email field cannot be blank") String email,
+			@RequestParam(name = "page", required = false, defaultValue = "0") 
+			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") 
+			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
+		return ResponseEntity.ok(userSevice.fetchByEmail(email, Integer.parseInt(page), Integer.parseInt(size)));
 	}
 	
 	@GetMapping("manage_user/fetch_by_name")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> fetchUserByName(
-			@RequestParam(name = "name", required = true) @NotBlank(message = "Name field cannot be blank") String name) {
-		return ResponseEntity.ok(userSevice.fetchByName(name));
+			@RequestParam(name = "name", required = true) @NotBlank(message = "Name field cannot be blank") String name,
+			@RequestParam(name = "page", required = false, defaultValue = "0") 
+			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") 
+			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
+		return ResponseEntity.ok(userSevice.fetchByName(name, Integer.parseInt(page), Integer.parseInt(size)));
 	}
 
 	@GetMapping("/manage_user/lock_account/{email}")
@@ -160,7 +173,7 @@ public class UserController {
 				throw new CannotLockAdminAccountException("Cannot lock admin account");
 			}
 		}
-		return ResponseEntity.ok("Account lock successful");
+		return ResponseEntity.ok("Lock account successfully");
 	}
 
 	@GetMapping("/manage_user/unlock_account/{email}")
@@ -168,7 +181,7 @@ public class UserController {
 	public ResponseEntity<Object> unlockAccount(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
 		userSevice.unlockAccount(email);
-		return ResponseEntity.ok("Account unlock successful");
+		return ResponseEntity.ok("Unlock account successfully");
 	}
 
 	@GetMapping("/manage_user/active_account/{email}")
@@ -177,6 +190,13 @@ public class UserController {
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
 		userSevice.activeAccount(email);
 		return ResponseEntity.ok("Account activation success");
+	}
+	
+	@PostMapping("/manage_user/reset_user_password")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<Object> resetUserPassword(@Valid @RequestBody AdminResetPassword adminResetPassword) {
+		userSevice.resetUserPassword(adminResetPassword.getEmail(), adminResetPassword.getNewPassword());
+		return ResponseEntity.ok("Reset user's password successfully");
 	}
 	
 	@GetMapping("/manage_user/delete_user/{email}")

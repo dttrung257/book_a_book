@@ -1,10 +1,12 @@
 package com.uet.book_a_book.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -70,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
 
 		return order;
 	}
-	
+
 	@Override
 	public Order addOrderFromAdmin(OrderAddedByAdmin newOrder) {
 		newOrder.getOrderdetails().stream().forEach(od -> {
@@ -98,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
 		});
 		return order;
 	}
-	
+
 	private OrderDTO orderToOrderDTO(Order order) {
 		OrderDTO orderDTO = new OrderDTO();
 		orderDTO.setId(order.getId());
@@ -120,11 +122,11 @@ public class OrderServiceImpl implements OrderService {
 	public Page<OrderDTO> fetchUserOrder(Integer page, Integer size) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Pageable pageable = PageRequest.of(page, size);
-		List<Order> orders = orderRepository.fetchUserOrder(user.getId(), pageable).getContent();
+		List<Order> orders = orderRepository.fetchUserOrders(user.getId());
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o)).collect(Collectors.toList());
-		return new PageImpl<>(orderDTOs, pageable, orders.size());
+		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
 	}
-	
+
 	private OrderdetailDTO orderdetailToOrderdetailDTO(Orderdetail orderdetail) {
 		OrderdetailDTO orderdetailDTO = new OrderdetailDTO();
 		orderdetailDTO.setId(orderdetail.getId());
@@ -142,9 +144,10 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Page<OrderdetailDTO> fetchOrderdetails(UUID orderId, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<Orderdetail> orderdetails = orderdetailRepository.fetchByOrderId(orderId, pageable).getContent();
-		List<OrderdetailDTO> orderdetailDTOs = orderdetails.stream().map(od -> orderdetailToOrderdetailDTO(od)).collect(Collectors.toList());
-		return new PageImpl<>(orderdetailDTOs, pageable, orderdetails.size());
+		List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
+		List<OrderdetailDTO> orderdetailDTOs = orderdetails.stream().map(od -> orderdetailToOrderdetailDTO(od))
+				.collect(Collectors.toList());
+		return new PageImpl<>(orderdetailDTOs, pageable, orderdetailDTOs.size());
 	}
 
 	@Override
@@ -180,9 +183,10 @@ public class OrderServiceImpl implements OrderService {
 					+ orderId.toString() + " has been successfully delivered");
 		}
 		// PENDING or SHIPPING to SUCCESS => quantity in stock decreases
-		if ((order.getStatus().equals(OrderStatus.STATUS_PENDING) || order.getStatus().equals(OrderStatus.STATUS_SHIPPING)) 
+		if ((order.getStatus().equals(OrderStatus.STATUS_PENDING)
+				|| order.getStatus().equals(OrderStatus.STATUS_SHIPPING))
 				&& status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS)) {
-			
+
 			order.setStatus(OrderStatus.STATUS_SUCCESS);
 			List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
 			orderdetails.forEach(od -> {
@@ -198,9 +202,11 @@ public class OrderServiceImpl implements OrderService {
 				bookRepository.save(book);
 			});
 		}
-		// CANCELED to SUCCESS => quantity in stock decreases, available quantity decreases
-		if (order.getStatus().equals(OrderStatus.STATUS_CANCELED) && status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS)) {
-			
+		// CANCELED to SUCCESS => quantity in stock decreases, available quantity
+		// decreases
+		if (order.getStatus().equals(OrderStatus.STATUS_CANCELED)
+				&& status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS)) {
+
 			order.setStatus(OrderStatus.STATUS_SUCCESS);
 			List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
 			orderdetails.forEach(od -> {
@@ -217,9 +223,10 @@ public class OrderServiceImpl implements OrderService {
 			});
 		}
 		// PENDING or SHIPPING to CANCELED => available quantity increases
-		if ((order.getStatus().equals(OrderStatus.STATUS_PENDING) || order.getStatus().equals(OrderStatus.STATUS_SHIPPING)) 
+		if ((order.getStatus().equals(OrderStatus.STATUS_PENDING)
+				|| order.getStatus().equals(OrderStatus.STATUS_SHIPPING))
 				&& status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED)) {
-			
+
 			order.setStatus(OrderStatus.STATUS_CANCELED);
 			List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
 			orderdetails.forEach(od -> {
@@ -235,25 +242,33 @@ public class OrderServiceImpl implements OrderService {
 			});
 		}
 		// CANCELED to PENDING or SHIPPING => available quantity decreases
-		if (order.getStatus().equals(OrderStatus.STATUS_CANCELED) 
-				&& (status.equalsIgnoreCase(OrderStatus.STATUS_PENDING) || status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING))) {
+		if (order.getStatus().equals(OrderStatus.STATUS_CANCELED)
+				&& (status.equalsIgnoreCase(OrderStatus.STATUS_PENDING)
+						|| status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING))) {
+
+			order.setStatus(status.toUpperCase());
+			List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
+			orderdetails.forEach(od -> {
+				Book book = orderdetailRepository.findBookByOrderdetailId(od.getId()).orElse(null);
+				if (book == null) {
+					throw new NotFoundBookException("Not found book with orderdetail id: " + od.getId());
+				}
+			});
+			orderdetails.forEach(od -> {
+				Book book = orderdetailRepository.findBookByOrderdetailId(od.getId()).orElse(null);
+				book.setAvailableQuantity(book.getAvailableQuantity() - od.getQuantityOrdered());
+				bookRepository.save(book);
+			});
+		}
+		if ((order.getStatus().equals(OrderStatus.STATUS_PENDING) && status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING))
+				|| (order.getStatus().equals(OrderStatus.STATUS_SHIPPING) && status.equalsIgnoreCase(OrderStatus.STATUS_PENDING))) {
 			
-				order.setStatus(status.toUpperCase());
-				List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
-				orderdetails.forEach(od -> {
-					Book book = orderdetailRepository.findBookByOrderdetailId(od.getId()).orElse(null);
-					if (book == null) {
-						throw new NotFoundBookException("Not found book with orderdetail id: " + od.getId());
-					}
-				});
-				orderdetails.forEach(od -> {
-					Book book = orderdetailRepository.findBookByOrderdetailId(od.getId()).orElse(null);
-					book.setAvailableQuantity(book.getAvailableQuantity() - od.getQuantityOrdered());
-					bookRepository.save(book);
-				});
-			}
-		if (!(status.equalsIgnoreCase(OrderStatus.STATUS_PENDING) || status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING)
-				|| status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS) || status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED))) {
+			order.setStatus(status.toUpperCase());
+		}
+		if (!(status.equalsIgnoreCase(OrderStatus.STATUS_PENDING)
+				|| status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING)
+				|| status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS)
+				|| status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED))) {
 			throw new NotFoundOrderStatusException("Not found order status: " + status);
 		}
 		orderRepository.save(order);
@@ -265,7 +280,54 @@ public class OrderServiceImpl implements OrderService {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o)).collect(Collectors.toList());
-		return new PageImpl<>(orderDTOs, pageable, orders.size());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
+		if (start <= orderDTOs.size()) {
+			return new PageImpl<>(orderDTOs.subList(start, end), pageable, orderDTOs.size());
+		}
+		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
+	}
+	
+	@Override
+	public Page<OrderDTO> fetchOrdersByUser(String email, Integer page, Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<Order> orders = orderRepository.findAll();
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
+				.filter(o -> (o.getUser().contains(email))).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
+		if (start <= orderDTOs.size()) {
+			return new PageImpl<>(orderDTOs.subList(start, end), pageable, orderDTOs.size());
+		}
+		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
+	}
+
+	@Override
+	public Page<OrderDTO> fetchOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<Order> orders = orderRepository.findAll();
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
+				.filter(o -> (o.getTotal() >= fromPrice && o.getTotal() <= toPrice)).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
+		if (start <= orderDTOs.size()) {
+			return new PageImpl<>(orderDTOs.subList(start, end), pageable, orderDTOs.size());
+		}
+		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
+	}
+
+	@Override
+	public Page<OrderDTO> fetchOrdersByDate(Date orderDate, Integer page, Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<Order> orders = orderRepository.findAll();
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
+				.filter(o -> (DateUtils.isSameDay(orderDate, o.getOrderDate()))).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
+		if (start <= orderDTOs.size()) {
+			return new PageImpl<>(orderDTOs.subList(start, end), pageable, orderDTOs.size());
+		}
+		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 
 }

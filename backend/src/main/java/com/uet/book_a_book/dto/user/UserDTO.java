@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,9 @@ public class UserDTO {
 	private String phoneNumber;
 	private String address;
 	private String avatar;
+	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date createdAt;
+	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date updatedAt;
 	private boolean locked;
 	private boolean emailVerified;

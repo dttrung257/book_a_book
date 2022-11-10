@@ -39,8 +39,12 @@ public class CommentController {
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	ResponseEntity<Object> fetchOtherComment(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
-			@Min(value = 1, message = "Book id field must be in integer format greater than or equal to 1") String bookId) {
-		return ResponseEntity.ok(commentService.fetchOtherComment(Long.parseLong(bookId)));
+			@Min(value = 1, message = "Book id field must be in integer format greater than or equal to 1") String bookId,
+			@RequestParam(name = "page", required = false, defaultValue = "0") 
+			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") 
+			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
+		return ResponseEntity.ok(commentService.fetchOtherComment(Long.parseLong(bookId), Integer.parseInt(page), Integer.parseInt(size)));
 	}
 	
 	@PostMapping("/comment/add_comment")
