@@ -16,10 +16,10 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
 	@Query("SELECT u FROM AppUser u JOIN FETCH u.role")
 	List<AppUser> fetchAllUsers();
 	
-	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role WHERE u.email LIKE %:email%")
-	List<AppUser> fetchByEmail(@Param("email") String email);
+//	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role WHERE u.email LIKE %:email%")
+//	List<AppUser> fetchByEmail(@Param("email") String email);
 	
-	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role WHERE u.firstName LIKE %:name% OR u.lastName LIKE %:name%")
+	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role WHERE u.email LIKE %:name% OR u.firstName LIKE %:name% OR u.lastName LIKE %:name%")
 	List<AppUser> fetchByName(@Param("name") String name);
 	
 	@Query("SELECT u FROM AppUser u JOIN FETCH u.role WHERE u.email = :email")

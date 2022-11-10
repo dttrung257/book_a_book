@@ -9,7 +9,7 @@ import com.uet.book_a_book.entity.AppUser;
 
 public interface UserSevice {
 	Page<UserDTO> fetchAllUsers(Integer page, Integer size);
-	Page<UserDTO> fetchByEmail(String email, Integer page, Integer size);
+	//Page<UserDTO> fetchByEmail(String email, Integer page, Integer size);
 	Page<UserDTO> fetchByName(String name, Integer page, Integer size);
 	AppUser save(AppUser user);
 	AppUser findByEmail(String email);

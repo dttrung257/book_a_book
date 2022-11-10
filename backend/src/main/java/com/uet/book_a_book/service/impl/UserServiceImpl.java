@@ -66,17 +66,17 @@ public class UserServiceImpl implements UserSevice {
 		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
 	}
 
-	@Override
-	public Page<UserDTO> fetchByEmail(String email, Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByEmail(email));
-		Integer start = (int) pageable.getOffset();
-		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
-		if (start <= userDTOs.size()) {
-			return new PageImpl<>(userDTOs.subList(start, end), pageable, userDTOs.size());
-		}
-		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
-	}
+//	@Override
+//	public Page<UserDTO> fetchByEmail(String email, Integer page, Integer size) {
+//		Pageable pageable = PageRequest.of(page, size);
+//		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByEmail(email));
+//		Integer start = (int) pageable.getOffset();
+//		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
+//		if (start <= userDTOs.size()) {
+//			return new PageImpl<>(userDTOs.subList(start, end), pageable, userDTOs.size());
+//		}
+//		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
+//	}
 
 	@Override
 	public Page<UserDTO> fetchByName(String name, Integer page, Integer size) {

@@ -140,16 +140,16 @@ public class UserController {
 		return ResponseEntity.ok(userSevice.fetchAllUsers(Integer.parseInt(page), Integer.parseInt(size)));
 	}
 	
-	@GetMapping("manage_user/fetch_by_email")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> fetchUserByEmail(
-			@RequestParam(name = "email", required = true) @NotBlank(message = "Email field cannot be blank") String email,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(userSevice.fetchByEmail(email, Integer.parseInt(page), Integer.parseInt(size)));
-	}
+//	@GetMapping("manage_user/fetch_by_email")
+//	@PreAuthorize("hasAuthority('ADMIN')")
+//	public ResponseEntity<Object> fetchUserByEmail(
+//			@RequestParam(name = "email", required = true) @NotBlank(message = "Email field cannot be blank") String email,
+//			@RequestParam(name = "page", required = false, defaultValue = "0") 
+//			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+//			@RequestParam(name = "size", required = false, defaultValue = "10") 
+//			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
+//		return ResponseEntity.ok(userSevice.fetchByEmail(email, Integer.parseInt(page), Integer.parseInt(size)));
+//	}
 	
 	@GetMapping("manage_user/fetch_by_name")
 	@PreAuthorize("hasAuthority('ADMIN')")
