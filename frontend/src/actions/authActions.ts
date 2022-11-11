@@ -13,18 +13,19 @@ export const login = createAsyncThunk(
         email: email,
         password: password,
       });
-      let data = response.data;
+      const data = response.data;
       console.log("@@ @@ ", data);
 
-      data = {
+      const info = {
         user: {
+          avatar: data.avatar,
           firstName: data.firstName,
           lastName: data.lastName,
-          role: data.authorities,
+          authority: data.authority,
         },
         accessToken: data.accessToken,
       };
-      return data;
+      return info;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
