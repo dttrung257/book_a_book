@@ -1,4 +1,4 @@
-package com.uet.book_a_book.configuration;
+package com.uet.book_a_book.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

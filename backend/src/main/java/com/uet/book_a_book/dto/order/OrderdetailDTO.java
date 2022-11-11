@@ -14,6 +14,7 @@ import lombok.Setter;
 public class OrderdetailDTO {
 	private UUID id;
 	private String image;
+	private String bookName;
 	private Long quantityOrdered;
 	private Double priceEach;
 }

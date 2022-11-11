@@ -1,4 +1,4 @@
-package com.uet.book_a_book.configuration;
+package com.uet.book_a_book.config;
 
 import java.util.Date;
 
@@ -15,7 +15,7 @@ import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
 
 @Configuration
-public class DatabaseResourceTest {
+public class DatabaseResource {
     private @Autowired UserSevice userSevice;
     private @Autowired RoleService roleService;
     private @Autowired PasswordEncoder passwordEncoder;

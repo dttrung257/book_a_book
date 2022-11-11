@@ -135,8 +135,10 @@ public class OrderServiceImpl implements OrderService {
 		Book book = orderdetailRepository.findBookByOrderdetailId(orderdetail.getId()).orElse(null);
 		if (book == null) {
 			orderdetailDTO.setImage(null);
+			orderdetailDTO.setBookName(null);
 		} else {
 			orderdetailDTO.setImage(book.getImage());
+			orderdetailDTO.setBookName(book.getName());
 		}
 		return orderdetailDTO;
 	}
