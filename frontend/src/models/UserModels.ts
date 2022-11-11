@@ -40,7 +40,7 @@ export interface UserInfo {
   avatar?: string;
   firstName: string;
   lastName: string;
-  role: string[];
+  authority: string;
 }
 
 export interface LoginInfo {

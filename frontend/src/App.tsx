@@ -12,12 +12,17 @@ import Forget from "./pages/ForgetPassword/Forget";
 import Reset from "./pages/ForgetPassword/Reset";
 import AuthVerify from "./pages/VerifyEmail/AuthVerify";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
+// import DashBoardUser from "./pages/DashBoard/User/User";
+// import DashBoardBook from "./pages/DashBoard/Books/Book";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const SignUp = React.lazy(() => import("./pages/Signup/SignUp"));
 const Home = React.lazy(() => import("./pages/Home/Home"));
 const Layout = React.lazy(() => import("./components/Layout"));
 const Loading = React.lazy(() => import("./pages/Loading"));
+// const DashBoardLayout = React.lazy(
+//   () => import("./pages/DashBoard/DashBoardLayout")
+// );
 
 const theme = createTheme({
   palette: {
@@ -44,7 +49,7 @@ const App = () => {
         user: {
           firstName: user.firstName,
           lastName: user.lastName,
-          role: user.role,
+          authority: user.authority,
         },
       })
     );
@@ -59,6 +64,10 @@ const App = () => {
             <Route path="test" element={<Test />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
+          {/* <Route path="dashboard" element={<DashBoardLayout />}>
+            <Route index element={<DashBoardUser />} />
+            <Route path="books" element={<DashBoardBook />} />
+          </Route> */}
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
           <Route path="verify-email" element={<AuthVerify />} />
