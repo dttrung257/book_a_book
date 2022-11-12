@@ -1,0 +1,95 @@
+:root {
+    --head-banner:#e8ebe6;
+    --book-sort: #fafafa;
+}
+.header, .headBanner {
+    width: 100%;
+}
+.header {
+    height: 100px;
+}
+.headBanner {
+    line-height: 30px;
+    background-color: var(--head-banner);
+    vertical-align: middle;
+    text-align: center;
+    font-size: 12px;
+}
+.mainSubject {
+    font-size: 20px;
+    text-align: center;
+    overflow: hidden;
+    font-family: Poynter,Georgia,serif;;
+}
+.mainSubject::before,
+.mainSubject::after {
+    background-color: #000;
+    content: "";
+    display: inline-block;
+    height: 0.5px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+}
+.mainSubject:before {
+    right: 0.5em;
+    margin-left: -50%;
+}
+  
+.mainSubject:after {
+    left: 0.5em;
+    margin-right: -50%;
+}
+
+.dropDown {
+    float: right;
+    line-height: 30px;
+    width: 200px;
+    background-color: var(--book-sort);
+    border: 1px solid grey;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 12px;
+    color: grey;
+    position: relative;
+    padding: 0;
+    margin-top: 20px;
+}
+.dropIcon {
+    float: right;
+    margin-right: 10px;
+    margin-top: 8px;
+}
+.dropDown:hover{
+    border: 1px solid black;
+    border-bottom: 0;
+}
+.dropDownList {
+    position: absolute;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    border: 1px solid black;
+    background-color: var(--book-sort);
+
+}
+.dropDown:hover .dropDownList {
+    display: block;
+}
+.dropDownItem {
+    color: #000;
+    font-size: 14px;
+    padding-left: 10px;
+    justify-content: center;
+    transition: border-left 0.1s linear;
+    margin: 0;
+}
+.dropDownItem:hover {
+    border-left: 2px solid black;
+}
+.dropDown:before {
+    content: "Sort by:";
+    margin: 5px;
+} 

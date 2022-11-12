@@ -1,0 +1,49 @@
+:root {
+    --criterion-title: #3c8576;
+}
+.container {
+    width: 1400px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.filter {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+}
+.bookContainer {
+    width: 75%;
+    border-left: 1px solid black;
+    padding: 20px;
+    min-height: 500px;
+}
+.filterField {
+    margin-bottom: 20px;
+}
+.filterTitle {
+    font-size: 14px;
+    line-height: 26px;
+    font-weight:bolder;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.criterionTitle {
+    font-size: 14px;
+    cursor:pointer;
+    line-height: 26px;
+    color: var(--criterion-title);
+}
+.criterionTitle:hover {
+    text-decoration: underline;
+}
+.starContainer {
+    display: flex;
+    line-height: 26px;
+}
+.starItem{ 
+    margin-right: 5px;
+}

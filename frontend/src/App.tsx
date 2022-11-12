@@ -14,6 +14,7 @@ import AuthVerify from "./pages/VerifyEmail/AuthVerify";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 // import DashBoardUser from "./pages/DashBoard/User/User";
 // import DashBoardBook from "./pages/DashBoard/Books/Book";
+import Category from "./pages/Category/Category";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const SignUp = React.lazy(() => import("./pages/Signup/SignUp"));
@@ -76,6 +77,7 @@ const App = () => {
             <Route path="verify" element={<CodeVerify />} />
             <Route path="reset/:resetToken" element={<Reset />} />
           </Route>
+          <Route path="books" element={<Category />}/>
           {/* <Route path='*' element={<Home />} /> */}
         </Routes>
       </Suspense>
