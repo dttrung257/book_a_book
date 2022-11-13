@@ -15,11 +15,17 @@
     flex-direction: column;
     width: 20%;
 }
-.bookContainer {
+.content {
     width: 75%;
     border-left: 1px solid black;
     padding: 20px;
     min-height: 500px;
+    height: fit-content;
+}
+.bookContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: fit-content;
 }
 .filterField {
     margin-bottom: 20px;
@@ -46,4 +52,8 @@
 }
 .starItem{ 
     margin-right: 5px;
+}
+#footer {
+    position: absolute;
+    bottom: 0;
 }

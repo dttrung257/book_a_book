@@ -8,7 +8,7 @@ export const getBookViaId = async (id: number) => {
 export const getAllBook = async() => {
   try{
     const response = await axiosInstance.get('book/fetch_books',);
-    return response.data;
+    return response.data.content;
   }
   catch(error) {
     console.log(error);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, {  useState, useLayoutEffect } from "react"
 import styled from "styled-components";
 import style from "./Category.module.css";
 import { FaStar,FaChevronDown, FaBookOpen} from "react-icons/fa";
@@ -7,11 +7,16 @@ import Footer from "../../components/Footer/Footer"
 import Header from "../../components/Header/Header"
 import { Link } from "react-router-dom";
 import * as bookSearch from "../../apis/book";
+import BookCard from "../../components/Book/BookCard";
+import { BookInfo } from "../../models";
 const Wrapper = styled.div`
 	background-color: #ffffff;
 	position: relative;
 	overflow: auto;
 	min-height: 100vh;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
 `;
 
 const subjects = ['Literary','Lifestyle','Education','Technology','Science',
@@ -27,12 +32,11 @@ const Category = () => {
     const [maxPrice,setMaxPrice] = useState(1000);
     const [starValue,setStarValue] = useState(0);
     const [sortType, setSortType] = useState(BESTSELL);
-    const [searchResult,setSearchResult] = useState([]);
+    const [searchResult,setSearchResult] = useState<BookInfo[]>([]);
     const stars = Array(5).fill(0);
 
     const handleStarClick = (value:number) =>{
         setStarValue(value);
-
     }
     const handleSortClick = (sort:string) => {
         setSortType(sort);
@@ -40,21 +44,24 @@ const Category = () => {
 
     const handleTypeClick = (category:string) => {
         setType(category);
-        console.log(type);
     }
 
     const handlePriceClick = (id: number) => {
         setMinPrice(price[id]);
         setMaxPrice(price[id+1]);
     }
-    useEffect(() =>{
+    useLayoutEffect(() => {
         const fetchApi = async () => {
-            const result = await bookSearch.getAllBook();
-            setSearchResult(result);
+            try{
+                const result = await bookSearch.getAllBook();
+                setSearchResult(result);
+             } catch(error)
+             {
+                console.log(error);
+             }
         }
         fetchApi();
-
-    },[type])
+    }, [type])
     console.log(searchResult);
     return (
         <Wrapper>
@@ -103,7 +110,7 @@ const Category = () => {
                     </div>
                     </div>                    
                 </div>
-                <div className={`${style.bookContainer}`}>
+                <div className={`${style.content}`}>
                     <div className={`${bookStyle.header}`}>
                             <div className={`${bookStyle.mainSubject}`}>
                                 { type === "" ? "The Book Store": type}
@@ -123,8 +130,26 @@ const Category = () => {
                         <FaBookOpen size={14} className='mx-2' />
                         Have a good day at Book a book. Get it at our home page   
                         <Link to={"#"} className='mx-2'>Home</Link>
+
                     </div>
+                    <div className={`${style.bookContainer}`}>
+                    {
+                        searchResult.map(result => {
+                            return <BookCard
+                            key={result.id}
+                            id={result.id} 
+                            name={result.name} 
+                            image={result.image} 
+                            author={result.author} 
+                            sellingPrice={result.sellingPrice}
+                            rating={result.rating}
+                            />
+                        })
+                        }
+                    </div>
+                    
             </div>
+
             </div>
             <Footer />
         </Wrapper>
