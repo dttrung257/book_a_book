@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Getter
 @Slf4j
-//@ConfigurationPropertiesScan(basePackageClasses = MyServerProperties.class)
 public class JwtUtil {
 	@Value("${my.server.secretKey}")
 	private String secretKey;

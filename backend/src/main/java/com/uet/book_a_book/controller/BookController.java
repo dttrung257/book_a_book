@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +30,7 @@ public class BookController {
 	@Autowired
 	private BookService bookService;
 
-	@GetMapping("/book/fetch_books")
+	@GetMapping("/book/fetch_all_books")
 	ResponseEntity<Object> fetchAllBooks(
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
 			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
@@ -104,13 +106,13 @@ public class BookController {
 		return ResponseEntity.ok(bookService.addBook(newBook));
 	}
 	
-	@PostMapping("/manage_book/update_book")
+	@PutMapping("/manage_book/update_book")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> updateBook(@Valid @RequestBody UpdateBook updateBook) {
 		return ResponseEntity.ok(bookService.updateBook(updateBook));
 	}
 	
-	@GetMapping("/manage_book/update_book")
+	@PutMapping("/manage_book/update_status")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> updateStatus(
 			@RequestParam(name = "id", required = false, defaultValue = "0")
@@ -119,7 +121,7 @@ public class BookController {
 		return ResponseEntity.ok(bookService.stopSelling(Long.parseLong(id), stop_selling));
 	}
 	
-	@GetMapping("/manage_book/delete_book/{id}")
+	@DeleteMapping("/manage_book/delete_book/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> deleteBook(
 			@PathVariable("id") 

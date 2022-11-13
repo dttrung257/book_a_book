@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,13 +55,13 @@ public class CommentController {
 		return ResponseEntity.ok(commentService.addComment(newComment));
 	}
 	
-	@PostMapping("/comment/update_comment")
+	@PutMapping("/comment/update_comment")
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	ResponseEntity<Object> editComment(@Valid @RequestBody NewComment updateComment) {
 		return ResponseEntity.ok(commentService.updateComment(updateComment));
 	}
 	
-	@GetMapping("/comment/delete_comment")
+	@DeleteMapping("/comment/delete_comment")
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	ResponseEntity<Object> deleteComment(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 
@@ -68,7 +70,7 @@ public class CommentController {
 		return ResponseEntity.ok("Delete comment successfully");
 	}
 	
-	@GetMapping("/manage_comment/delete_comment")
+	@DeleteMapping("/manage_comment/delete_comment")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> deleteCommentFromAdmin(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") 

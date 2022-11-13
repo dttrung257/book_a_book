@@ -14,9 +14,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -75,7 +77,7 @@ public class UserController {
 		return ResponseEntity.ok(token.getResetToken());
 	}
 
-	@PostMapping("/user/forgot_password/reset_password")
+	@PutMapping("/user/forgot_password/reset_password")
 	public ResponseEntity<Object> resetPassword(@RequestBody ResetPassword resetPassword) {
 		ResetPasswordToken token = resetPasswordTokenService.resetPassword(resetPassword.getEmail(),
 				resetPassword.getResetToken(), resetPassword.getNewPassword());
@@ -91,7 +93,7 @@ public class UserController {
 		return ResponseEntity.ok("Reset password successfully");
 	}
 
-	@PostMapping("/user/change_password")
+	@PutMapping("/user/change_password")
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	public ResponseEntity<Object> changePassword(@Valid @RequestBody NewPassword request) {
 		userSevice.changePassword(request.getOldPassword(), request.getNewPassword());
@@ -104,7 +106,7 @@ public class UserController {
 		return ResponseEntity.ok(userSevice.viewInformation());
 	}
 	
-	@PostMapping("/user/update_user")
+	@PutMapping("/user/update_user")
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
 	public ResponseEntity<Object> updateUser(@Valid @RequestBody UpdateUser updateUser) {
 		return ResponseEntity.ok(userSevice.updateUser(updateUser));
@@ -162,7 +164,7 @@ public class UserController {
 		return ResponseEntity.ok(userSevice.fetchByName(name, Integer.parseInt(page), Integer.parseInt(size)));
 	}
 
-	@GetMapping("/manage_user/lock_account/{email}")
+	@PutMapping("/manage_user/lock_account/{email}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> lockAccount(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
@@ -176,7 +178,7 @@ public class UserController {
 		return ResponseEntity.ok("Lock account successfully");
 	}
 
-	@GetMapping("/manage_user/unlock_account/{email}")
+	@PutMapping("/manage_user/unlock_account/{email}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> unlockAccount(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
@@ -184,7 +186,7 @@ public class UserController {
 		return ResponseEntity.ok("Unlock account successfully");
 	}
 
-	@GetMapping("/manage_user/active_account/{email}")
+	@PutMapping("/manage_user/activate_account/{email}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> activeAccount(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
@@ -192,14 +194,14 @@ public class UserController {
 		return ResponseEntity.ok("Account activation success");
 	}
 	
-	@PostMapping("/manage_user/reset_user_password")
+	@PutMapping("/manage_user/reset_user_password")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> resetUserPassword(@Valid @RequestBody AdminResetPassword adminResetPassword) {
 		userSevice.resetUserPassword(adminResetPassword.getEmail(), adminResetPassword.getNewPassword());
 		return ResponseEntity.ok("Reset user's password successfully");
 	}
 	
-	@GetMapping("/manage_user/delete_user/{email}")
+	@DeleteMapping("/manage_user/delete_user/{email}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> deleteUser(
 			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {

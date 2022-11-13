@@ -30,6 +30,7 @@ import com.uet.book_a_book.exception.account.IncorrectResetPasswordCodeException
 import com.uet.book_a_book.exception.account.IncorrectResetTokenException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
+import com.uet.book_a_book.exception.account.NotFoundGenderException;
 import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException;
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
@@ -170,7 +171,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IncorrectOldPasswordException.class)
 	ResponseEntity<Object> handleIncorrectOldPasswordException(IncorrectOldPasswordException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
-				"The current password is incorrect, the password cannot be reversed", e.getMessage());
+				"The current password is incorrect, the password cannot be changed", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
@@ -214,6 +215,13 @@ public class GlobalExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Cannot reset password of another admin account", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+	}
+	
+	@ExceptionHandler(NotFoundGenderException.class)
+	ResponseEntity<Object> handleNotFoundGenderException(NotFoundGenderException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
+				"Not found gender", e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotFoundBookException.class)

@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +28,10 @@ import com.uet.book_a_book.dto.AuthenResponse;
 import com.uet.book_a_book.dto.RegisterRequest;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Role;
+import com.uet.book_a_book.entity.util.Gender;
 import com.uet.book_a_book.entity.util.RoleName;
 import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
+import com.uet.book_a_book.exception.account.NotFoundGenderException;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -76,8 +79,15 @@ public class AuthenController {
 		AppUser user = new AppUser();
 		user.setEmail(request.getEmail());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setFirstName(request.getFirstName());
-		user.setLastName(request.getLastName());
+		user.setFirstName(request.getFirstName().trim());
+		user.setLastName(request.getLastName().trim());
+		if (request.getGender().equalsIgnoreCase(Gender.GENDER_MALE) 
+				|| request.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)
+				|| request.getGender().equalsIgnoreCase(Gender.GENDER_OTHER)) {
+			user.setGender(request.getGender().toUpperCase());
+		} else {
+			throw new NotFoundGenderException("Not found gender: " + request.getGender());
+		}
 		user.setCreatedAt(new Date());
 		Role roleUser = roleService.findByRoleName(RoleName.ROLE_USER);
 		user.setRole(roleUser);
@@ -93,7 +103,7 @@ public class AuthenController {
 				.body("You have successfully created an account. Please verify your email!");
 	}
 
-	@GetMapping("{email}/confirm_verification/{code}")
+	@PutMapping("{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmVerification(
 			@PathVariable("email") @Email(message = "Email field is not valid") String email,
 			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {

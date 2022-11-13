@@ -88,9 +88,9 @@ public class BookServiceImpl implements BookService {
 			throw new BookAlreadyExistsException("The book named " + newBook.getName() + " already exists");
 		}
 		Book book = new Book();
-		book.setName(newBook.getName());
-		book.setAuthor(newBook.getAuthor());
-		book.setCategory(newBook.getCategory());
+		book.setName(newBook.getName().trim());
+		book.setAuthor(newBook.getAuthor().trim());
+		book.setCategory(newBook.getCategory().toUpperCase());
 		book.setIsbn(newBook.getIsbn());
 		book.setPublisher(newBook.getPublisher());
 		book.setBuyPrice(newBook.getBuyPrice());
@@ -113,13 +113,17 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Book updateBook(UpdateBook updateBook) {
+		Book checkBook = bookRepository.findByNameAndAuthor(updateBook.getName().trim(), updateBook.getAuthor().trim()).orElse(null);
+		if (checkBook.getId() != updateBook.getId() && checkBook != null) {
+			throw new BookAlreadyExistsException("The book named " + updateBook.getName() + " already exists with id: " + checkBook.getId());
+		}
 		Book book = bookRepository.findById(updateBook.getId()).orElse(null);
 		if (book == null) {
 			throw new NotFoundBookException("Not found book with id: " + updateBook.getId());
 		}
-		book.setName(updateBook.getName());
-		book.setAuthor(updateBook.getAuthor());
-		book.setCategory(updateBook.getCategory());
+		book.setName(updateBook.getName().trim());
+		book.setAuthor(updateBook.getAuthor().trim());
+		book.setCategory(updateBook.getCategory().toUpperCase());
 		book.setIsbn(updateBook.getIsbn());
 		book.setWidth(updateBook.getWidth());
 		book.setPublisher(updateBook.getPublisher());

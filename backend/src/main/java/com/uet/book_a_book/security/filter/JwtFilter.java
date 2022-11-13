@@ -20,9 +20,10 @@ import com.uet.book_a_book.security.jwt.JwtUtil;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
-	private @Autowired JwtUtil jwtUtil;
-	private @Autowired UserRepository userRepository;
+	@Autowired
+	private JwtUtil jwtUtil;
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

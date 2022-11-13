@@ -26,4 +26,7 @@ public class RegisterRequest {
 	@NotBlank(message = "Password field cannot be blank")
 	@Size(min = 8, max = 100, message = "Password field should have at least 8 characters")
 	private String password;
+	
+	@NotBlank(message = "Gender field cannot be blank")
+	private String gender;
 }

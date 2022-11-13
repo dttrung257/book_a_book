@@ -1,6 +1,7 @@
 package com.uet.book_a_book.dto.user;
 
 import java.util.Date;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -14,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+	private UUID id;
 	private String firstName;
 	private String lastName;
 	private String email;

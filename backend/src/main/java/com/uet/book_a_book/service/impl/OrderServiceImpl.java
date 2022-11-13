@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 		});
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = new Order();
-		order.setAddress(newOrder.getAddress());
+		order.setAddress(newOrder.getAddress().trim());
 		order.setOrderDate(new Date());
 		order.setStatus(OrderStatus.STATUS_PENDING);
 		order.setUser(user);

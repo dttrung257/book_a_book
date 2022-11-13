@@ -31,6 +31,7 @@ import com.uet.book_a_book.exception.account.IncorrectEmailVerificationCodeExcep
 import com.uet.book_a_book.exception.account.IncorrectOldPasswordException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
+import com.uet.book_a_book.exception.account.NotFoundGenderException;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserSevice {
 
 	private List<UserDTO> mapUserToUserDTO(List<AppUser> users) {
 		List<UserDTO> userDTOs = users.stream()
-				.map(user -> new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
+				.map(user -> new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
 						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
 						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), 
 						user.getAuthorities().stream().map(auth -> auth.getAuthority())
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	public Page<UserDTO> fetchByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByName(name));
+		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByName(name.trim()));
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {
@@ -162,7 +163,7 @@ public class UserServiceImpl implements UserSevice {
 			return;
 		} else {
 			throw new IncorrectOldPasswordException(
-					"The current password is incorrect, the password cannot be reversed");
+					"The current password is incorrect, the password cannot be changed");
 		}
 	}
 
@@ -183,14 +184,17 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	public UserInfo updateUser(UpdateUser updateUser) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		user.setFirstName(updateUser.getFirstName());
-		user.setLastName(updateUser.getLastName());
+		user.setFirstName(updateUser.getFirstName().trim());
+		user.setLastName(updateUser.getLastName().trim());
 		if (updateUser.getGender().equalsIgnoreCase(Gender.GENDER_MALE)
-				|| updateUser.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)) {
+				|| updateUser.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)
+				|| updateUser.getGender().equalsIgnoreCase(Gender.GENDER_OTHER)) {
 			user.setGender(updateUser.getGender().toUpperCase());
+		} else {
+			throw new NotFoundGenderException("Not found gender: " + updateUser.getGender());
 		}
 		user.setPhoneNumber(updateUser.getPhoneNumber());
-		user.setAddress(updateUser.getAddress());
+		user.setAddress(updateUser.getAddress().trim());
 		user.setAvatar(updateUser.getAvatar());
 		user.setUpdatedAt(new Date());
 		userRepository.save(user);
