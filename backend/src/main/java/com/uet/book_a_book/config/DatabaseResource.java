@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Role;
-import com.uet.book_a_book.entity.util.Gender;
-import com.uet.book_a_book.entity.util.RoleName;
+import com.uet.book_a_book.entity.constant.Gender;
+import com.uet.book_a_book.entity.constant.RoleName;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
 

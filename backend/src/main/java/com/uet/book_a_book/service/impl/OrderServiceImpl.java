@@ -23,7 +23,7 @@ import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.entity.Order;
 import com.uet.book_a_book.entity.Orderdetail;
-import com.uet.book_a_book.entity.util.OrderStatus;
+import com.uet.book_a_book.entity.constant.OrderStatus;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.exception.order.CannotCancelOrderException;
 import com.uet.book_a_book.exception.order.CannotChangeOrderStatusException;

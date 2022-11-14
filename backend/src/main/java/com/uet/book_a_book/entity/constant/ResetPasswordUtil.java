@@ -1,4 +1,4 @@
-package com.uet.book_a_book.entity.util;
+package com.uet.book_a_book.entity.constant;
 
 import java.security.SecureRandom;
 import java.util.Base64;

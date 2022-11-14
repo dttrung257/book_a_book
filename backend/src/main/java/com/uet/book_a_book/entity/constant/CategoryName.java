@@ -1,4 +1,4 @@
-package com.uet.book_a_book.entity.util;
+package com.uet.book_a_book.entity.constant;
 
 public final class CategoryName {
 	public static final String CATEGORY_COMIC = "COMIC";

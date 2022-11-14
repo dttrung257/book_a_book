@@ -1,4 +1,4 @@
-package com.uet.book_a_book.entity.util;
+package com.uet.book_a_book.entity.constant;
 
 public final class Gender {
 	public static final String GENDER_MALE = "MALE";

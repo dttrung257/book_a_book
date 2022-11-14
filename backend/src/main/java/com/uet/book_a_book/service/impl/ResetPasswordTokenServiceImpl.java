@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.ResetPasswordToken;
-import com.uet.book_a_book.entity.util.ResetPasswordUtil;
+import com.uet.book_a_book.entity.constant.ResetPasswordUtil;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;

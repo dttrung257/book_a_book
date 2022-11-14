@@ -1,4 +1,4 @@
-package com.uet.book_a_book.entity.util;
+package com.uet.book_a_book.entity.constant;
 
 public final class OrderStatus {
 	public static final String STATUS_PENDING = "PENDING";
