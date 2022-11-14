@@ -1,11 +1,13 @@
 package com.uet.book_a_book.controller;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,18 +27,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uet.book_a_book.dto.RegisterRequest;
-import com.uet.book_a_book.dto.user.AdminResetPassword;
+import com.uet.book_a_book.dto.user.AdmResetPassword;
 import com.uet.book_a_book.dto.user.NewPassword;
 import com.uet.book_a_book.dto.user.ResetPassword;
 import com.uet.book_a_book.dto.user.UpdateUser;
+import com.uet.book_a_book.dto.user.UpdateUserStatus;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.constant.ResetPasswordUtil;
 import com.uet.book_a_book.entity.constant.RoleName;
-import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
+import com.uet.book_a_book.entity.constant.UserStatus;
 import com.uet.book_a_book.exception.account.IncorrectResetPasswordCodeException;
 import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException;
+import com.uet.book_a_book.exception.account.NotFoundUserStatusException;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -56,14 +60,14 @@ public class UserController {
 	@Autowired
 	private ResetPasswordUtil resetPasswordUtil;
 
-	@GetMapping("/user/forgot_password/{email}")
+	@GetMapping("/users/forgot_password/{email}")
 	public ResponseEntity<Object> forgotPassword(
 			@PathVariable(name = "email") @Email(message = "Email field is not valid") String email) {
 		resetPasswordTokenService.forgotPassword(email);
 		return ResponseEntity.ok("Email sent successlly");
 	}
 
-	@GetMapping("/user/forgot_password/{email}/confirm_verification/{code}")
+	@GetMapping("/users/forgot_password/{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmResetPassword(
 			@PathVariable("email") @Email(message = "Email field is not valid") String email,
 			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {
@@ -77,7 +81,7 @@ public class UserController {
 		return ResponseEntity.ok(token.getResetToken());
 	}
 
-	@PutMapping("/user/forgot_password/reset_password")
+	@PutMapping("/users/forgot_password/reset_password")
 	public ResponseEntity<Object> resetPassword(@RequestBody ResetPassword resetPassword) {
 		ResetPasswordToken token = resetPasswordTokenService.resetPassword(resetPassword.getEmail(),
 				resetPassword.getResetToken(), resetPassword.getNewPassword());
@@ -93,26 +97,23 @@ public class UserController {
 		return ResponseEntity.ok("Reset password successfully");
 	}
 
-	@PutMapping("/user/change_password")
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+	@PutMapping("/users/change_password")
 	public ResponseEntity<Object> changePassword(@Valid @RequestBody NewPassword request) {
 		userSevice.changePassword(request.getOldPassword(), request.getNewPassword());
 		return ResponseEntity.ok("Change password successfully");
 	}
 	
-	@GetMapping("/user/user_information")
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-	public ResponseEntity<Object> viewUserInformation() {
-		return ResponseEntity.ok(userSevice.viewInformation());
+	@GetMapping("/users")
+	public ResponseEntity<Object> getUserInfo() {
+		return ResponseEntity.ok(userSevice.getUserInfo());
 	}
 	
-	@PutMapping("/user/update_user")
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+	@PutMapping("/users")
 	public ResponseEntity<Object> updateUser(@Valid @RequestBody UpdateUser updateUser) {
 		return ResponseEntity.ok(userSevice.updateUser(updateUser));
 	}
 
-	@PostMapping("/manage_user/create_account")
+	@PostMapping("/manage/users")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> createAccount(@Valid @RequestBody RegisterRequest request) {
 		if (userSevice.findByEmail(request.getEmail()) != null) {
@@ -129,83 +130,75 @@ public class UserController {
 		user.setEmailVerified(true);
 
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account");
+		return ResponseEntity.status(HttpStatus.CREATED).body("Create account successfully");
 	}
 
-	@GetMapping("manage_user/fetch_all_users")
+	@GetMapping("manage/users")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> fetchAllUsers(
+	public ResponseEntity<Object> getAllUsers(
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(userSevice.fetchAllUsers(Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(userSevice.getAllUsers(page, size));
 	}
 	
-//	@GetMapping("manage_user/fetch_by_email")
-//	@PreAuthorize("hasAuthority('ADMIN')")
-//	public ResponseEntity<Object> fetchUserByEmail(
-//			@RequestParam(name = "email", required = true) @NotBlank(message = "Email field cannot be blank") String email,
-//			@RequestParam(name = "page", required = false, defaultValue = "0") 
-//			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
-//			@RequestParam(name = "size", required = false, defaultValue = "10") 
-//			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-//		return ResponseEntity.ok(userSevice.fetchByEmail(email, Integer.parseInt(page), Integer.parseInt(size)));
-//	}
-	
-	@GetMapping("manage_user/fetch_by_name")
+	@GetMapping("manage/users/name")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> fetchUserByName(
+	public ResponseEntity<Object> getUsersByName(
 			@RequestParam(name = "name", required = true) @NotBlank(message = "Name field cannot be blank") String name,
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(userSevice.fetchByName(name, Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(userSevice.getUsersByName(name, page, size));
 	}
 
-	@PutMapping("/manage_user/lock_account/{email}")
+	@PutMapping("/manage/users/{id}/status")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> lockAccount(
-			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
-		AppUser user = userSevice.lockAccount(email);
-		if (!user.isLocked()) {
-			if (user.getAuthorities().stream()
-					.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
-				throw new CannotLockAdminAccountException("Cannot lock admin account");
+	public ResponseEntity<Object> updateStatus(
+			@PathVariable(name = "id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
+			message = "id field must in UUID format") String id,
+			@Valid @RequestBody UpdateUserStatus updateUserStatus) {
+			if (updateUserStatus.getStatus().equalsIgnoreCase(UserStatus.STATUS_LOCKED)) {
+				if (updateUserStatus.getState() == true) {
+					userSevice.lockAccount(UUID.fromString(id));
+					return ResponseEntity.ok("Lock user id: " + id + " successfully");
+				} else {
+					userSevice.unlockAccount(UUID.fromString(id));
+					return ResponseEntity.ok("Unlock user id: " + id + " successfully");
+				}
+			} else if (updateUserStatus.getStatus().equalsIgnoreCase(UserStatus.STATUS_ACTIVATED)) {
+				if (updateUserStatus.getState() == true) {
+					userSevice.activeAccount(UUID.fromString(id));
+					return ResponseEntity.ok("Activate user id: " + id + " successfully");
+				} else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The system does not support this feature");
+				}
+			} else {
+				throw new NotFoundUserStatusException("Not found user status: " + updateUserStatus.getStatus());
 			}
-		}
-		return ResponseEntity.ok("Lock account successfully");
-	}
-
-	@PutMapping("/manage_user/unlock_account/{email}")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> unlockAccount(
-			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
-		userSevice.unlockAccount(email);
-		return ResponseEntity.ok("Unlock account successfully");
-	}
-
-	@PutMapping("/manage_user/activate_account/{email}")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> activeAccount(
-			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
-		userSevice.activeAccount(email);
-		return ResponseEntity.ok("Account activation success");
 	}
 	
-	@PutMapping("/manage_user/reset_user_password")
+	@PutMapping("/manage/users/{id}/password")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Object> resetUserPassword(@Valid @RequestBody AdminResetPassword adminResetPassword) {
-		userSevice.resetUserPassword(adminResetPassword.getEmail(), adminResetPassword.getNewPassword());
-		return ResponseEntity.ok("Reset user's password successfully");
+	public ResponseEntity<Object> updateUserPassword(
+			@PathVariable(name = "id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
+			message = "id field must in UUID format") String id,
+			@Valid @RequestBody AdmResetPassword adminResetPassword) {
+		userSevice.updateUserPassword(UUID.fromString(id), adminResetPassword.getNewPassword());
+		return ResponseEntity.ok("Reset user id " + id + " password successfully");
 	}
 	
-	@DeleteMapping("/manage_user/delete_user/{email}")
+	@DeleteMapping("/manage/users/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> deleteUser(
-			@PathVariable(name = "email") @Email(message = "Email is not valid") String email) {
-		userSevice.deleteUser(email);
-		return ResponseEntity.ok("Delete user with email " + email + " successfully");
+			@PathVariable(name = "id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
+			message = "id field must in UUID format") String id) {
+		userSevice.deleteUser(UUID.fromString(id));
+		return ResponseEntity.ok("Delete user id: " + id + " successfully");
 	}
 }

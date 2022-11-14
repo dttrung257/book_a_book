@@ -15,8 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.uet.book_a_book.dto.order.AdmOrder;
 import com.uet.book_a_book.dto.order.NewOrder;
-import com.uet.book_a_book.dto.order.OrderAddedByAdmin;
 import com.uet.book_a_book.dto.order.OrderDTO;
 import com.uet.book_a_book.dto.order.OrderdetailDTO;
 import com.uet.book_a_book.entity.AppUser;
@@ -24,6 +24,7 @@ import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.entity.Order;
 import com.uet.book_a_book.entity.Orderdetail;
 import com.uet.book_a_book.entity.constant.OrderStatus;
+import com.uet.book_a_book.exception.book.NotEnoughQuantityException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.exception.order.CannotCancelOrderException;
 import com.uet.book_a_book.exception.order.CannotChangeOrderStatusException;
@@ -50,6 +51,9 @@ public class OrderServiceImpl implements OrderService {
 			if (book == null) {
 				throw new NotFoundBookException("Not found book with id: " + od.getBookId());
 			}
+			if (book.getAvailableQuantity() < od.getQuantity()) {
+				throw new NotEnoughQuantityException("Not enough quantity book: " + book.getName() + " to order");
+			}
 		});
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Order order = new Order();
@@ -74,11 +78,14 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Order addOrderFromAdmin(OrderAddedByAdmin newOrder) {
+	public Order addOrderByAdmin(AdmOrder newOrder) {
 		newOrder.getOrderdetails().stream().forEach(od -> {
 			Book book = bookRepository.findById(od.getBookId()).orElse(null);
 			if (book == null) {
 				throw new NotFoundBookException("Not found book with id: " + od.getBookId());
+			}
+			if (book.getAvailableQuantity() < od.getQuantity()) {
+				throw new NotEnoughQuantityException("Not enough quantity book: " + book.getName() + " to order");
 			}
 		});
 		Order order = new Order();
@@ -109,9 +116,11 @@ public class OrderServiceImpl implements OrderService {
 		orderDTO.setStatus(order.getStatus());
 		AppUser user = orderRepository.findUserByOrderId(order.getId()).orElse(null);
 		if (user == null) {
-			orderDTO.setUser(null);
+			orderDTO.setEmail(null);
+			orderDTO.setUserId(null);
 		} else {
-			orderDTO.setUser(user.getEmail());
+			orderDTO.setUserId(user.getId());
+			orderDTO.setEmail(user.getEmail());
 		}
 		orderDTO.setQuantity(orderdetailRepository.countTotalQuantity(order.getId()));
 		orderDTO.setTotal(orderdetailRepository.calculateTotalPrice(order.getId()));
@@ -119,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<OrderDTO> fetchUserOrder(Integer page, Integer size) {
+	public Page<OrderDTO> getUserOrders(Integer page, Integer size) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.fetchUserOrders(user.getId());
@@ -144,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<OrderdetailDTO> fetchOrderdetails(UUID orderId, Integer page, Integer size) {
+	public Page<OrderdetailDTO> getOrderdetails(UUID orderId, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
 		List<OrderdetailDTO> orderdetailDTOs = orderdetails.stream().map(od -> orderdetailToOrderdetailDTO(od))
@@ -278,7 +287,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<OrderDTO> fetchAllOrders(Integer page, Integer size) {
+	public Page<OrderDTO> getAllOrders(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o)).collect(Collectors.toList());
@@ -291,11 +300,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	public Page<OrderDTO> fetchOrdersByUser(String email, Integer page, Integer size) {
+	public Page<OrderDTO> getOrdersByEmail(String email, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
-				.filter(o -> (o.getUser().contains(email))).collect(Collectors.toList());
+				.filter(o -> (o.getEmail().contains(email))).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
 		if (start <= orderDTOs.size()) {
@@ -305,7 +314,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<OrderDTO> fetchOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
+	public Page<OrderDTO> getOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
@@ -319,7 +328,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<OrderDTO> fetchOrdersByDate(Date orderDate, Integer page, Integer size) {
+	public Page<OrderDTO> getOrdersByDate(Date orderDate, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))

@@ -47,8 +47,8 @@ public class SecurityConfiguration {
 			.and()
 			.authorizeHttpRequests(
 				requests -> {requests.antMatchers("/api/authen/**").permitAll()
-					.antMatchers("/api/user/forgot_password/**").permitAll()
-					.antMatchers("/api/book/**").permitAll()
+					.antMatchers("/api/users/forgot_password/**").permitAll()
+					.antMatchers("/api/books/**").permitAll()
 					.antMatchers("/swagger/**").permitAll()
 					.anyRequest().authenticated();
 					})

@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uet.book_a_book.dto.book.NewBook;
-import com.uet.book_a_book.dto.book.UpdateBook;
+import com.uet.book_a_book.dto.book.BookDTO;
+import com.uet.book_a_book.dto.book.UpdateBookStatus;
 import com.uet.book_a_book.service.BookService;
 
 @RestController
@@ -30,103 +30,106 @@ public class BookController {
 	@Autowired
 	private BookService bookService;
 
-	@GetMapping("/book/fetch_all_books")
-	ResponseEntity<Object> fetchAllBooks(
+	@GetMapping("/books")
+	ResponseEntity<Object> getAllBooks(
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(bookService.findAll(Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getAllBooks(page, size));
 	}
 
-	@GetMapping("book/fetch_by_id/{id}")
-	ResponseEntity<Object> findBookById(
+	@GetMapping("books/{id}")
+	ResponseEntity<Object> getBookById(
 			@PathVariable("id") 
-			@Min(value = 1, message = "Id field must be in integer format and greater than or equal to 1") String id) {
-		return ResponseEntity.ok(bookService.findById(Long.parseLong(id)));
+			@Min(value = 1L) Long id) {
+		return ResponseEntity.ok(bookService.getBookById(id));
 	}
 	
-	@GetMapping("book/fetch_by_name")
-	ResponseEntity<Object> findBookByName(
-			@RequestParam(name = "name", required = false, defaultValue = "") String name,
+	@GetMapping("books/name")
+	ResponseEntity<Object> getBooksByName(
+			@RequestParam(name = "name", required = true) String name,
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(bookService.findByName(name, Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getBooksByName(name, page, size));
 	}
 	
-	@GetMapping("book/fetch_by_category")
-	ResponseEntity<Object> findBookByCategory(
-			@RequestParam(name = "category", required = false, defaultValue = "") String category,
+	@GetMapping("books/category")
+	ResponseEntity<Object> getBooksByCategory(
+			@RequestParam(name = "category", required = true) String category,
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(bookService.findByCategory(category, Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getBooksByCategory(category, page, size));
 	}
 	
-	@GetMapping("book/fetch_by_price")
-	ResponseEntity<Object> findByPrice(
+	@GetMapping("books/price")
+	ResponseEntity<Object> getBooksByPrice(
 			@RequestParam(name= "from", required = false, defaultValue = "0") 
-			@DecimalMin(value = "0.0", message = "Lower price field must be in double format greater than or equal to 0") String fromPrice,
-			@RequestParam(name = "to", required = false, defaultValue = "1000000") 
-			@DecimalMin(value = "0.1", message = "Higher price field must be in double format greater than or equal to 0.1") String toPrice,
+			@DecimalMin(value = "0.0") Double fromPrice,
+			@RequestParam(name = "to", required = false, defaultValue = "100000000") 
+			@DecimalMin(value = "0.1") Double toPrice,
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(bookService.findByPrice(Double.parseDouble(fromPrice), Double.parseDouble(toPrice), Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getBooksByPrice(fromPrice, toPrice, page, size));
 	}
 	
-	@GetMapping("/book/fetch_by_rating")
-	ResponseEntity<Object> findByRating(
+	@GetMapping("/books/rating")
+	ResponseEntity<Object> getBooksByRating(
 			@RequestParam(name = "rating", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Rating field must be in integer format greater than or equal to 0") 
-			@Max(value = 5, message = "Rating field must be in integer format lesser than or equal to 5") String rating,
+			@Min(value = 0) 
+			@Max(value = 5) Integer rating,
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(bookService.findByRating(Integer.parseInt(rating), Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getBooksByRating(rating, page, size));
 	}
 	
-	@GetMapping("/book/fetch_by_best_selling")
-	ResponseEntity<Object> findByBestSelling(
+	@GetMapping("/books/best_selling")
+	ResponseEntity<Object> getBooksByBestSelling(
 			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0, message = "Page field must be in integer format greater than or equal to 0") String page,
+			@Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1, message = "Size field must be in integer format greater than or equal to 1") String size) {
-		return ResponseEntity.ok(bookService.findByBestSelling(Integer.parseInt(page), Integer.parseInt(size)));
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getBooksByBestSelling(page, size));
 	}
 	
-	@PostMapping("/manage_book/add_book")
+	@PostMapping("/manage/books")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	ResponseEntity<Object> addBook(@Valid @RequestBody NewBook newBook) {
+	ResponseEntity<Object> addBook(@Valid @RequestBody BookDTO newBook) {
 		return ResponseEntity.ok(bookService.addBook(newBook));
 	}
 	
-	@PutMapping("/manage_book/update_book")
+	@PutMapping("/manage/books/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	ResponseEntity<Object> updateBook(@Valid @RequestBody UpdateBook updateBook) {
-		return ResponseEntity.ok(bookService.updateBook(updateBook));
+	ResponseEntity<Object> updateBook(
+			@Valid @RequestBody BookDTO updateBook,
+			@PathVariable(name = "id", required = true) 
+			@Min(value = 1L) Long id) {
+		return ResponseEntity.ok(bookService.updateBook(updateBook, id));
 	}
 	
-	@PutMapping("/manage_book/update_status")
+	@PutMapping("/manage/books/{id}/status")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> updateStatus(
-			@RequestParam(name = "id", required = false, defaultValue = "0")
-			@Min(value = 1, message = "Id field must be in integer format and greater than or equal to 1") String id,
-			@RequestParam(name = "stop_selling", required = true) Boolean stop_selling) {
-		return ResponseEntity.ok(bookService.stopSelling(Long.parseLong(id), stop_selling));
+			@Valid @RequestBody UpdateBookStatus bookStatus,
+			@PathVariable(name = "id", required = true)
+			@Min(value = 1L) Long id) {
+		return ResponseEntity.ok(bookService.updateStatus(id, bookStatus.getStopSelling()));
 	}
 	
-	@DeleteMapping("/manage_book/delete_book/{id}")
+	@DeleteMapping("/manage/books/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> deleteBook(
-			@PathVariable("id") 
-			@Min(value = 1, message = "Id field must be in integer format and greater than or equal to 1") String id) {
-		bookService.deleteBook(Long.parseLong(id));
+			@PathVariable(name = "id", required = true) 
+			@Min(value = 1L) Long id) {
+		bookService.deleteBook(id);
 		return ResponseEntity.ok("Delete book id " + id + " successfully");
 	}
 	

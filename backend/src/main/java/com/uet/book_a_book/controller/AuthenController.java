@@ -18,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,10 +49,6 @@ public class AuthenController {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private JwtUtil jwtUtil;
-//	@Autowired
-//	private EmailValidator emailValidator;
-//	@Autowired
-//	private EmailSenderService emailSenderService;
 
 	@PostMapping("/sign_in")
 	public ResponseEntity<Object> signIn(@Valid @RequestBody AuthenRequest request) {
@@ -72,10 +67,6 @@ public class AuthenController {
 			throw new AccountAlreadyExistsException(
 					String.format("User with email %s already exists", request.getEmail()));
 		}
-//		if (!emailValidator.checkEmailExists(request.getEmail())) {
-//			throw new EmailNotExistsOnTheInternetException(
-//					String.format("Email %s does not exist on the internet", request.getEmail()));
-//		}
 		AppUser user = new AppUser();
 		user.setEmail(request.getEmail());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -92,18 +83,11 @@ public class AuthenController {
 		Role roleUser = roleService.findByRoleName(RoleName.ROLE_USER);
 		user.setRole(roleUser);
 
-//		String verificationCode = emailSenderService.generateVerificationCode();
-//		user.setEmailVerificationCode(verificationCode);
-//		String emailBody = emailSenderService.buildEmailVerificationAccount(request.getEmail(),
-//				request.getFirstName() + " " + request.getLastName(), verificationCode);
-//		emailSenderService.sendEmail(request.getEmail(), emailBody);
-
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body("You have successfully created an account. Please verify your email!");
+		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account. Please verify your email!");
 	}
 
-	@PutMapping("{email}/confirm_verification/{code}")
+	@GetMapping("{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmVerification(
 			@PathVariable("email") @Email(message = "Email field is not valid") String email,
 			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {

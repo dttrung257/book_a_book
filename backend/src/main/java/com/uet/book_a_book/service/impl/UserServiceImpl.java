@@ -3,6 +3,7 @@ package com.uet.book_a_book.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -26,6 +27,7 @@ import com.uet.book_a_book.entity.constant.RoleName;
 import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
 import com.uet.book_a_book.exception.account.CannotDeleteAdminAccountException;
+import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
 import com.uet.book_a_book.exception.account.CannotResetPasswordException;
 import com.uet.book_a_book.exception.account.IncorrectEmailVerificationCodeException;
 import com.uet.book_a_book.exception.account.IncorrectOldPasswordException;
@@ -56,7 +58,7 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	@Override
-	public Page<UserDTO> fetchAllUsers(Integer page, Integer size) {
+	public Page<UserDTO> getAllUsers(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchAllUsers());
 		Integer start = (int) pageable.getOffset();
@@ -67,20 +69,8 @@ public class UserServiceImpl implements UserSevice {
 		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
 	}
 
-//	@Override
-//	public Page<UserDTO> fetchByEmail(String email, Integer page, Integer size) {
-//		Pageable pageable = PageRequest.of(page, size);
-//		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByEmail(email));
-//		Integer start = (int) pageable.getOffset();
-//		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
-//		if (start <= userDTOs.size()) {
-//			return new PageImpl<>(userDTOs.subList(start, end), pageable, userDTOs.size());
-//		}
-//		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
-//	}
-
 	@Override
-	public Page<UserDTO> fetchByName(String name, Integer page, Integer size) {
+	public Page<UserDTO> getUsersByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByName(name.trim()));
 		Integer start = (int) pageable.getOffset();
@@ -168,7 +158,7 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	@Override
-	public UserInfo viewInformation() {
+	public UserInfo getUserInfo() {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserInfo userInfo = new UserInfo();
 		userInfo.setFirstName(user.getFirstName());
@@ -210,61 +200,58 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	@Override
-	@Transactional
-	public AppUser lockAccount(String email) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+	public void lockAccount(UUID id) {
+		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
-			throw new NotFoundAccountException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user id: " + id);
 		}
 		if (user.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
-			return user;
+			throw new CannotLockAdminAccountException("Cannot lock admin account");
 		}
 		if (user.isLocked()) {
-			return user;
+			return;
 		}
 		user.setLocked(true);
-		return user;
+		userRepository.save(user);
 	}
 
 	@Override
-	@Transactional
-	public AppUser unlockAccount(String email) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+	public void unlockAccount(UUID id) {
+		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
-			throw new NotFoundAccountException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user id: " + id);
 		}
 		if (user.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
-			return user;
+			return;
 		}
 		if (!user.isLocked()) {
-			return user;
+			return;
 		}
 		user.setLocked(false);
-		return user;
+		userRepository.save(user);
 	}
 
 	@Override
-	@Transactional
-	public void activeAccount(String email) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+	public void activeAccount(UUID id) {
+		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
-			throw new NotFoundAccountException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user id: " + id);
 		}
 		if (user.isEmailVerified()) {
-			throw new AccountAlreadyActivatedException(
-					String.format("Account with email: %s already activated", email));
+			throw new AccountAlreadyActivatedException("Account id: " + id + " already activated");
 		}
 		user.setEmailVerified(true);
 		user.setEmailVerificationCode(null);
+		userRepository.save(user);
 	}
 
 	@Override
-	public void deleteUser(String email) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+	public void deleteUser(UUID id) {
+		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
-			throw new NotFoundAccountException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user id: " + id);
 		}
 		if (user.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
@@ -274,20 +261,20 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	@Override
-	public void resetUserPassword(String email, String newPassword) {
+	public void updateUserPassword(UUID id, String newPassword) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.getEmail().equals(email)) {
+		if (user.getId().equals(id)) {
 			user.setPassword(passwordEncoder.encode(newPassword));
 			userRepository.save(user);
 			return;
 		}
-		AppUser appUser = userRepository.findByUserEmail(email).orElse(null);
+		AppUser appUser = userRepository.findById(id).orElse(null);
 		if (appUser == null) {
-			throw new NotFoundAccountException("Not found user with email: " + email);
+			throw new NotFoundAccountException("Not found user id: " + id);
 		}
 		if (appUser.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
-			throw new CannotResetPasswordException("Cannot reset password of admin account with email: " + email);
+			throw new CannotResetPasswordException("Cannot reset password of admin account id: " + id);
 		}
 		appUser.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(appUser);

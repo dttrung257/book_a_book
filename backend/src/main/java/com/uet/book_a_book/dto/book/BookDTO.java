@@ -14,14 +14,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewBook {
-	@NotBlank(message = "Name field cannot be blank")
+public class BookDTO {
+	@NotBlank(message = "name field is mandatory")
 	private String name;
 	
-	@NotBlank(message = "Category field cannot be blank")
+	@NotBlank(message = "category field is mandatory")
 	private String category;
 	
-	@NotBlank(message = "Author field cannot be blank")
+	@NotBlank(message = "author field is mandatory")
 	private String author;
 	
 	private String publisher;
@@ -32,21 +32,21 @@ public class NewBook {
 	
 	private Integer numberOfPages;
 	
-	@NotNull(message = "Buy price field cannot be null")
-	@DecimalMin(value = "0.1", message = "Buy price field is invalid")
+	@NotNull(message = "buyPrice field is mandatory")
+	@DecimalMin(value = "0.1")
 	private Double buyPrice;
 	
-	@NotNull(message = "Selling price field cannot be null")
-	@DecimalMin(value = "0.1", message = "Selling price field is invalid")
+	@NotNull(message = "sellingPrice field is mandatory")
+	@DecimalMin(value = "0.1")
 	private Double sellingPrice;
 	
-	@NotNull(message = "Quantity field cannot be null")
+	@NotNull(message = "quantityInStock field is mandatory")
 	@Min(value = 1L, message = "Quantity field is invalid")
 	private Long quantityInStock;
 	
 	private String description;
 	
-	@NotBlank(message = "Image link field cannot be blank")
+	@NotBlank(message = "image field is mandatory")
 	private String image;
 	
 	private Double width;

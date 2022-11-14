@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderAddedByAdmin {
+public class AdmOrder {
 	@NotEmpty(message = "Orderdetails field cannot be empty")
 	@Valid
 	private List<NewOrderdetail> orderdetails;

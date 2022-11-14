@@ -9,8 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.uet.book_a_book.dto.book.NewBook;
-import com.uet.book_a_book.dto.book.UpdateBook;
+import com.uet.book_a_book.dto.book.BookDTO;
 import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
@@ -23,13 +22,13 @@ public class BookServiceImpl implements BookService {
 	private BookRepository bookRepository;
 	
 	@Override
-	public Page<Book> findAll(Integer page, Integer size) {
+	public Page<Book> getAllBooks(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return bookRepository.findAll(pageable);
 	}
 
 	@Override
-	public Book findById(Long id) {
+	public Book getBookById(Long id) {
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
 			throw new NotFoundBookException("Not found book with id: " + id);
@@ -38,7 +37,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Page<Book> findByName(String name, Integer page, Integer size) {
+	public Page<Book> getBooksByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		if (name.equals("")) {
 			return bookRepository.findAll(pageable);
@@ -47,7 +46,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Page<Book> findByCategory(String category, Integer page, Integer size) {
+	public Page<Book> getBooksByCategory(String category, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		if (category.equals("")) {
 			return bookRepository.findAll(pageable);
@@ -56,13 +55,13 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Page<Book> findByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
+	public Page<Book> getBooksByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return bookRepository.findByPrice(fromPrice, toPrice, pageable);
 	}
 
 	@Override
-	public Page<Book> findByRating(Integer rating, Integer page, Integer size) {
+	public Page<Book> getBooksByRating(Integer rating, Integer page, Integer size) {
 		if (rating == 0) {
 			Sort sort = Sort.by("rating").descending();
 			Pageable pageable = PageRequest.of(page, size, sort);
@@ -73,19 +72,17 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public Page<Book> findByBestSelling(Integer page, Integer size) {
+	public Page<Book> getBooksByBestSelling(Integer page, Integer size) {
 		Sort sort = Sort.by("quantitySold").descending();
 		Pageable pageable = PageRequest.of(page, size, sort);
 		return bookRepository.findByBestSelling(pageable);
 	}
 	
-	
-
 	@Override
-	public Book addBook(NewBook newBook) {
-		Book checkBook = bookRepository.findByNameAndAuthor(newBook.getName(), newBook.getAuthor()).orElse(null);
+	public Book addBook(BookDTO newBook) {
+		Book checkBook = bookRepository.findByNameAndAuthor(newBook.getName().trim(), newBook.getAuthor().trim()).orElse(null);
 		if (checkBook != null) {
-			throw new BookAlreadyExistsException("The book named " + newBook.getName() + " already exists");
+			throw new BookAlreadyExistsException("The book named " + newBook.getName().trim() + " already exists");
 		}
 		Book book = new Book();
 		book.setName(newBook.getName().trim());
@@ -112,14 +109,14 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Book updateBook(UpdateBook updateBook) {
+	public Book updateBook(BookDTO updateBook, Long id) {
 		Book checkBook = bookRepository.findByNameAndAuthor(updateBook.getName().trim(), updateBook.getAuthor().trim()).orElse(null);
-		if (checkBook.getId() != updateBook.getId() && checkBook != null) {
+		if (checkBook != null && checkBook.getId() != id) {
 			throw new BookAlreadyExistsException("The book named " + updateBook.getName() + " already exists with id: " + checkBook.getId());
 		}
-		Book book = bookRepository.findById(updateBook.getId()).orElse(null);
+		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
-			throw new NotFoundBookException("Not found book with id: " + updateBook.getId());
+			throw new NotFoundBookException("Not found book with id: " + id);
 		}
 		book.setName(updateBook.getName().trim());
 		book.setAuthor(updateBook.getAuthor().trim());
@@ -134,13 +131,13 @@ public class BookServiceImpl implements BookService {
 		book.setHeight(updateBook.getHeight());
 		book.setImage(updateBook.getImage());
 		book.setQuantityInStock(updateBook.getQuantityInStock());
-		book.setDescription(updateBook.getDesception());
+		book.setDescription(updateBook.getDescription());
 		bookRepository.save(book);
 		return book;
 	}
 	
 	@Override
-	public Book stopSelling(Long id, Boolean stopSelling) {
+	public Book updateStatus(Long id, Boolean stopSelling) {
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
 			throw new NotFoundBookException("Not found book with id: " + id);
@@ -158,7 +155,4 @@ public class BookServiceImpl implements BookService {
 		}
 		bookRepository.delete(book);
 	}
-
-	
-	
 }
