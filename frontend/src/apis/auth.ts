@@ -1,5 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import { UserSignUp, VerifyEmail } from "../models";
+import { useAppSelector } from "../store/hook";
 
 export const verifyEmail = async (verify: VerifyEmail) => {
   const res = await axiosInstance.get(

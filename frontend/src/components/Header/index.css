@@ -22,7 +22,7 @@
 }
 
 .header {
-  height: 50px;
+  height: 55px;
   font-weight: 500;
   justify-content: space-between;
   width: 99%;
@@ -34,8 +34,7 @@
 }
 
 .account {
-  justify-content: space-between;
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .logo {
@@ -93,7 +92,7 @@
 
 #searchIcon {
   position: absolute;
-  right: 10px;
+  right: 15px;
   font-size: 18px;
 }
 

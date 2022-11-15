@@ -1,8 +1,8 @@
-import { ChangeEvent, Fragment, useContext, useEffect, useState } from "react";
+import { ChangeEvent, Fragment, useState } from "react";
 import { FiSearch, FiUser, FiShoppingCart } from "react-icons/fi";
 import { VscTriangleDown } from "react-icons/vsc";
 import "./index.css";
-import { Avatar, Badge, InputAdornment, TextField } from "@material-ui/core";
+import { Avatar, Badge } from "@material-ui/core";
 import { useAppSelector } from "../../store/hook";
 import { Link } from "react-router-dom";
 
@@ -70,15 +70,15 @@ const Header = () => {
           </Fragment>
         ) : (
           <Fragment>
-            <FiUser style={{ margin: "0 20px" }} fontSize={20} />
+            <FiUser style={{ marginRight: "10px" }} fontSize={20} />
             <a>Log in</a>
-            <svg height="30" width="10">
+            <svg height="30" width="30">
               <line
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="30"
-                style={{ stroke: "#999999", strokeWidth: 3 }}
+                x1="15"
+                y1="5"
+                x2="15"
+                y2="25"
+                style={{ stroke: "#999999", strokeWidth: 2 }}
               />
             </svg>
             <a>Sign up</a>

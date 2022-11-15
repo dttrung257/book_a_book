@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import Contact from "./Contact/Contact";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
 
@@ -7,6 +8,7 @@ const Layout = () => {
     <>
       <Header />
       <Outlet />
+      <Contact />
       <Footer />
     </>
   );

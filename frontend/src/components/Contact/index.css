@@ -1,0 +1,53 @@
+#back-to-top {
+  /* display: none; */
+  position: fixed;
+  background-color: #549da0;
+  color: white;
+  bottom: 20px;
+  right: 20px;
+  padding: 6px 7px;
+  cursor: pointer;
+  border-radius: 30px;
+}
+#back-to-top:hover {
+  background-color: #3a696b;
+}
+#locate {
+  position: fixed;
+  background-color: #fd6032;
+  color: white;
+  bottom: 90px;
+  right: 20px;
+  padding: 6px 7px;
+  cursor: pointer;
+  border-radius: 30px;
+}
+#locate:hover {
+  background-color: #e03906;
+}
+#mail {
+  position: fixed;
+  background-color: #00c6ff;
+  color: white;
+  bottom: 140px;
+  right: 20px;
+  padding: 6px 7px;
+  cursor: pointer;
+  border-radius: 30px;
+}
+#mail:hover {
+  background-color: #0295bd;
+}
+#mess {
+  position: fixed;
+  background-color: #0078ff;
+  color: white;
+  bottom: 190px;
+  right: 20px;
+  padding: 6px 7px;
+  cursor: pointer;
+  border-radius: 30px;
+}
+#mess:hover {
+  background-color: #0257b8;
+}

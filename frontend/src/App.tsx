@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 import "./App.css";
 import Test from "./pages/Test";
 import { authActions } from "./store/authSlice";
@@ -77,7 +79,7 @@ const App = () => {
             <Route path="verify" element={<CodeVerify />} />
             <Route path="reset/:resetToken" element={<Reset />} />
           </Route>
-          <Route path="books" element={<Category />}/>
+          <Route path="books" element={<Category />} />
           {/* <Route path='*' element={<Home />} /> */}
         </Routes>
       </Suspense>

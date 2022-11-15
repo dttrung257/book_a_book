@@ -3,13 +3,18 @@ import { Carousel } from "react-bootstrap";
 
 const Slide = () => {
   const [index, setIndex] = useState(0);
+  let slideWidth = window.screen.width - 130;
 
   const handleSelect = (selectedIndex: number) => {
     setIndex(selectedIndex);
   };
 
   return (
-    <Carousel activeIndex={index} onSelect={handleSelect}>
+    <Carousel
+      activeIndex={index}
+      onSelect={handleSelect}
+      style={{ width: slideWidth, margin: "auto" }}
+    >
       <Carousel.Item>
         <img
           className="d-block w-100"

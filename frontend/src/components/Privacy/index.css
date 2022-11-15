@@ -1,0 +1,39 @@
+#privacyFooter {
+  display: flex;
+  border: 1px solid #f0f0f0;
+  border-left: none;
+  border-right: none;
+  height: 80px;
+  justify-content: space-evenly;
+  margin-top: 50px;
+}
+.privacyFooter {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.privacyFooter span {
+  color: #008b8b;
+}
+
+.privacyFooter p {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+#sponsor {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 30px;
+  align-items: center;
+  height: 200px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+#sponsor a img {
+  max-width: 70%;
+}

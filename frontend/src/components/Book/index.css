@@ -1,29 +1,27 @@
 #text {
-  max-width: 320px;
-  margin-left: 30px;
+  max-width: 100%;
+  margin-left: 10px;
 }
 
-h3,
-h4 {
-  font-weight: 400;
+#text > p {
+  font-size: 18px !important;
+  margin-bottom: 0px;
 }
-h3 {
-  font-size: 30;
-}
-h4 {
-  font-size: larger;
+#text > #author {
+  font-size: 16px !important;
+  margin-bottom: 0px;
 }
 
 #cart {
   position: absolute;
-  right: 30px;
+  right: 20px;
   bottom: 0px;
 }
 
 .frame {
-  width: 320px;
+  width: 100%;
   border: 1px solid #f0f0f0;
-  height: 470px;
+  height: 370px;
 }
 
 #info {
@@ -31,13 +29,8 @@ h4 {
   top: 20px;
 }
 
-#text > p {
-  font-size: larger;
+#text > #price {
+  font-size: 20px;
   color: #008b8b;
-}
-
-img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 20px;
 }

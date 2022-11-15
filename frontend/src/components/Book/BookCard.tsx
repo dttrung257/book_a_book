@@ -1,16 +1,15 @@
-
 import { BsCartPlus } from "react-icons/bs";
 import "./index.css";
 
-const BookCard = (props: { 
-    id: number,
-    name: string,
-    image: string,
-    author: string,
-    sellingPrice: number,
-    rating: number,
+const BookCard = (props: {
+  id: number;
+  name: string;
+  image: string;
+  author: string;
+  sellingPrice: number;
+  rating: number;
 }) => {
-    const formatStr = (s: string) => {
+  const formatStr = (s: string) => {
     if (s.length < 20) return s;
     else {
       return s.slice(0, 18).concat("...");
