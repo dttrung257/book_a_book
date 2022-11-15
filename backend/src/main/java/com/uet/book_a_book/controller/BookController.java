@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uet.book_a_book.dto.book.BookDTO;
+import com.uet.book_a_book.dto.book.NewBook;
 import com.uet.book_a_book.dto.book.UpdateBookStatus;
 import com.uet.book_a_book.service.BookService;
 
@@ -102,14 +102,14 @@ public class BookController {
 	
 	@PostMapping("/manage/books")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	ResponseEntity<Object> addBook(@Valid @RequestBody BookDTO newBook) {
+	ResponseEntity<Object> addBook(@Valid @RequestBody NewBook newBook) {
 		return ResponseEntity.ok(bookService.addBook(newBook));
 	}
 	
 	@PutMapping("/manage/books/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> updateBook(
-			@Valid @RequestBody BookDTO updateBook,
+			@Valid @RequestBody NewBook updateBook,
 			@PathVariable(name = "id", required = true) 
 			@Min(value = 1L) Long id) {
 		return ResponseEntity.ok(bookService.updateBook(updateBook, id));

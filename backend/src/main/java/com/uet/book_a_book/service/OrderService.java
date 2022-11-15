@@ -18,6 +18,7 @@ public interface OrderService {
 	Page<OrderdetailDTO> getOrderdetails(UUID orderId, Integer page, Integer size);
 	void cancelOrder(UUID orderId);
 	Order updateStatus(UUID orderId, String status);
+	OrderDTO getOrderById(UUID id);
 	Page<OrderDTO> getAllOrders(Integer page, Integer size);
 	Page<OrderDTO> getOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size);
 	Page<OrderDTO> getOrdersByDate(Date orderDate, Integer page, Integer size);

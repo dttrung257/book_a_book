@@ -1,9 +1,6 @@
 package com.uet.book_a_book.dto.comment;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,15 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentDTO {
-	@NotNull(message = "bookId field is mandatory")
-	@Min(value = 1L, message = "bookId must be greater than or equal to 1")
+	private UUID id;
+	private UUID userId;
 	private Long bookId;
-	
-	@NotNull(message = "star field is mandatory")
-	@Min(value = 1, message = "star field must be greater than or equal to 1")
-	@Max(value = 5, message = "star field must be less than or equal to 5")
+	private String email;
+	private String bookName;
 	private Integer star;
-	
-	@NotBlank(message = "content field is mandatory")
 	private String content;
 }

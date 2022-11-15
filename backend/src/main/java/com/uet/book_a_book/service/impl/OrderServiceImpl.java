@@ -341,4 +341,13 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 
+	@Override
+	public OrderDTO getOrderById(UUID id) {
+		Order order = orderRepository.findById(id).orElse(null);
+		if (order == null) {
+			throw new NotFoundOrderException("Not found order id: " + id);
+		}
+		return orderToOrderDTO(order);
+	}
+
 }

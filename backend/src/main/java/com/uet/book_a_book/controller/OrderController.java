@@ -98,6 +98,15 @@ public class OrderController {
 		return ResponseEntity.ok(orderService.getAllOrders(page, size));
 	}
 	
+	@GetMapping("/manage/orders/{id}")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	public ResponseEntity<Object> getOrderById(
+			@PathVariable(name = "id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
+			message = "id field must in UUID format") String id) {
+		return ResponseEntity.ok(orderService.getOrderById(UUID.fromString(id)));
+	}
+	
 	@GetMapping("/manage/orders/email")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getOrdersByEmail(

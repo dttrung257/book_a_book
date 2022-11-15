@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookDTO {
+public class NewBook {
 	@NotBlank(message = "name field is mandatory")
 	private String name;
 	

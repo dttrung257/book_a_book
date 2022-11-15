@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserSevice {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	private List<UserDTO> mapUserToUserDTO(List<AppUser> users) {
+	private List<UserDTO> usersToUserDTOs(List<AppUser> users) {
 		List<UserDTO> userDTOs = users.stream()
 				.map(user -> new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
 						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
@@ -56,11 +56,28 @@ public class UserServiceImpl implements UserSevice {
 				.collect(Collectors.toList());
 		return userDTOs;
 	}
+	
+	private UserDTO userToUserDTO(AppUser user) {
+		return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
+				user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
+				user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), 
+				user.getAuthorities().stream().map(auth -> auth.getAuthority())
+									.collect(Collectors.toList()).get(0));
+	}
+	
+	@Override
+	public UserDTO getUserById(UUID id) {
+		AppUser user = userRepository.findById(id).orElse(null);
+		if (user == null) {
+			throw new NotFoundAccountException("Not found account id: " + id);
+		}
+		return userToUserDTO(user);
+	}
 
 	@Override
 	public Page<UserDTO> getAllUsers(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchAllUsers());
+		List<UserDTO> userDTOs = usersToUserDTOs(userRepository.fetchAllUsers());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {
@@ -72,7 +89,7 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	public Page<UserDTO> getUsersByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = mapUserToUserDTO(userRepository.fetchByName(name.trim()));
+		List<UserDTO> userDTOs = usersToUserDTOs(userRepository.fetchByName(name.trim()));
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {

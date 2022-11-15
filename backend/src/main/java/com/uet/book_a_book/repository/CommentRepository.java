@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.entity.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
@@ -20,8 +22,14 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 	@Query("SELECT AVG(c.star) FROM Comment c WHERE c.book.id = :bookId")
 	Double calculateRateOfBook(@Param("bookId") Long bookId);
 	
-	@Query("SELECT c FROM Comment c WHERE c.id = :commentId AND c.book.id = :bookId")
-	Optional<Comment> findByCommetIdAndBookId(@Param("commentId") UUID commentId, @Param("bookId") Long bookId);
+	@Query("SELECT c FROM Comment c WHERE c.id = :id")
+	Optional<Comment> findById(@Param("id") UUID id);
+	
+	@Query("SELECT b FROM Comment c INNER JOIN Book b ON c.book.id = b.id WHERE c.id = :id")
+	Optional<Book> findBookByCommentId(@Param("id") UUID id);
+	
+	@Query("SELECT u FROM Comment c INNER JOIN AppUser u ON c.user.id = u.id WHERE c.id = :id")
+	Optional<AppUser> findUserByCommentId(@Param("id") UUID id);
 	
 	boolean existsById(UUID commentId);
 }

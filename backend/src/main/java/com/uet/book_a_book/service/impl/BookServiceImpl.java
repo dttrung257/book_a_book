@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.uet.book_a_book.dto.book.BookDTO;
+import com.uet.book_a_book.dto.book.NewBook;
 import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
@@ -79,7 +79,7 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public Book addBook(BookDTO newBook) {
+	public Book addBook(NewBook newBook) {
 		Book checkBook = bookRepository.findByNameAndAuthor(newBook.getName().trim(), newBook.getAuthor().trim()).orElse(null);
 		if (checkBook != null) {
 			throw new BookAlreadyExistsException("The book named " + newBook.getName().trim() + " already exists");
@@ -109,7 +109,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Book updateBook(BookDTO updateBook, Long id) {
+	public Book updateBook(NewBook updateBook, Long id) {
 		Book checkBook = bookRepository.findByNameAndAuthor(updateBook.getName().trim(), updateBook.getAuthor().trim()).orElse(null);
 		if (checkBook != null && checkBook.getId() != id) {
 			throw new BookAlreadyExistsException("The book named " + updateBook.getName() + " already exists with id: " + checkBook.getId());

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uet.book_a_book.dto.comment.CommentDTO;
+import com.uet.book_a_book.dto.comment.NewComment;
 import com.uet.book_a_book.service.CommentService;
 
 @RestController
@@ -50,13 +50,13 @@ public class CommentController {
 	
 	@PostMapping("/comments")
 	ResponseEntity<Object> addComment(
-			@Valid @RequestBody CommentDTO newComment) {
+			@Valid @RequestBody NewComment newComment) {
 		return ResponseEntity.ok(commentService.addComment(newComment));
 	}
 	
 	@PutMapping("/comments")
 	ResponseEntity<Object> updateComment(
-			@Valid @RequestBody CommentDTO updateComment) {
+			@Valid @RequestBody NewComment updateComment) {
 		return ResponseEntity.ok(commentService.updateComment(updateComment));
 	}
 	
@@ -68,15 +68,32 @@ public class CommentController {
 		return ResponseEntity.ok("Delete comment successfully");
 	}
 	
-	@DeleteMapping("/manage/comments/{id}/book/{bookId}")
+	@GetMapping("/manage/comments")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	ResponseEntity<Object> getAllComments(
+			@RequestParam(name = "page", required = false, defaultValue = "0") 
+			@Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") 
+			@Min(value = 1) Integer size) {
+		return ResponseEntity.ok(commentService.getAllComments(page, size));
+	}
+	
+	@GetMapping("/manage/comments/{id}")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	ResponseEntity<Object> getCommentById(
+			@PathVariable(name = "id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
+			message = "id field must in UUID format") String id) {
+		return ResponseEntity.ok(commentService.getCommentById(UUID.fromString(id)));
+	}
+	
+	@DeleteMapping("/manage/comments/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> deleteCommentByAdmin(
 			@PathVariable(name = "id", required = true) 
 			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id,
-			@PathVariable(name = "bookId", required = true) 
-			@Min(value = 1, message = "bookId field must be in integer format greater than or equal to 1") Long bookId) {
-		commentService.deleteCommentByAdmin(UUID.fromString(id), bookId);
+			message = "id field must in UUID format") String id) {
+		commentService.deleteCommentByAdmin(UUID.fromString(id));
 		return ResponseEntity.ok("Delete comment id:" + id + " successfully");
 	}
 }

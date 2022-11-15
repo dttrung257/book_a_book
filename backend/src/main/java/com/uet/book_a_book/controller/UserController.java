@@ -143,6 +143,15 @@ public class UserController {
 		return ResponseEntity.ok(userSevice.getAllUsers(page, size));
 	}
 	
+	@GetMapping("manage/users/{id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<Object> getUserById(
+			@PathVariable(name = "id", required = true) 
+			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
+			message = "id field must in UUID format") String id) {
+		return ResponseEntity.ok(userSevice.getUserById(UUID.fromString(id)));
+	}
+	
 	@GetMapping("manage/users/name")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getUsersByName(
