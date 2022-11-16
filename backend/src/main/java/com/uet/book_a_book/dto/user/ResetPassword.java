@@ -14,13 +14,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResetPassword {
-	@Email(message = "Email is not valid")
+	@Email(message = "email field is not valid")
 	private String email;
 	
-	@NotBlank(message = "Reset token field cannot be blank")
+	@NotBlank(message = "resetToken field is mandatory")
 	private String resetToken;
 	
-	@NotBlank(message = "Password field cannot be blank")
-	@Size(min = 8, max = 100, message = "Password field should have at least 8 characters")
+	@NotBlank(message = "password field cannot be blank")
+	@Size(min = 8, max = 100, message = "password field should have at least 8 characters")
 	private String newPassword;
 }

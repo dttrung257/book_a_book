@@ -32,71 +32,54 @@ public class BookController {
 
 	@GetMapping("/books")
 	ResponseEntity<Object> getAllBooks(
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getAllBooks(page, size));
 	}
 
 	@GetMapping("books/{id}")
 	ResponseEntity<Object> getBookById(
-			@PathVariable("id") 
-			@Min(value = 1L) Long id) {
+			@PathVariable(name = "id", required = true) @Min(value = 1L) Long id) {
 		return ResponseEntity.ok(bookService.getBookById(id));
 	}
 	
 	@GetMapping("books/name")
 	ResponseEntity<Object> getBooksByName(
 			@RequestParam(name = "name", required = true) String name,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getBooksByName(name, page, size));
 	}
 	
 	@GetMapping("books/category")
 	ResponseEntity<Object> getBooksByCategory(
 			@RequestParam(name = "category", required = true) String category,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getBooksByCategory(category, page, size));
 	}
 	
 	@GetMapping("books/price")
 	ResponseEntity<Object> getBooksByPrice(
-			@RequestParam(name= "from", required = false, defaultValue = "0") 
-			@DecimalMin(value = "0.0") Double fromPrice,
-			@RequestParam(name = "to", required = false, defaultValue = "100000000") 
-			@DecimalMin(value = "0.1") Double toPrice,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name= "from", required = false, defaultValue = "0") @DecimalMin(value = "0.0") Double fromPrice,
+			@RequestParam(name = "to", required = false, defaultValue = "10000000000") @DecimalMin(value = "0.1") Double toPrice,
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getBooksByPrice(fromPrice, toPrice, page, size));
 	}
 	
 	@GetMapping("/books/rating")
 	ResponseEntity<Object> getBooksByRating(
-			@RequestParam(name = "rating", required = false, defaultValue = "0") 
-			@Min(value = 0) 
-			@Max(value = 5) Integer rating,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "rating", required = false, defaultValue = "0") @Min(value = 0) @Max(value = 5) Integer rating,
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getBooksByRating(rating, page, size));
 	}
 	
 	@GetMapping("/books/best_selling")
 	ResponseEntity<Object> getBooksByBestSelling(
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getBooksByBestSelling(page, size));
 	}
 	
@@ -110,8 +93,7 @@ public class BookController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> updateBook(
 			@Valid @RequestBody NewBook updateBook,
-			@PathVariable(name = "id", required = true) 
-			@Min(value = 1L) Long id) {
+			@PathVariable(name = "id", required = true) @Min(value = 1L) Long id) {
 		return ResponseEntity.ok(bookService.updateBook(updateBook, id));
 	}
 	
@@ -119,18 +101,16 @@ public class BookController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> updateStatus(
 			@Valid @RequestBody UpdateBookStatus bookStatus,
-			@PathVariable(name = "id", required = true)
-			@Min(value = 1L) Long id) {
+			@PathVariable(name = "id", required = true) @Min(value = 1L) Long id) {
 		return ResponseEntity.ok(bookService.updateStatus(id, bookStatus.getStopSelling()));
 	}
 	
 	@DeleteMapping("/manage/books/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> deleteBook(
-			@PathVariable(name = "id", required = true) 
-			@Min(value = 1L) Long id) {
+			@PathVariable(name = "id", required = true) @Min(value = 1L) Long id) {
 		bookService.deleteBook(id);
-		return ResponseEntity.ok("Delete book id " + id + " successfully");
+		return ResponseEntity.ok("Delete book id: " + id + " successfully");
 	}
 	
 }

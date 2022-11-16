@@ -41,7 +41,7 @@ public class NewBook {
 	private Double sellingPrice;
 	
 	@NotNull(message = "quantityInStock field is mandatory")
-	@Min(value = 1L, message = "Quantity field is invalid")
+	@Min(value = 1L, message = "quantity field must be greater than or equal to 1")
 	private Long quantityInStock;
 	
 	private String description;

@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uet.book_a_book.dto.comment.NewComment;
 import com.uet.book_a_book.service.CommentService;
+import com.uet.book_a_book.validator.IdConstraint;
 
 @RestController
 @RequestMapping("/api")
@@ -32,19 +32,15 @@ public class CommentController {
 	
 	@GetMapping("/comments/user_comment")
 	ResponseEntity<Object> getUserComment(
-			@RequestParam(name = "book_id", required = true) 
-			@Min(value = 1L) Long bookId) {
+			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId) {
 		return ResponseEntity.ok(commentService.getUserComment(bookId));
 	}
 	
 	@GetMapping("/comments/other_comment")
 	ResponseEntity<Object> getOtherComments(
-			@RequestParam(name = "book_id", required = true) 
-			@Min(value = 1L) Long bookId,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(commentService.getOtherComments(bookId, page, size));
 	}
 	
@@ -62,8 +58,7 @@ public class CommentController {
 	
 	@DeleteMapping("/comments")
 	ResponseEntity<Object> deleteComment(
-			@RequestParam(name = "book_id", required = true) 
-			@Min(value = 1L) Long bookId) {
+			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId) {
 		commentService.deleteComment(bookId);
 		return ResponseEntity.ok("Delete comment successfully");
 	}
@@ -71,28 +66,22 @@ public class CommentController {
 	@GetMapping("/manage/comments")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> getAllComments(
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(commentService.getAllComments(page, size));
 	}
 	
 	@GetMapping("/manage/comments/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> getCommentById(
-			@PathVariable(name = "id", required = true) 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id) {
+			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		return ResponseEntity.ok(commentService.getCommentById(UUID.fromString(id)));
 	}
 	
 	@DeleteMapping("/manage/comments/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> deleteCommentByAdmin(
-			@PathVariable(name = "id", required = true) 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id) {
+			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		commentService.deleteCommentByAdmin(UUID.fromString(id));
 		return ResponseEntity.ok("Delete comment id:" + id + " successfully");
 	}

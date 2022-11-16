@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
 		newOrder.getOrderdetails().stream().forEach(od -> {
 			Book book = bookRepository.findById(od.getBookId()).orElse(null);
 			if (book == null) {
-				throw new NotFoundBookException("Not found book with id: " + od.getBookId());
+				throw new NotFoundBookException("Not found book id: " + od.getBookId());
 			}
 			if (book.getAvailableQuantity() < od.getQuantity()) {
 				throw new NotEnoughQuantityException("Not enough quantity book: " + book.getName() + " to order");
@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
 		newOrder.getOrderdetails().stream().forEach(od -> {
 			Book book = bookRepository.findById(od.getBookId()).orElse(null);
 			if (book == null) {
-				throw new NotFoundBookException("Not found book with id: " + od.getBookId());
+				throw new NotFoundBookException("Not found book id: " + od.getBookId());
 			}
 			if (book.getAvailableQuantity() < od.getQuantity()) {
 				throw new NotEnoughQuantityException("Not enough quantity book: " + book.getName() + " to order");
@@ -137,7 +137,7 @@ public class OrderServiceImpl implements OrderService {
 	public void cancelOrder(UUID orderId) {
 		Order order = orderRepository.findById(orderId).orElse(null);
 		if (order == null) {
-			throw new NotFoundOrderException("Not found order with id: " + orderId);
+			throw new NotFoundOrderException("Not found order id: " + orderId);
 		}
 		if (!order.getStatus().equals(OrderStatus.STATUS_PENDING)) {
 			throw new CannotCancelOrderException("Orders can only be canceled in pending status");
@@ -159,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
 	public Order updateStatus(UUID orderId, String status) {
 		Order order = orderRepository.findById(orderId).orElse(null);
 		if (order == null) {
-			throw new NotFoundOrderException("Not found order with id: " + orderId);
+			throw new NotFoundOrderException("Not found order id: " + orderId);
 		}
 		if (order.getStatus().equals(OrderStatus.STATUS_SUCCESS)) {
 			throw new CannotChangeOrderStatusException("The status cannot be changed once the order id: "

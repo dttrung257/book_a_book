@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
 	public CommentDTO getUserComment(Long bookId) {
 		Book book = bookRepository.findById(bookId).orElse(null);
 		if (book == null) {    
-			throw new NotFoundBookException("Not found book with id: " + bookId);
+			throw new NotFoundBookException("Not found book id: " + bookId);
 		}
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<CommentDTO> comments = commentRepository.findUserComment(user.getId(), bookId)
@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
 	public Page<CommentDTO> getOtherComments(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
 		if (book == null) {    
-			throw new NotFoundBookException("Not found book with id: " + bookId);
+			throw new NotFoundBookException("Not found book id: " + bookId);
 		}
 		Pageable pageable = PageRequest.of(page, size);
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -78,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<Comment> comments = commentRepository.findUserComment(user.getId(), newComment.getBookId());
 		if (!comments.isEmpty()) {
-			throw new CommentAlreadyExistsException("User " + user.getEmail() + " have already commented on the book id " + book.getId());
+			throw new CommentAlreadyExistsException("User " + user.getEmail() + " have already commented on the book id: " + book.getId());
 		}
 		Comment comment = new Comment();
 		comment.setContent(newComment.getContent());
@@ -102,12 +102,12 @@ public class CommentServiceImpl implements CommentService {
 	public CommentDTO updateComment(NewComment updateComment) {
 		Book book = bookRepository.findById(updateComment.getBookId()).orElse(null);
 		if (book == null) {
-			throw new NotFoundBookException("Not found book with id: " + updateComment.getBookId());
+			throw new NotFoundBookException("Not found book id: " + updateComment.getBookId());
 		}
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<Comment> comments = commentRepository.findUserComment(user.getId(), updateComment.getBookId());
 		if (comments.isEmpty()) {
-			throw new UserHasNotCommentedYetException("User " + user.getEmail() + " has not commented on the book id " + book.getId());
+			throw new UserHasNotCommentedYetException("User " + user.getEmail() + " has not commented on the book id: " + book.getId());
 		}
 		
 		Comment comment = comments.get(0);
@@ -128,7 +128,7 @@ public class CommentServiceImpl implements CommentService {
 	public void deleteComment(Long bookId) {
 		Book book = bookRepository.findById(bookId).orElse(null);
 		if (book == null) {    
-			throw new NotFoundBookException("Not found book with id: " + bookId);
+			throw new NotFoundBookException("Not found book id: " + bookId);
 		}
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<Comment> comments = commentRepository.findUserComment(user.getId(), bookId);

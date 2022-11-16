@@ -31,7 +31,7 @@ public class BookServiceImpl implements BookService {
 	public Book getBookById(Long id) {
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
-			throw new NotFoundBookException("Not found book with id: " + id);
+			throw new NotFoundBookException("Not found book id: " + id);
 		}
 		return book;
 	}
@@ -116,7 +116,7 @@ public class BookServiceImpl implements BookService {
 		}
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
-			throw new NotFoundBookException("Not found book with id: " + id);
+			throw new NotFoundBookException("Not found book id: " + id);
 		}
 		book.setName(updateBook.getName().trim());
 		book.setAuthor(updateBook.getAuthor().trim());
@@ -140,7 +140,7 @@ public class BookServiceImpl implements BookService {
 	public Book updateStatus(Long id, Boolean stopSelling) {
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
-			throw new NotFoundBookException("Not found book with id: " + id);
+			throw new NotFoundBookException("Not found book id: " + id);
 		}
 		book.setStopSelling(stopSelling);
 		bookRepository.save(book);
@@ -151,7 +151,7 @@ public class BookServiceImpl implements BookService {
 	public void deleteBook(Long id) {
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
-			throw new NotFoundBookException("Not found book with id: " + id);
+			throw new NotFoundBookException("Not found book id: " + id);
 		}
 		bookRepository.delete(book);
 	}

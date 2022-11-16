@@ -13,11 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewOrderdetail {
-	@NotNull(message = "Book id field cannot be null")
-	@Min(value = 1L, message = "Book id field must be in integer format and greater than or equal to 1")
+	@NotNull(message = "bookId field is mandatory")
+	@Min(value = 1L, message = "bookId field must be in integer format and greater than or equal to 1")
 	private Long bookId;
 	
-	@NotNull(message = "Quantity field cannot be null")
-	@Min(value = 1L, message = "Quantity field must be in double format greater than or equal to 1")
+	@NotNull(message = "quantity field is mandatory")
+	@Min(value = 1L, message = "quantity field must be in integer format greater than or equal to 1")
 	private Long quantity;
 }

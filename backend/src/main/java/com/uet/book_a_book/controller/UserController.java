@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,6 +43,7 @@ import com.uet.book_a_book.exception.account.NotFoundUserStatusException;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
+import com.uet.book_a_book.validator.IdConstraint;
 
 @RestController
 @RequestMapping("/api")
@@ -62,15 +62,15 @@ public class UserController {
 
 	@GetMapping("/users/forgot_password/{email}")
 	public ResponseEntity<Object> forgotPassword(
-			@PathVariable(name = "email") @Email(message = "Email field is not valid") String email) {
+			@PathVariable(name = "email") @Email(message = "email field is not valid") String email) {
 		resetPasswordTokenService.forgotPassword(email);
-		return ResponseEntity.ok("Email sent successlly");
+		return ResponseEntity.ok("Send email successlly");
 	}
 
 	@GetMapping("/users/forgot_password/{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmResetPassword(
 			@PathVariable("email") @Email(message = "email field is not valid") String email,
-			@PathVariable("code") @NotBlank(message = "verification code field is madatory") String code) {
+			@PathVariable("code") @NotBlank(message = "code field is madatory") String code) {
 		ResetPasswordToken token = resetPasswordTokenService.getResetPasswordToken(email, code);
 		if (token == null) {
 			throw new NotFoundResetPasswordTokenException("Reset password token of account with email: " + email + " does not exists");
@@ -136,19 +136,15 @@ public class UserController {
 	@GetMapping("manage/users")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getAllUsers(
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(userSevice.getAllUsers(page, size));
 	}
 	
 	@GetMapping("manage/users/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getUserById(
-			@PathVariable(name = "id", required = true) 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id) {
+			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		return ResponseEntity.ok(userSevice.getUserById(UUID.fromString(id)));
 	}
 	
@@ -156,19 +152,15 @@ public class UserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getUsersByName(
 			@RequestParam(name = "name", required = true) @NotBlank(message = "Name field cannot be blank") String name,
-			@RequestParam(name = "page", required = false, defaultValue = "0") 
-			@Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") 
-			@Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(userSevice.getUsersByName(name, page, size));
 	}
 
 	@PutMapping("/manage/users/{id}/status")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> updateStatus(
-			@PathVariable(name = "id", required = true) 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id,
+			@PathVariable(name = "id", required = true) @IdConstraint String id,
 			@Valid @RequestBody UpdateUserStatus updateUserStatus) {
 			if (updateUserStatus.getStatus().equalsIgnoreCase(UserStatus.STATUS_LOCKED)) {
 				if (updateUserStatus.getState() == true) {
@@ -193,9 +185,7 @@ public class UserController {
 	@PutMapping("/manage/users/{id}/password")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> updateUserPassword(
-			@PathVariable(name = "id", required = true) 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id,
+			@PathVariable(name = "id", required = true) @IdConstraint String id,
 			@Valid @RequestBody AdmResetPassword adminResetPassword) {
 		userSevice.updateUserPassword(UUID.fromString(id), adminResetPassword.getNewPassword());
 		return ResponseEntity.ok("Reset user id " + id + " password successfully");
@@ -204,9 +194,7 @@ public class UserController {
 	@DeleteMapping("/manage/users/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> deleteUser(
-			@PathVariable(name = "id", required = true) 
-			@Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-			message = "id field must in UUID format") String id) {
+			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		userSevice.deleteUser(UUID.fromString(id));
 		return ResponseEntity.ok("Delete user id: " + id + " successfully");
 	}

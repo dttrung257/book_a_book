@@ -16,10 +16,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewOrder {
-	@NotBlank(message = "Address field cannot be blank")
+	@NotBlank(message = "address field is mandatory")
 	private String address;
 	
-	@NotEmpty(message = "Orderdetails field cannot be empty")
+	@NotEmpty(message = "orderdetails field is mandatory")
 	@Valid
 	private List<NewOrderdetail> orderdetails;
 }

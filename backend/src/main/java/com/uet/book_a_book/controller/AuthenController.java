@@ -89,15 +89,15 @@ public class AuthenController {
 
 	@GetMapping("{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmVerification(
-			@PathVariable("email") @Email(message = "Email field is not valid") String email,
-			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {
+			@PathVariable("email") @Email(message = "email field is not valid") String email,
+			@PathVariable("code") @NotBlank(message = "code field cannot be blank") String code) {
 		userSevice.confirmEmailVerification(email, code);
 		return ResponseEntity.ok("Account activation successful");
 	}
 
 	@GetMapping("/send_email/{email}")
 	public ResponseEntity<Object> resendEmailVerification(
-			@PathVariable("email") @Email(message = "Email field is not valid") String email) {
+			@PathVariable("email") @Email(message = "mail field is not valid") String email) {
 		userSevice.sendEmailVerification(email);
 		return ResponseEntity.ok("Send email to " + email + " successfully");
 	}

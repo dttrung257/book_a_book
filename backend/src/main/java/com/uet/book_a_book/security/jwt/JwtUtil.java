@@ -25,7 +25,7 @@ public class JwtUtil {
 	@Value("${my.server.secretKey}")
 	private String secretKey;
 	
-	private static final long jwtExpiredTimeMs = 24 * 60 * 60 * 1000;
+	private static final long jwtExpiredTimeMs = 3 * 24 * 60 * 60 * 1000;
 	
 	public String generateJwtToken(String email) {
 		final SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());

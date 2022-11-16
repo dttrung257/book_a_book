@@ -14,19 +14,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
-	@NotBlank(message = "First name field cannot be blank")
+	@NotBlank(message = "firstName field cannot be blank")
 	private String firstName;
 	
-	@NotBlank(message = "Last name field cannot be blank")
+	@NotBlank(message = "lastName field cannot be blank")
 	private String lastName;
 	
-	@Email(message = "Email field is not valid")
+	@Email(message = "email field is not valid")
 	private String email;
 	
-	@NotBlank(message = "Password field cannot be blank")
-	@Size(min = 8, max = 100, message = "Password field should have at least 8 characters")
+	@NotBlank(message = "password field is mandatory")
+	@Size(min = 8, max = 100, message = "password field should have at least 8 characters")
 	private String password;
 	
-	@NotBlank(message = "Gender field cannot be blank")
+	@NotBlank(message = "gender field is mandatory")
 	private String gender;
 }
