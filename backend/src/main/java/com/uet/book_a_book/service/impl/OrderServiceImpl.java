@@ -30,6 +30,8 @@ import com.uet.book_a_book.exception.order.CannotCancelOrderException;
 import com.uet.book_a_book.exception.order.CannotChangeOrderStatusException;
 import com.uet.book_a_book.exception.order.NotFoundOrderException;
 import com.uet.book_a_book.exception.order.NotFoundOrderStatusException;
+import com.uet.book_a_book.mapper.OrderMapper;
+import com.uet.book_a_book.mapper.OrderdetailMapper;
 import com.uet.book_a_book.repository.BookRepository;
 import com.uet.book_a_book.repository.OrderRepository;
 import com.uet.book_a_book.repository.OrderdetailRepository;
@@ -43,6 +45,10 @@ public class OrderServiceImpl implements OrderService {
 	private OrderdetailRepository orderdetailRepository;
 	@Autowired
 	private BookRepository bookRepository;
+	@Autowired
+	private OrderMapper orderMapper;
+	@Autowired
+	private OrderdetailMapper orderdetailMapper;
 
 	@Override
 	public Order addOrder(NewOrder newOrder) {
@@ -108,55 +114,21 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
-	private OrderDTO orderToOrderDTO(Order order) {
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setId(order.getId());
-		orderDTO.setOrderDate(order.getOrderDate());
-		orderDTO.setAddress(order.getAddress());
-		orderDTO.setStatus(order.getStatus());
-		AppUser user = orderRepository.findUserByOrderId(order.getId()).orElse(null);
-		if (user == null) {
-			orderDTO.setEmail(null);
-			orderDTO.setUserId(null);
-		} else {
-			orderDTO.setUserId(user.getId());
-			orderDTO.setEmail(user.getEmail());
-		}
-		orderDTO.setQuantity(orderdetailRepository.countTotalQuantity(order.getId()));
-		orderDTO.setTotal(orderdetailRepository.calculateTotalPrice(order.getId()));
-		return orderDTO;
-	}
-
 	@Override
 	public Page<OrderDTO> getUserOrders(Integer page, Integer size) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Pageable pageable = PageRequest.of(page, size);
-		List<Order> orders = orderRepository.fetchUserOrders(user.getId());
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o)).collect(Collectors.toList());
+		List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
+		List<OrderDTO> orderDTOs = orders.stream().
+									map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
 		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
-	}
-
-	private OrderdetailDTO orderdetailToOrderdetailDTO(Orderdetail orderdetail) {
-		OrderdetailDTO orderdetailDTO = new OrderdetailDTO();
-		orderdetailDTO.setId(orderdetail.getId());
-		orderdetailDTO.setPriceEach(orderdetail.getPriceEach());
-		orderdetailDTO.setQuantityOrdered(orderdetail.getQuantityOrdered());
-		Book book = orderdetailRepository.findBookByOrderdetailId(orderdetail.getId()).orElse(null);
-		if (book == null) {
-			orderdetailDTO.setImage(null);
-			orderdetailDTO.setBookName(null);
-		} else {
-			orderdetailDTO.setImage(book.getImage());
-			orderdetailDTO.setBookName(book.getName());
-		}
-		return orderdetailDTO;
 	}
 
 	@Override
 	public Page<OrderdetailDTO> getOrderdetails(UUID orderId, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(orderId);
-		List<OrderdetailDTO> orderdetailDTOs = orderdetails.stream().map(od -> orderdetailToOrderdetailDTO(od))
+		List<OrderdetailDTO> orderdetailDTOs = orderdetails.stream().map(od -> orderdetailMapper.mapToOrderdetailDTO(od))
 				.collect(Collectors.toList());
 		return new PageImpl<>(orderdetailDTOs, pageable, orderdetailDTOs.size());
 	}
@@ -285,12 +257,21 @@ public class OrderServiceImpl implements OrderService {
 		orderRepository.save(order);
 		return order;
 	}
+	
+	@Override
+	public Page<OrderDTO> getOrdersByUserId(UUID userId, Integer page, Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<Order> orders = orderRepository.findOrdersByUserId(userId);
+		List<OrderDTO> orderDTOs = orders.stream().
+									map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
+		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
+	}
 
 	@Override
 	public Page<OrderDTO> getAllOrders(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o)).collect(Collectors.toList());
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
 		if (start <= orderDTOs.size()) {
@@ -303,7 +284,7 @@ public class OrderServiceImpl implements OrderService {
 	public Page<OrderDTO> getOrdersByEmail(String email, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o))
 				.filter(o -> (o.getEmail().contains(email))).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
@@ -317,7 +298,7 @@ public class OrderServiceImpl implements OrderService {
 	public Page<OrderDTO> getOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o))
 				.filter(o -> (o.getTotal() >= fromPrice && o.getTotal() <= toPrice)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
@@ -331,7 +312,7 @@ public class OrderServiceImpl implements OrderService {
 	public Page<OrderDTO> getOrdersByDate(Date orderDate, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderToOrderDTO(o))
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o))
 				.filter(o -> (DateUtils.isSameDay(orderDate, o.getOrderDate()))).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
@@ -347,7 +328,9 @@ public class OrderServiceImpl implements OrderService {
 		if (order == null) {
 			throw new NotFoundOrderException("Not found order id: " + id);
 		}
-		return orderToOrderDTO(order);
+		return orderMapper.mapToOrderDTO(order);
 	}
+
+	
 
 }

@@ -15,7 +15,8 @@ public class CommentDTO {
 	private UUID id;
 	private UUID userId;
 	private Long bookId;
-	private String email;
+	private String fullName;
+	private String avatar;
 	private String bookName;
 	private Integer star;
 	private String content;

@@ -34,6 +34,7 @@ import com.uet.book_a_book.exception.account.IncorrectOldPasswordException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
 import com.uet.book_a_book.exception.account.NotFoundGenderException;
+import com.uet.book_a_book.mapper.UserMapper;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -45,25 +46,8 @@ public class UserServiceImpl implements UserSevice {
 	private EmailSenderService emailSenderService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	private List<UserDTO> usersToUserDTOs(List<AppUser> users) {
-		List<UserDTO> userDTOs = users.stream()
-				.map(user -> new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
-						user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
-						user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), 
-						user.getAuthorities().stream().map(auth -> auth.getAuthority())
-											.collect(Collectors.toList()).get(0)))
-				.collect(Collectors.toList());
-		return userDTOs;
-	}
-	
-	private UserDTO userToUserDTO(AppUser user) {
-		return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getGender(),
-				user.getPhoneNumber(), user.getAddress(), user.getAvatar(), user.getCreatedAt(),
-				user.getUpdatedAt(), user.isLocked(), user.isEmailVerified(), 
-				user.getAuthorities().stream().map(auth -> auth.getAuthority())
-									.collect(Collectors.toList()).get(0));
-	}
+	@Autowired
+	private UserMapper userMapper;
 	
 	@Override
 	public UserDTO getUserById(UUID id) {
@@ -71,13 +55,13 @@ public class UserServiceImpl implements UserSevice {
 		if (user == null) {
 			throw new NotFoundAccountException("Not found account id: " + id);
 		}
-		return userToUserDTO(user);
+		return userMapper.mapTUserDTO(user);
 	}
 
 	@Override
 	public Page<UserDTO> getAllUsers(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = usersToUserDTOs(userRepository.fetchAllUsers());
+		List<UserDTO> userDTOs = userRepository.findAll().stream().map(u -> userMapper.mapTUserDTO(u)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {
@@ -89,7 +73,7 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	public Page<UserDTO> getUsersByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = usersToUserDTOs(userRepository.fetchByName(name.trim()));
+		List<UserDTO> userDTOs = userRepository.findByName(name.trim()).stream().map(u -> userMapper.mapTUserDTO(u)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {
@@ -105,13 +89,13 @@ public class UserServiceImpl implements UserSevice {
 
 	@Override
 	public AppUser findByEmail(String email) {
-		return userRepository.findByUserEmail(email).orElse(null);
+		return userRepository.findByEmail(email).orElse(null);
 	}
 
 	@Override
 	@Transactional
 	public void confirmEmailVerification(String email, String code) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException(String.format("Not found user with email: %s", email));
 		}
@@ -133,7 +117,7 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	@Transactional
 	public void sendEmailVerification(String email) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
@@ -177,15 +161,7 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	public UserInfo getUserInfo() {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		UserInfo userInfo = new UserInfo();
-		userInfo.setFirstName(user.getFirstName());
-		userInfo.setLastName(user.getLastName());
-		userInfo.setEmail(user.getEmail());
-		userInfo.setGender(user.getGender());
-		userInfo.setPhoneNumber(user.getPhoneNumber());
-		userInfo.setAddress(user.getAddress());
-		userInfo.setAvatar(user.getAvatar());
-		return userInfo;
+		return userMapper.mapToUserInfo(user);
 	}
 
 	@Override

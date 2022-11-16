@@ -22,6 +22,7 @@ import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.exception.comment.CommentAlreadyExistsException;
 import com.uet.book_a_book.exception.comment.NotFoundCommentException;
 import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
+import com.uet.book_a_book.mapper.CommentMapper;
 import com.uet.book_a_book.repository.BookRepository;
 import com.uet.book_a_book.repository.CommentRepository;
 import com.uet.book_a_book.service.CommentService;
@@ -32,30 +33,8 @@ public class CommentServiceImpl implements CommentService {
 	private CommentRepository commentRepository;
 	@Autowired
 	private BookRepository bookRepository;
-	
-	private CommentDTO commentToCommentDTO(Comment comment) {
-		CommentDTO commentDTO = new CommentDTO();
-		commentDTO.setId(comment.getId());
-		commentDTO.setStar(comment.getStar());
-		commentDTO.setContent(comment.getContent());
-		Book book = commentRepository.findBookByCommentId(comment.getId()).orElse(null);
-		if (book == null) {
-			commentDTO.setBookId(null);
-			commentDTO.setBookName(null);
-		} else {
-			commentDTO.setBookId(book.getId());
-			commentDTO.setBookName(book.getName());
-		}
-		AppUser user = commentRepository.findUserByCommentId(comment.getId()).orElse(null);
-		if (user == null) {
-			commentDTO.setUserId(null);
-			commentDTO.setEmail(null);
-		} else {
-			commentDTO.setEmail(user.getEmail());
-			commentDTO.setUserId(user.getId());
-		}
-		return commentDTO;
-	}
+	@Autowired
+	private CommentMapper commentMapper;
 	
 	@Override
 	public CommentDTO getUserComment(Long bookId) {
@@ -65,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 		}
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<CommentDTO> comments = commentRepository.findUserComment(user.getId(), bookId)
-				.stream().map(c -> commentToCommentDTO(c)).collect(Collectors.toList());
+				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
 		if (comments.isEmpty()) {
 			return null;
 		}
@@ -81,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
 		Pageable pageable = PageRequest.of(page, size);
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<CommentDTO> comments = commentRepository.findOtherUserComments(user.getId(), bookId)
-				.stream().map(c -> commentToCommentDTO(c)).collect(Collectors.toList());
+				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
 		if (start <= comments.size()) {
@@ -116,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
 		}
 		commentRepository.save(comment);
 		bookRepository.save(book);
-		return commentToCommentDTO(comment);
+		return commentMapper.mapToCommentDTO(comment);
 	}
 
 	@Override
@@ -133,7 +112,7 @@ public class CommentServiceImpl implements CommentService {
 		
 		Comment comment = comments.get(0);
 		if (updateComment.getContent().equals(comment.getContent()) && updateComment.getStar() == comment.getStar()) {
-			return commentToCommentDTO(comment);
+			return commentMapper.mapToCommentDTO(comment);
 		}
 		comment.setContent(updateComment.getContent());
 		comment.setStar(updateComment.getStar());
@@ -142,7 +121,7 @@ public class CommentServiceImpl implements CommentService {
 		double newRating = commentRepository.calculateRateOfBook(updateComment.getBookId());
 		book.setRating(Math.ceil(newRating * 10) / 10);
 		bookRepository.save(book);
-		return commentToCommentDTO(comment);
+		return commentMapper.mapToCommentDTO(comment);
 	}
 
 	@Override
@@ -194,7 +173,7 @@ public class CommentServiceImpl implements CommentService {
 	public Page<CommentDTO> getAllComments(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<CommentDTO> comments = commentRepository.findAll()
-				.stream().map(c -> commentToCommentDTO(c)).collect(Collectors.toList());
+				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
 		if (start <= comments.size()) {
@@ -209,7 +188,7 @@ public class CommentServiceImpl implements CommentService {
 		if (comment == null) {
 			throw new NotFoundCommentException("Not found comment id: " + id);
 		}
-		return commentToCommentDTO(comment);
+		return commentMapper.mapToCommentDTO(comment);
 	}
 	
 }

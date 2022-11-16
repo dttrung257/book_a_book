@@ -69,8 +69,8 @@ public class UserController {
 
 	@GetMapping("/users/forgot_password/{email}/confirm_verification/{code}")
 	public ResponseEntity<Object> confirmResetPassword(
-			@PathVariable("email") @Email(message = "Email field is not valid") String email,
-			@PathVariable("code") @NotBlank(message = "Varification code field cannot be blank") String code) {
+			@PathVariable("email") @Email(message = "email field is not valid") String email,
+			@PathVariable("code") @NotBlank(message = "verification code field is madatory") String code) {
 		ResetPasswordToken token = resetPasswordTokenService.getResetPasswordToken(email, code);
 		if (token == null) {
 			throw new NotFoundResetPasswordTokenException("Reset password token of account with email: " + email + " does not exists");

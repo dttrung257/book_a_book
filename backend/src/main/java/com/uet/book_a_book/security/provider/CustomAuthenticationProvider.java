@@ -27,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String email = authentication.getPrincipal().toString();
 		String password = authentication.getCredentials().toString();
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			throw new UsernameNotFoundException("Not found user with email: " + email);
 		}

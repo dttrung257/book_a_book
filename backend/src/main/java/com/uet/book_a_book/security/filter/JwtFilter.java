@@ -40,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 		String email = jwtUtil.getEmailFromToken(jwtToken);
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			//throw new UsernameNotFoundException("Not found user with email: " + email);
 			filterChain.doFilter(request, response);

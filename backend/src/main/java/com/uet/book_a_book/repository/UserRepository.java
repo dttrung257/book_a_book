@@ -14,7 +14,7 @@ import com.uet.book_a_book.entity.AppUser;
 @Configuration
 public interface UserRepository extends JpaRepository<AppUser, UUID> {
 	@Query("SELECT u FROM AppUser u JOIN FETCH u.role WHERE u.email = :email")
-	Optional<AppUser> findByUserEmail(@Param("email") String email);
+	Optional<AppUser> findByEmail(@Param("email") String email);
 	
 	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role WHERE u.id = :id")
 	Optional<AppUser> findById(@Param("id") UUID id);
@@ -25,9 +25,9 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
 			+ " OR u.lastName LIKE %:name%"
 			+ " OR CONCAT(u.firstName, ' ', u.lastName) LIKE %:name%"
 			+ " OR CONCAT(u.lastName, ' ', u.firstName) LIKE %:name%")
-	List<AppUser> fetchByName(@Param("name") String name);
+	List<AppUser> findByName(@Param("name") String name);
 	
 	@Query("SELECT u FROM AppUser u JOIN FETCH u.role")
-	List<AppUser> fetchAllUsers();
+	List<AppUser> findAll();
 	
 }

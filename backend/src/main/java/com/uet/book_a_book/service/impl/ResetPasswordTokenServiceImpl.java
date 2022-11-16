@@ -38,7 +38,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 	@Override
 	@Transactional
 	public void forgotPassword(String email) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
@@ -48,7 +48,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 		if (!user.isEmailVerified()) {
 			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
-		ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findByUserEmail(email).orElse(null);
+		ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findByEmail(email).orElse(null);
 		if (resetPasswordToken == null) {
 			ResetPasswordToken token = new ResetPasswordToken(null, resetPasswordUtil.generateResetToken(),
 					resetPasswordUtil.generateVerificationCode(), user);
@@ -71,7 +71,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 
 	@Override
 	public ResetPasswordToken getResetPasswordToken(String email, String code) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
@@ -81,14 +81,14 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 		if (!user.isEmailVerified()) {
 			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
-		ResetPasswordToken token = resetPasswordTokenRepository.findByUserEmail(email).orElse(null);
+		ResetPasswordToken token = resetPasswordTokenRepository.findByEmail(email).orElse(null);
 		return token;
 	}
 
 	@Override
 	@Transactional
 	public ResetPasswordToken resetPassword(String email, String resetToken, String newPassword) {
-		AppUser user = userRepository.findByUserEmail(email).orElse(null);
+		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user with email: " + email);
 		}
@@ -98,7 +98,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 		if (!user.isEmailVerified()) {
 			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
-		ResetPasswordToken token = resetPasswordTokenRepository.findByUserEmail(email).orElse(null);
+		ResetPasswordToken token = resetPasswordTokenRepository.findByEmail(email).orElse(null);
 		if (token.getResetToken().equals(resetToken) && !passwordEncoder.matches(newPassword, user.getPassword())) {
 			user.setPassword(passwordEncoder.encode(newPassword));
 		}
