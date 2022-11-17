@@ -4,7 +4,7 @@ import { useAppSelector } from "../store/hook";
 
 export const verifyEmail = async (verify: VerifyEmail) => {
   const res = await axiosInstance.get(
-    `/user/forgot_password/${verify.email}/confirm_verification/${verify.verifyCode}`
+    `/users/forgot_password/${verify.email}/confirm_verification/${verify.verifyCode}`
   );
   return res.data;
 };

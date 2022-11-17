@@ -1,0 +1,164 @@
+/* Header */
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Content */
+.content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+th,
+td {
+  text-align: center;
+}
+
+.tableHeader {
+  border: 1px solid #cbcbcb;
+}
+
+.tableHeader th:first-child {
+  width: 10%;
+}
+
+.tableHeader th:last-child {
+  width: 5%;
+}
+
+.tableBody span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100px;
+}
+
+#search {
+  border: 2px solid #cbcbcb;
+  border-radius: 20px;
+  width: 220px;
+  cursor: pointer;
+}
+
+#search:hover,
+.searchForm input:hover,
+.searchForm input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.iconSetting {
+  position: relative;
+}
+
+.iconSetting a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.iconSetting .action {
+  z-index: 100;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background-color: white;
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  display: none;
+}
+
+.iconSetting .action > div:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.iconSetting .divider {
+  height: 1px;
+  width: 100%;
+  background-color: #cecece;
+}
+
+.iconSetting:hover .action {
+  display: block;
+}
+
+.searchForm {
+}
+
+.searchForm > div:first-child {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.searchForm button {
+  transition: all 0.3s;
+}
+
+.searchForm input {
+  padding: 8px 16px;
+  font-size: 20px;
+  border-radius: 12px;
+  border: 2px solid #cbcbcb;
+  width: 100%;
+}
+
+.lockModal .cancelBtn,
+.searchForm .cancelBtn {
+  background-color: #cbcbcb;
+  color: white;
+  margin-right: 12px;
+}
+
+.lockModal .cancelBtn:hover,
+.searchForm .cancelBtn:hover {
+  background-color: #cbcbcb;
+  opacity: 0.7;
+}
+
+.deleteModal .deleteBtn,
+.lockModal .toggleLockBtn,
+.searchForm .searchBtn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.deleteModal .deleteBtn:hover,
+.lockModal .toggleLockBtn:hover,
+.searchForm .searchBtn:hover {
+  background-color: var(--primary-color);
+  opacity: 0.7;
+}
+
+#userDetail .header button + button {
+  margin-left: 12px;
+}
+
+#userDetail .left {
+  flex-basis: 400px;
+  border-right: 2px solid #cbcbcb;
+  display: flex;
+  flex-direction: column;
+}
+
+#userDetail .avatar {
+  border-bottom: 1px solid #cbcbcb;
+}
+
+#userDetail .avatar div:last-child p {
+  display: inline-block;
+}
+
+#userDetail .title {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.addUserModal {
+  width: 400px;
+}

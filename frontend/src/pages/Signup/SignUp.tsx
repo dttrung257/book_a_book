@@ -111,6 +111,7 @@ const Login = () => {
         lastName: info.lastName,
         email: info.email,
         password: info.password,
+        gender: info.gender,
       });
       console.log(data);
       // const response = await axios.post("/authen/register", {
@@ -288,7 +289,7 @@ const Login = () => {
 
             <Form.Group className="mb-3">
               <Form.Label>What's your gender</Form.Label>
-              {["Female", "Male", "Non-binary"].map((gen) => {
+              {["Female", "Male", "Other"].map((gen) => {
                 return (
                   <Form.Check
                     key={gen}

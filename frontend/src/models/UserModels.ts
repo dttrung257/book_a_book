@@ -13,6 +13,7 @@ export interface UserSignUp {
   lastName: string;
   email: string;
   password: string;
+  gender: string;
 }
 
 export interface AuthInfo {
@@ -46,4 +47,14 @@ export interface UserInfo {
 export interface LoginInfo {
   accessToken: string;
   user: UserInfo;
+}
+
+export interface UserDetailInfo extends UserInfo {
+  id: string;
+  email: string;
+  gender: string;
+  phoneNumber?: number;
+  address?: string;
+  locked: boolean;
+  createdAt: string;
 }

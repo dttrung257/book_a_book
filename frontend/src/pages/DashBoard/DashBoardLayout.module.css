@@ -1,0 +1,109 @@
+header,
+footer {
+  position: relative;
+  z-index: 100;
+}
+
+header,
+.account {
+  display: flex;
+  align-items: center;
+}
+
+.logo,
+.account {
+  cursor: pointer;
+}
+
+header {
+  height: 50px;
+  font-weight: 500;
+  justify-content: space-between;
+  box-shadow: 0px 0 4px 0 #111;
+}
+
+.account {
+  justify-content: space-between;
+  font-size: 17px;
+}
+
+.logo {
+  margin: auto 20px;
+}
+
+#headerLeft {
+  display: flex;
+  width: 50%;
+  justify-content: start;
+  align-items: center;
+}
+.logo a {
+  text-decoration: none;
+}
+
+.logo p {
+  font-size: 26px !important;
+  margin: 0;
+  color: black;
+  font-weight: 500;
+}
+.logo p span {
+  color: #008b8b;
+  font-weight: bolder;
+  font-size: 26;
+}
+
+.title {
+  margin: 0;
+  font-weight: 400;
+  color: #604d4d;
+}
+
+.account > span {
+  font-weight: 400;
+  margin: 0 10px;
+}
+
+#copyright {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.container {
+  background-color: #efefef;
+}
+
+nav {
+  background-color: white;
+  width: 240px;
+  height: 100vh;
+}
+
+nav a {
+  width: 100%;
+  display: inline-block;
+  background-color: white;
+  color: var(--primary-color);
+  border-bottom: 1px solid #efefef;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+nav a svg {
+  margin: 0 12px;
+}
+
+nav a.isActive,
+nav a:hover {
+  color: white;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
