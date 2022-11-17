@@ -5,6 +5,6 @@ import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.entity.AppUser;
 
 public interface UserMapper {
-	UserDTO mapTUserDTO(AppUser user);
+	UserDTO mapToUserDTO(AppUser user);
 	UserInfo mapToUserInfo(AppUser user);
 }

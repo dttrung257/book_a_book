@@ -55,13 +55,13 @@ public class UserServiceImpl implements UserSevice {
 		if (user == null) {
 			throw new NotFoundAccountException("Not found account id: " + id);
 		}
-		return userMapper.mapTUserDTO(user);
+		return userMapper.mapToUserDTO(user);
 	}
 
 	@Override
 	public Page<UserDTO> getAllUsers(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = userRepository.findAll().stream().map(u -> userMapper.mapTUserDTO(u)).collect(Collectors.toList());
+		List<UserDTO> userDTOs = userRepository.findAll().stream().map(u -> userMapper.mapToUserDTO(u)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserSevice {
 	@Override
 	public Page<UserDTO> getUsersByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = userRepository.findByName(name.trim()).stream().map(u -> userMapper.mapTUserDTO(u)).collect(Collectors.toList());
+		List<UserDTO> userDTOs = userRepository.findByName(name.trim()).stream().map(u -> userMapper.mapToUserDTO(u)).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {

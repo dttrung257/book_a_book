@@ -42,17 +42,14 @@ public class JwtFilter extends OncePerRequestFilter {
 		String email = jwtUtil.getEmailFromToken(jwtToken);
 		AppUser user = userRepository.findByEmail(email).orElse(null);
 		if (user == null) {
-			//throw new UsernameNotFoundException("Not found user with email: " + email);
 			filterChain.doFilter(request, response);
 			return;
 		}
 		if (!user.isEmailVerified()) {
-			//throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 			filterChain.doFilter(request, response);
 			return;
 		}
 		if (user.isLocked()) {
-			//throw new LockedAccountException(String.format("Account with email: %s has been locked", email));
 			filterChain.doFilter(request, response);
 			return;
 		}

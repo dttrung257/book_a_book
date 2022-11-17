@@ -13,7 +13,7 @@ import com.uet.book_a_book.mapper.UserMapper;
 public class UserMapperImpl implements UserMapper {
 
 	@Override
-	public UserDTO mapTUserDTO(AppUser user) {
+	public UserDTO mapToUserDTO(AppUser user) {
 		UserDTO userDTO = new UserDTO();
 		userDTO.setId(user.getId());
 		userDTO.setFirstName(user.getFirstName());

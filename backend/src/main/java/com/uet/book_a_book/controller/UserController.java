@@ -34,12 +34,15 @@ import com.uet.book_a_book.dto.user.UpdateUserStatus;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.Role;
+import com.uet.book_a_book.entity.constant.Gender;
 import com.uet.book_a_book.entity.constant.ResetPasswordUtil;
 import com.uet.book_a_book.entity.constant.RoleName;
 import com.uet.book_a_book.entity.constant.UserStatus;
 import com.uet.book_a_book.exception.account.IncorrectResetPasswordCodeException;
+import com.uet.book_a_book.exception.account.NotFoundGenderException;
 import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException;
 import com.uet.book_a_book.exception.account.NotFoundUserStatusException;
+import com.uet.book_a_book.mapper.UserMapper;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
@@ -59,6 +62,8 @@ public class UserController {
 	private ResetPasswordTokenService resetPasswordTokenService;
 	@Autowired
 	private ResetPasswordUtil resetPasswordUtil;
+	@Autowired
+	private UserMapper userMapper;
 
 	@GetMapping("/users/forgot_password/{email}")
 	public ResponseEntity<Object> forgotPassword(
@@ -125,12 +130,19 @@ public class UserController {
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
 		user.setCreatedAt(new Date());
+		if (request.getGender().equalsIgnoreCase(Gender.GENDER_MALE) 
+				|| request.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)
+				|| request.getGender().equalsIgnoreCase(Gender.GENDER_OTHER)) {
+			user.setGender(request.getGender().toUpperCase());
+		} else {
+			throw new NotFoundGenderException("Not found gender: " + request.getGender());
+		}
 		Role roleUser = roleService.findByRoleName(RoleName.ROLE_USER);
 		user.setRole(roleUser);
 		user.setEmailVerified(true);
 
 		userSevice.save(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body("Create account successfully");
+		return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.mapToUserDTO(user));
 	}
 
 	@GetMapping("manage/users")
