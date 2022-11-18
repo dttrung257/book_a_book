@@ -13,6 +13,9 @@ import com.uet.book_a_book.entity.Book;
 import com.uet.book_a_book.entity.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
+	@Query("SELECT c FROM Comment c WHERE c.book.id = :bookId")
+	List<Comment> findAll(@Param("bookId") Long bookId);
+	
 	@Query("SELECT c FROM Comment c WHERE c.book.id = :bookId AND c.user.id <> :userId")
 	List<Comment> findOtherUserComments(@Param("userId") UUID userId, @Param("bookId") Long bookId);
 	

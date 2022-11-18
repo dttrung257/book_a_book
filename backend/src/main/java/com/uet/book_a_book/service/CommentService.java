@@ -8,6 +8,7 @@ import com.uet.book_a_book.dto.comment.CommentDTO;
 import com.uet.book_a_book.dto.comment.NewComment;
 
 public interface CommentService {
+	Page<CommentDTO> getAllComments(Long bookId, Integer page, Integer size);
 	CommentDTO getUserComment(Long bookId);
 	Page<CommentDTO> getOtherComments(Long bookId, Integer page, Integer size);
 	CommentDTO addComment(NewComment newComment);

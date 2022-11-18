@@ -3,6 +3,7 @@ package com.uet.book_a_book.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -49,6 +50,7 @@ public class SecurityConfiguration {
 				requests -> {requests.antMatchers("/api/authen/**").permitAll()
 					.antMatchers("/api/users/forgot_password/**").permitAll()
 					.antMatchers("/api/books/**").permitAll()
+					.antMatchers(HttpMethod.GET, "/api/comments").permitAll()
 					.antMatchers("/swagger/**").permitAll()
 					.anyRequest().authenticated();
 					})

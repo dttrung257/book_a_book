@@ -37,6 +37,23 @@ public class CommentServiceImpl implements CommentService {
 	private CommentMapper commentMapper;
 	
 	@Override
+	public Page<CommentDTO> getAllComments(Long bookId, Integer page, Integer size) {
+		Book book = bookRepository.findById(bookId).orElse(null);
+		if (book == null) {    
+			throw new NotFoundBookException("Not found book id: " + bookId);
+		}
+		Pageable pageable = PageRequest.of(page, size);
+		List<CommentDTO> comments = commentRepository.findAll(bookId)
+				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
+		if (start <= comments.size()) {
+			return new PageImpl<>(comments.subList(start, end), pageable, comments.size());
+		}
+		return new PageImpl<>(comments, pageable, comments.size());
+	}
+	
+	@Override
 	public CommentDTO getUserComment(Long bookId) {
 		Book book = bookRepository.findById(bookId).orElse(null);
 		if (book == null) {    

@@ -30,6 +30,14 @@ public class CommentController {
 	@Autowired
 	private CommentService commentService;
 	
+	@GetMapping("/comments")
+	ResponseEntity<Object> getAllComments(
+			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+		return ResponseEntity.ok(commentService.getAllComments(bookId, page, size));
+	}
+	
 	@GetMapping("/comments/user_comment")
 	ResponseEntity<Object> getUserComment(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId) {
