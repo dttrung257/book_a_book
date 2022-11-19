@@ -83,6 +83,18 @@ public class BookController {
 		return ResponseEntity.ok(bookService.getBooksByBestSelling(page, size));
 	}
 	
+	@GetMapping("/books/filter")
+	ResponseEntity<Object> getBooksByFilter(
+			@RequestParam(name = "name", required = false, defaultValue = "") String name,
+			@RequestParam(name = "category", required = false, defaultValue = "") String category,
+			@RequestParam(name= "from", required = false, defaultValue = "0") @DecimalMin(value = "0.0") Double fromPrice,
+			@RequestParam(name = "to", required = false, defaultValue = "10000000000") @DecimalMin(value = "0.1") Double toPrice,
+			@RequestParam(name = "rating", required = false, defaultValue = "0") @Min(value = 0) @Max(value = 5) Integer rating,
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+		return ResponseEntity.ok(bookService.getBooksByFilter(name, category, fromPrice, toPrice, rating, page, size));
+	}
+	
 	@PostMapping("/manage/books")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	ResponseEntity<Object> addBook(@Valid @RequestBody NewBook newBook) {

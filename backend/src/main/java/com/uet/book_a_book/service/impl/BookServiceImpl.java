@@ -1,9 +1,12 @@
 package com.uet.book_a_book.service.impl;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -76,6 +79,30 @@ public class BookServiceImpl implements BookService {
 		Sort sort = Sort.by("quantitySold").descending();
 		Pageable pageable = PageRequest.of(page, size, sort);
 		return bookRepository.findByBestSelling(pageable);
+	}
+	
+	@Override
+	public Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
+			Integer page, Integer size) {
+		List<Book> books = bookRepository.findAll();
+		System.out.println(books.size());
+		if (!(name.equals("") || name == null)) {
+			books = books.stream().filter(book -> book.getName().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
+		}
+		if (!(category.equals("") || category == null)) {
+			books = books.stream().filter(book -> book.getCategory().equalsIgnoreCase(category)).collect(Collectors.toList());
+		}
+		if (rating != 0) {
+			books = books.stream().filter(book -> (book.getRating() != null && book.getRating().intValue() == rating)).collect(Collectors.toList());
+		}
+		books = books.stream().filter(book -> (book.getSellingPrice() >= fromPrice && book.getSellingPrice() <= toPrice)).collect(Collectors.toList());
+		Pageable pageable = PageRequest.of(page, size);
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), books.size());
+		if (start <= books.size()) {
+			return new PageImpl<>(books.subList(start, end), pageable, books.size());
+		}
+		return new PageImpl<>(new ArrayList<>(), pageable, books.size());
 	}
 	
 	@Override
