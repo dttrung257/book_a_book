@@ -17,6 +17,7 @@ import lombok.Setter;
 public class OrderDTO {
 	private UUID id;
 	private UUID userId;
+	private String fullName;
 	private String email;
 	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
 	private Date orderDate;

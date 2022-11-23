@@ -6,6 +6,8 @@ import com.uet.book_a_book.entity.Role;
 
 public interface RoleService {
 	List<Role> findAll();
+
 	Role findByRoleName(String roleName);
+
 	Role save(Role role);
 }

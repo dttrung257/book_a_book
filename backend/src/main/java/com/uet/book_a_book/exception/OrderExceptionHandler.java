@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.uet.book_a_book.exception.book.NotEnoughQuantityException;
 import com.uet.book_a_book.exception.order.CannotCancelOrderException;
 import com.uet.book_a_book.exception.order.CannotChangeOrderStatusException;
+import com.uet.book_a_book.exception.order.CannotDeleteShippingOrderException;
+import com.uet.book_a_book.exception.order.CannotDeleteSuccessOrderException;
 import com.uet.book_a_book.exception.order.NotFoundOrderException;
 import com.uet.book_a_book.exception.order.NotFoundOrderStatusException;
 
@@ -47,6 +49,20 @@ public class OrderExceptionHandler {
 	ResponseEntity<Object> handleNotEnoughQuantityException(NotEnoughQuantityException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Not enough quantity", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotDeleteShippingOrderException.class)
+	ResponseEntity<Object> handleCannotDeleteShippingOrderException(CannotDeleteShippingOrderException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Cannot delete shipping order", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotDeleteSuccessOrderException.class)
+	ResponseEntity<Object> handleCannotDeleteSuccessOrderException(CannotDeleteSuccessOrderException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Cannot delete success order", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 }

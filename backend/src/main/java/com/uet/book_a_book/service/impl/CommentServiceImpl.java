@@ -36,6 +36,7 @@ public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private CommentMapper commentMapper;
 	
+	/** Get all comments of a book. **/
 	@Override
 	public Page<CommentDTO> getAllComments(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -53,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
 		return new PageImpl<>(comments, pageable, comments.size());
 	}
 	
+	/** Get user comment from a book. **/
 	@Override
 	public CommentDTO getUserComment(Long bookId) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -68,6 +70,7 @@ public class CommentServiceImpl implements CommentService {
 		return comments.get(0);
 	}
 	
+	/** Get all other users' comments from a book. **/
 	@Override
 	public Page<CommentDTO> getOtherComments(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -86,6 +89,7 @@ public class CommentServiceImpl implements CommentService {
 		return new PageImpl<>(comments, pageable, comments.size());
 	}
 
+	/** User comment. **/
 	@Override
 	public CommentDTO addComment(NewComment newComment) {
 		Book book = bookRepository.findById(newComment.getBookId()).orElse(null);
@@ -115,6 +119,7 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.mapToCommentDTO(comment);
 	}
 
+	/** User updates comment. **/
 	@Override
 	public CommentDTO updateComment(NewComment updateComment) {
 		Book book = bookRepository.findById(updateComment.getBookId()).orElse(null);
@@ -141,6 +146,7 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.mapToCommentDTO(comment);
 	}
 
+	/** User deletes comment. **/
 	@Override
 	public void deleteComment(Long bookId) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -163,6 +169,7 @@ public class CommentServiceImpl implements CommentService {
 		bookRepository.save(book);
 	}
 
+	/** Admin deletes comment. **/
 	@Override
 	public void deleteCommentByAdmin(UUID id) {
 		Book book = commentRepository.findBookByCommentId(id).orElse(null);
@@ -186,6 +193,7 @@ public class CommentServiceImpl implements CommentService {
 		
 	}
 
+	/** Get all comments. **/
 	@Override
 	public Page<CommentDTO> getAllComments(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -199,6 +207,7 @@ public class CommentServiceImpl implements CommentService {
 		return new PageImpl<>(comments, pageable, comments.size());
 	}
 
+	/** Get comment by id. **/
 	@Override
 	public CommentDTO getCommentById(UUID id) {
 		Comment comment = commentRepository.findById(id).orElse(null);

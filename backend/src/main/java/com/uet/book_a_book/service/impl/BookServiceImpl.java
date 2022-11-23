@@ -24,12 +24,14 @@ public class BookServiceImpl implements BookService {
 	@Autowired
 	private BookRepository bookRepository;
 	
+	/** Get all books. **/
 	@Override
 	public Page<Book> getAllBooks(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return bookRepository.findAll(pageable);
 	}
 
+	/** Get book by id. **/
 	@Override
 	public Book getBookById(Long id) {
 		Book book = bookRepository.findById(id).orElse(null);
@@ -39,6 +41,7 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
+	/** Get books by name. **/
 	@Override
 	public Page<Book> getBooksByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -48,6 +51,7 @@ public class BookServiceImpl implements BookService {
 		return bookRepository.findByName(name.trim(), pageable);
 	}
 
+	/** Get books by category. **/
 	@Override
 	public Page<Book> getBooksByCategory(String category, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -57,12 +61,14 @@ public class BookServiceImpl implements BookService {
 		return bookRepository.findByCategory(category.trim().toUpperCase(), pageable);
 	}
 
+	/** Get books in price range. **/
 	@Override
 	public Page<Book> getBooksByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return bookRepository.findByPrice(fromPrice, toPrice, pageable);
 	}
 
+	/** Get books by rating. **/
 	@Override
 	public Page<Book> getBooksByRating(Integer rating, Integer page, Integer size) {
 		if (rating == 0) {
@@ -74,6 +80,7 @@ public class BookServiceImpl implements BookService {
 		return bookRepository.findByRating(rating, pageable);
 	}
 	
+	/** Get best selling books. **/
 	@Override
 	public Page<Book> getBooksByBestSelling(Integer page, Integer size) {
 		Sort sort = Sort.by("quantitySold").descending();
@@ -81,6 +88,7 @@ public class BookServiceImpl implements BookService {
 		return bookRepository.findByBestSelling(pageable);
 	}
 	
+	/** Get books by many criteria. **/
 	@Override
 	public Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size) {
@@ -105,6 +113,7 @@ public class BookServiceImpl implements BookService {
 		return new PageImpl<>(new ArrayList<>(), pageable, books.size());
 	}
 	
+	/** Add a new book. **/
 	@Override
 	public Book addBook(NewBook newBook) {
 		Book checkBook = bookRepository.findByNameAndAuthor(newBook.getName().trim(), newBook.getAuthor().trim()).orElse(null);
@@ -135,6 +144,7 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
+	/** Update a book. **/
 	@Override
 	public Book updateBook(NewBook updateBook, Long id) {
 		Book checkBook = bookRepository.findByNameAndAuthor(updateBook.getName().trim(), updateBook.getAuthor().trim()).orElse(null);
@@ -163,6 +173,7 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 	
+	/** Update status of book (stop selling or keep selling). **/
 	@Override
 	public Book updateStatus(Long id, Boolean stopSelling) {
 		Book book = bookRepository.findById(id).orElse(null);
@@ -174,6 +185,7 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
+	/** Delete a book. **/
 	@Override
 	public void deleteBook(Long id) {
 		Book book = bookRepository.findById(id).orElse(null);

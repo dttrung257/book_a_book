@@ -130,4 +130,12 @@ public class OrderController {
 					throws NumberFormatException, ParseException {
 		return ResponseEntity.ok(orderService.getOrdersByDate((orderDate), page, size));
 	}
+	
+	@DeleteMapping("manage/orders/{id}")
+	public ResponseEntity<Object> deleteOrder(
+			@PathVariable(name = "id", required = true) @IdConstraint String id) {
+		orderService.deleteOrder(UUID.fromString(id));
+		return ResponseEntity.ok("Delete order id: " + id + " successfully");
+	}
+	
 }

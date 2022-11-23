@@ -28,9 +28,11 @@ public class OrderMapperImpl implements OrderMapper {
 		if (user == null) {
 			orderDTO.setEmail(null);
 			orderDTO.setUserId(null);
+			orderDTO.setFullName(null);
 		} else {
 			orderDTO.setUserId(user.getId());
 			orderDTO.setEmail(user.getEmail());
+			orderDTO.setFullName(user.getFirstName() + " " + user.getLastName());
 		}
 		orderDTO.setQuantity(orderdetailRepository.countTotalQuantity(order.getId()));
 		orderDTO.setTotal(orderdetailRepository.calculateTotalPrice(order.getId()));

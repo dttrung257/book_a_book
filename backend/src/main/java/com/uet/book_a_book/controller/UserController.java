@@ -125,10 +125,10 @@ public class UserController {
 			throw new BadCredentialsException(String.format("User with email %s already exists", request.getEmail()));
 		}
 		AppUser user = new AppUser();
-		user.setEmail(request.getEmail());
+		user.setEmail(request.getEmail().trim());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setFirstName(request.getFirstName());
-		user.setLastName(request.getLastName());
+		user.setFirstName(request.getFirstName().trim());
+		user.setLastName(request.getLastName().trim());
 		user.setCreatedAt(new Date());
 		if (request.getGender().equalsIgnoreCase(Gender.GENDER_MALE) 
 				|| request.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)

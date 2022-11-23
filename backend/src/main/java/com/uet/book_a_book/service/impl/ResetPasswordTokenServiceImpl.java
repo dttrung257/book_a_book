@@ -35,6 +35,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 		resetPasswordTokenRepository.save(token);
 	}
 
+	/** Send code to reset password. **/
 	@Override
 	@Transactional
 	public void forgotPassword(String email) {
@@ -69,6 +70,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 		}
 	}
 
+	/** Get reset password token. **/
 	@Override
 	public ResetPasswordToken getResetPasswordToken(String email, String code) {
 		AppUser user = userRepository.findByEmail(email).orElse(null);
@@ -85,6 +87,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 		return token;
 	}
 
+	/** User reset password. **/
 	@Override
 	@Transactional
 	public ResetPasswordToken resetPassword(String email, String resetToken, String newPassword) {

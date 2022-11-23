@@ -28,6 +28,8 @@ import com.uet.book_a_book.exception.book.NotEnoughQuantityException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.exception.order.CannotCancelOrderException;
 import com.uet.book_a_book.exception.order.CannotChangeOrderStatusException;
+import com.uet.book_a_book.exception.order.CannotDeleteShippingOrderException;
+import com.uet.book_a_book.exception.order.CannotDeleteSuccessOrderException;
 import com.uet.book_a_book.exception.order.NotFoundOrderException;
 import com.uet.book_a_book.exception.order.NotFoundOrderStatusException;
 import com.uet.book_a_book.mapper.OrderMapper;
@@ -50,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderdetailMapper orderdetailMapper;
 
+	/** User orders. **/
 	@Override
 	public Order addOrder(NewOrder newOrder) {
 		newOrder.getOrderdetails().stream().forEach(od -> {
@@ -83,6 +86,7 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+	/** Add order by admin. **/
 	@Override
 	public Order addOrderByAdmin(AdmOrder newOrder) {
 		newOrder.getOrderdetails().stream().forEach(od -> {
@@ -114,6 +118,7 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+	/** Get all orders of a user. **/
 	@Override
 	public Page<OrderDTO> getUserOrders(Integer page, Integer size) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -124,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
 	}
 
+	/** Get all order details of a order. **/
 	@Override
 	public Page<OrderdetailDTO> getOrderdetails(UUID orderId, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -133,6 +139,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(orderdetailDTOs, pageable, orderdetailDTOs.size());
 	}
 
+	/** User cancels order. **/
 	@Override
 	public void cancelOrder(UUID orderId) {
 		Order order = orderRepository.findById(orderId).orElse(null);
@@ -155,6 +162,7 @@ public class OrderServiceImpl implements OrderService {
 		orderRepository.delete(order);
 	}
 
+	/** Change order status. **/
 	@Override
 	public Order updateStatus(UUID orderId, String status) {
 		Order order = orderRepository.findById(orderId).orElse(null);
@@ -258,6 +266,7 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 	
+	/** Get order by user id. **/
 	@Override
 	public Page<OrderDTO> getOrdersByUserId(UUID userId, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -267,6 +276,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
 	}
 
+	/** Get all orders. **/
 	@Override
 	public Page<OrderDTO> getAllOrders(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -280,6 +290,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 	
+	/** Get order by email of user. **/
 	@Override
 	public Page<OrderDTO> getOrdersByEmail(String email, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -294,6 +305,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 
+	/** Get orders in price range. **/
 	@Override
 	public Page<OrderDTO> getOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -308,6 +320,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 
+	/** Get orders by date. **/
 	@Override
 	public Page<OrderDTO> getOrdersByDate(Date orderDate, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -322,6 +335,7 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 
+	/** Get order by id. **/
 	@Override
 	public OrderDTO getOrderById(UUID id) {
 		Order order = orderRepository.findById(id).orElse(null);
@@ -331,6 +345,19 @@ public class OrderServiceImpl implements OrderService {
 		return orderMapper.mapToOrderDTO(order);
 	}
 
-	
-
+	/** Delete a order. **/
+	@Override
+	public void deleteOrder(UUID id) {
+		Order order = orderRepository.findById(id).orElse(null);
+		if (order == null) {
+			throw new NotFoundOrderException("Not found order id: " + id);
+		}
+		if (order.getStatus().equals(OrderStatus.STATUS_SUCCESS)) {
+			throw new CannotDeleteSuccessOrderException("Cannot delete success order");
+		}
+		if (order.getStatus().equals(OrderStatus.STATUS_SHIPPING)) {
+			throw new CannotDeleteShippingOrderException("Cannot delete shipping order");
+		}
+		orderRepository.delete(order);
+	}
 }

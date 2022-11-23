@@ -22,7 +22,9 @@ import com.uet.book_a_book.dto.user.UserDTO;
 import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.entity.Order;
 import com.uet.book_a_book.entity.constant.Gender;
+import com.uet.book_a_book.entity.constant.OrderStatus;
 import com.uet.book_a_book.entity.constant.RoleName;
 import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
@@ -34,7 +36,9 @@ import com.uet.book_a_book.exception.account.IncorrectOldPasswordException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
 import com.uet.book_a_book.exception.account.NotFoundGenderException;
+import com.uet.book_a_book.exception.order.CannotDeleteShippingOrderException;
 import com.uet.book_a_book.mapper.UserMapper;
+import com.uet.book_a_book.repository.OrderRepository;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -43,12 +47,15 @@ public class UserServiceImpl implements UserSevice {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
+	private OrderRepository orderRepository;
+	@Autowired
 	private EmailSenderService emailSenderService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private UserMapper userMapper;
 	
+	/** Get user by id. **/
 	@Override
 	public UserDTO getUserById(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -58,6 +65,7 @@ public class UserServiceImpl implements UserSevice {
 		return userMapper.mapToUserDTO(user);
 	}
 
+	/** Get all users. **/
 	@Override
 	public Page<UserDTO> getAllUsers(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -70,6 +78,7 @@ public class UserServiceImpl implements UserSevice {
 		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
 	}
 
+	/** Get user by name or email. **/
 	@Override
 	public Page<UserDTO> getUsersByName(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -82,6 +91,7 @@ public class UserServiceImpl implements UserSevice {
 		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
 	}
 
+	/** Save user. **/
 	@Override
 	public AppUser save(AppUser user) {
 		return userRepository.save(user);
@@ -91,7 +101,9 @@ public class UserServiceImpl implements UserSevice {
 	public AppUser findByEmail(String email) {
 		return userRepository.findByEmail(email).orElse(null);
 	}
-
+	
+	
+	/** Account verification. **/
 	@Override
 	@Transactional
 	public void confirmEmailVerification(String email, String code) {
@@ -114,6 +126,7 @@ public class UserServiceImpl implements UserSevice {
 		user.setEmailVerificationCode(null);
 	}
 
+	/** Send activation email. **/
 	@Override
 	@Transactional
 	public void sendEmailVerification(String email) {
@@ -137,6 +150,7 @@ public class UserServiceImpl implements UserSevice {
 		}
 	}
 
+	/** User changes password. **/
 	@Override
 	public void changePassword(String oldPassword, String newPassword) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -158,12 +172,14 @@ public class UserServiceImpl implements UserSevice {
 		}
 	}
 
+	/** Get user information. **/
 	@Override
 	public UserInfo getUserInfo() {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return userMapper.mapToUserInfo(user);
 	}
 
+	/** User updates information **/
 	@Override
 	public UserInfo updateUser(UpdateUser updateUser) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -192,6 +208,7 @@ public class UserServiceImpl implements UserSevice {
 		return userInfo;
 	}
 
+	/** Lock user account **/
 	@Override
 	public void lockAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -209,6 +226,7 @@ public class UserServiceImpl implements UserSevice {
 		userRepository.save(user);
 	}
 
+	/** Unlock user account. */
 	@Override
 	public void unlockAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -226,6 +244,7 @@ public class UserServiceImpl implements UserSevice {
 		userRepository.save(user);
 	}
 
+	/** Activate account. **/
 	@Override
 	public void activeAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -240,6 +259,7 @@ public class UserServiceImpl implements UserSevice {
 		userRepository.save(user);
 	}
 
+	/** Delete user. **/
 	@Override
 	public void deleteUser(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -250,9 +270,24 @@ public class UserServiceImpl implements UserSevice {
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
 			throw new CannotDeleteAdminAccountException("Cannot delete admin account");
 		}
+		List<Order> orders = orderRepository.findOrdersByUserId(id);
+		orders.stream().forEach(o -> {
+			// If user has a shipping order, can't delete user.
+			if (o.getStatus().equals(OrderStatus.STATUS_SHIPPING)) {
+				throw new CannotDeleteShippingOrderException("Can't delete user while shipping");
+			}
+		});
+		orders.stream().forEach(o -> {
+			// Don't delete success order.
+			if (o.getStatus().equals(OrderStatus.STATUS_SUCCESS)) {
+				o.setUser(null);
+				orderRepository.save(o);
+			}
+		});
 		userRepository.delete(user);
 	}
 
+	/** Reset password. **/
 	@Override
 	public void updateUserPassword(UUID id, String newPassword) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -265,6 +300,7 @@ public class UserServiceImpl implements UserSevice {
 		if (appUser == null) {
 			throw new NotFoundAccountException("Not found user id: " + id);
 		}
+		// Cannot reset password of other admin account.
 		if (appUser.getAuthorities().stream()
 				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
 			throw new CannotResetPasswordException("Cannot reset password of admin account id: " + id);

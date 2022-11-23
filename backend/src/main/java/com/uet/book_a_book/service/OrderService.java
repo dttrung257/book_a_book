@@ -13,15 +13,28 @@ import com.uet.book_a_book.entity.Order;
 
 public interface OrderService {
 	Order addOrder(NewOrder newOrder);
+
 	Order addOrderByAdmin(AdmOrder newOrder);
+
 	Page<OrderDTO> getUserOrders(Integer page, Integer size);
+
 	Page<OrderdetailDTO> getOrderdetails(UUID orderId, Integer page, Integer size);
+
 	void cancelOrder(UUID orderId);
+
 	Order updateStatus(UUID orderId, String status);
+
 	Page<OrderDTO> getOrdersByUserId(UUID id, Integer page, Integer size);
+
 	OrderDTO getOrderById(UUID userId);
+
 	Page<OrderDTO> getAllOrders(Integer page, Integer size);
+
 	Page<OrderDTO> getOrdersByPrice(Double fromPrice, Double toPrice, Integer page, Integer size);
+
 	Page<OrderDTO> getOrdersByDate(Date orderDate, Integer page, Integer size);
+
 	Page<OrderDTO> getOrdersByEmail(String email, Integer page, Integer size);
+
+	void deleteOrder(UUID id);
 }
