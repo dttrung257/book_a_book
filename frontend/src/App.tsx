@@ -16,6 +16,8 @@ import AuthVerify from "./pages/VerifyEmail/AuthVerify";
 import DashBoardUser from "./pages/DashBoard/User/User";
 import DashBoardUserDetail from "./pages/DashBoard/User/UserDetail";
 import DashBoardBook from "./pages/DashBoard/Books/Book";
+import DashBoardOrder from "./pages/DashBoard/Orders/Order";
+import DashBoardOrderDetail from "./pages/DashBoard/Orders/OrderDetail";
 import Category from "./pages/Category/Category";
 import Product from "./pages/Product/Product";
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -75,7 +77,8 @@ const App = () => {
             <Route path="users" element={<DashBoardUser />} />
             <Route path="users/:id" element={<DashBoardUserDetail />} />
             <Route path="books" element={<DashBoardBook />} />
-            <Route path="orders" element={<div>Order</div>} />
+            <Route path="orders" element={<DashBoardOrder/>} />
+            <Route path="orders/:id" element={<DashBoardOrderDetail/>} />
           </Route>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
