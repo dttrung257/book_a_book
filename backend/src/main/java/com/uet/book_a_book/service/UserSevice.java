@@ -10,6 +10,10 @@ import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.entity.AppUser;
 
 public interface UserSevice {
+	// For users
+	UserInfo getUserInfo();
+	
+	// For admins
 	Page<UserDTO> getAllUsers(Integer page, Integer size);
 
 	Page<UserDTO> getUsersByName(String name, Integer page, Integer size);
@@ -20,12 +24,12 @@ public interface UserSevice {
 
 	AppUser findByEmail(String email);
 
+	// For users
 	void changePassword(String oldPassword, String newPassword);
-
-	UserInfo getUserInfo();
 
 	UserInfo updateUser(UpdateUser userInfo);
 
+	// For admins
 	void lockAccount(UUID id);
 
 	void unlockAccount(UUID id);
@@ -34,9 +38,11 @@ public interface UserSevice {
 
 	void updateUserPassword(UUID id, String newPassword);
 
+	// For users
 	void confirmEmailVerification(String email, String code);
 
 	void sendEmailVerification(String email);
 
+	// For admins
 	void deleteUser(UUID id);
 }

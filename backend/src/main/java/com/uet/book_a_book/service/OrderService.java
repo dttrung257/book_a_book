@@ -12,18 +12,12 @@ import com.uet.book_a_book.dto.order.OrderdetailDTO;
 import com.uet.book_a_book.entity.Order;
 
 public interface OrderService {
-	Order addOrder(NewOrder newOrder);
-
-	Order addOrderByAdmin(AdmOrder newOrder);
-
+	// For users
 	Page<OrderDTO> getUserOrders(Integer page, Integer size);
 
 	Page<OrderdetailDTO> getOrderdetails(UUID orderId, Integer page, Integer size);
-
-	void cancelOrder(UUID orderId);
-
-	Order updateStatus(UUID orderId, String status);
-
+	
+	// For admins
 	Page<OrderDTO> getOrdersByUserId(UUID id, Integer page, Integer size);
 
 	OrderDTO getOrderById(UUID userId);
@@ -35,6 +29,16 @@ public interface OrderService {
 	Page<OrderDTO> getOrdersByDate(Date orderDate, Integer page, Integer size);
 
 	Page<OrderDTO> getOrdersByEmail(String email, Integer page, Integer size);
+	
+	// For users
+	Order addOrder(NewOrder newOrder);
+
+	Order addOrderByAdmin(AdmOrder newOrder);
+
+	void cancelOrder(UUID orderId);
+	
+	// For admins
+	Order updateStatus(UUID orderId, String status);
 
 	void deleteOrder(UUID id);
 }

@@ -90,8 +90,14 @@ public class UserServiceImpl implements UserSevice {
 		}
 		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
 	}
+	
+	/** Get user information. **/
+	@Override
+	public UserInfo getUserInfo() {
+		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userMapper.mapToUserInfo(user);
+	}
 
-	/** Save user. **/
 	@Override
 	public AppUser save(AppUser user) {
 		return userRepository.save(user);
@@ -103,7 +109,7 @@ public class UserServiceImpl implements UserSevice {
 	}
 	
 	
-	/** Account verification. **/
+	/** Update account verification. **/
 	@Override
 	@Transactional
 	public void confirmEmailVerification(String email, String code) {
@@ -150,7 +156,7 @@ public class UserServiceImpl implements UserSevice {
 		}
 	}
 
-	/** User changes password. **/
+	/** Update user password. **/
 	@Override
 	public void changePassword(String oldPassword, String newPassword) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -172,14 +178,7 @@ public class UserServiceImpl implements UserSevice {
 		}
 	}
 
-	/** Get user information. **/
-	@Override
-	public UserInfo getUserInfo() {
-		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return userMapper.mapToUserInfo(user);
-	}
-
-	/** User updates information **/
+	/** Update user information **/
 	@Override
 	public UserInfo updateUser(UpdateUser updateUser) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -258,6 +257,28 @@ public class UserServiceImpl implements UserSevice {
 		user.setEmailVerificationCode(null);
 		userRepository.save(user);
 	}
+	
+	/** Reset password. **/
+	@Override
+	public void updateUserPassword(UUID id, String newPassword) {
+		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.getId().equals(id)) {
+			user.setPassword(passwordEncoder.encode(newPassword));
+			userRepository.save(user);
+			return;
+		}
+		AppUser appUser = userRepository.findById(id).orElse(null);
+		if (appUser == null) {
+			throw new NotFoundAccountException("Not found user id: " + id);
+		}
+		// Cannot reset password of other admin account.
+		if (appUser.getAuthorities().stream()
+				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
+			throw new CannotResetPasswordException("Cannot reset password of admin account id: " + id);
+		}
+		appUser.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(appUser);
+	}
 
 	/** Delete user. **/
 	@Override
@@ -285,28 +306,6 @@ public class UserServiceImpl implements UserSevice {
 			}
 		});
 		userRepository.delete(user);
-	}
-
-	/** Reset password. **/
-	@Override
-	public void updateUserPassword(UUID id, String newPassword) {
-		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.getId().equals(id)) {
-			user.setPassword(passwordEncoder.encode(newPassword));
-			userRepository.save(user);
-			return;
-		}
-		AppUser appUser = userRepository.findById(id).orElse(null);
-		if (appUser == null) {
-			throw new NotFoundAccountException("Not found user id: " + id);
-		}
-		// Cannot reset password of other admin account.
-		if (appUser.getAuthorities().stream()
-				.anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN))) {
-			throw new CannotResetPasswordException("Cannot reset password of admin account id: " + id);
-		}
-		appUser.setPassword(passwordEncoder.encode(newPassword));
-		userRepository.save(appUser);
 	}
 
 }

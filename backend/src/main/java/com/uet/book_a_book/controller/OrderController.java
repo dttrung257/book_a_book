@@ -59,7 +59,7 @@ public class OrderController {
 	}
 
 	@DeleteMapping("/orders/{id}")
-	public ResponseEntity<Object> cancelOrder(@IdConstraint String id) {
+	public ResponseEntity<Object> cancelOrder(@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		orderService.cancelOrder(UUID.fromString(id));
 		return ResponseEntity.ok("Cancel order successfully");
 	}

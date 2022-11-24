@@ -22,7 +22,8 @@ public interface BookService {
 
 	Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size);
-
+	
+	// For admins
 	Book addBook(NewBook newBook);
 
 	Book updateBook(NewBook updateBook, Long id);

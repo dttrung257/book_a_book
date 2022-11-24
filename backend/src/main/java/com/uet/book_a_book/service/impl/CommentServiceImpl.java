@@ -36,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private CommentMapper commentMapper;
 	
-	/** Get all comments of a book. **/
+	/** Get all comments of a book. (When user not login) **/
 	@Override
 	public Page<CommentDTO> getAllComments(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
 		return new PageImpl<>(comments, pageable, comments.size());
 	}
 	
-	/** Get user comment from a book. **/
+	/** Get user comment from a book. (Get user comments when logged in) **/
 	@Override
 	public CommentDTO getUserComment(Long bookId) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -70,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
 		return comments.get(0);
 	}
 	
-	/** Get all other users' comments from a book. **/
+	/** Get all other users' comments from a book. (Get comments from other users when logged in) **/
 	@Override
 	public Page<CommentDTO> getOtherComments(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
@@ -88,8 +88,32 @@ public class CommentServiceImpl implements CommentService {
 		}
 		return new PageImpl<>(comments, pageable, comments.size());
 	}
+	
+	/** Get all comments. **/
+	@Override
+	public Page<CommentDTO> getAllComments(Integer page, Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<CommentDTO> comments = commentRepository.findAll()
+				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
+		if (start <= comments.size()) {
+			return new PageImpl<>(comments.subList(start, end), pageable, comments.size());
+		}
+		return new PageImpl<>(comments, pageable, comments.size());
+	}
 
-	/** User comment. **/
+	/** Get comment by id. **/
+	@Override
+	public CommentDTO getCommentById(UUID id) {
+		Comment comment = commentRepository.findById(id).orElse(null);
+		if (comment == null) {
+			throw new NotFoundCommentException("Not found comment id: " + id);
+		}
+		return commentMapper.mapToCommentDTO(comment);
+	}
+
+	/** Users add new comments. **/
 	@Override
 	public CommentDTO addComment(NewComment newComment) {
 		Book book = bookRepository.findById(newComment.getBookId()).orElse(null);
@@ -191,30 +215,6 @@ public class CommentServiceImpl implements CommentService {
 		}
 		bookRepository.save(book);
 		
-	}
-
-	/** Get all comments. **/
-	@Override
-	public Page<CommentDTO> getAllComments(Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		List<CommentDTO> comments = commentRepository.findAll()
-				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
-		Integer start = (int) pageable.getOffset();
-		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
-		if (start <= comments.size()) {
-			return new PageImpl<>(comments.subList(start, end), pageable, comments.size());
-		}
-		return new PageImpl<>(comments, pageable, comments.size());
-	}
-
-	/** Get comment by id. **/
-	@Override
-	public CommentDTO getCommentById(UUID id) {
-		Comment comment = commentRepository.findById(id).orElse(null);
-		if (comment == null) {
-			throw new NotFoundCommentException("Not found comment id: " + id);
-		}
-		return commentMapper.mapToCommentDTO(comment);
 	}
 	
 }
