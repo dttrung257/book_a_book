@@ -100,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o))
-				.filter(o -> (o.getEmail().contains(email))).collect(Collectors.toList());
+				.filter(o -> (o.getEmail() != null && o.getEmail().contains(email))).collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
 		if (start <= orderDTOs.size()) {
