@@ -12,7 +12,6 @@
   "semi": true,
   "quoteProps": "as-needed",
   "rangeStart": 0,
-  "rangeEnd": 100,
   "requirePragma": false,
   "insertPragma": false,
   "proseWrap": "preserve",
