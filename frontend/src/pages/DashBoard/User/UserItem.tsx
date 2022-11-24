@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SlSettings } from "react-icons/sl";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import style from "./User.module.css";
 import { UserDetailInfo } from "../../../models";
 import { Link } from "react-router-dom";

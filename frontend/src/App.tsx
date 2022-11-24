@@ -13,11 +13,12 @@ import ForgetPasswordLayout from "./pages/ForgetPassword/Layout";
 import Forget from "./pages/ForgetPassword/Forget";
 import Reset from "./pages/ForgetPassword/Reset";
 import AuthVerify from "./pages/VerifyEmail/AuthVerify";
-import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 import DashBoardUser from "./pages/DashBoard/User/User";
 import DashBoardUserDetail from "./pages/DashBoard/User/UserDetail";
 import DashBoardBook from "./pages/DashBoard/Books/Book";
 import Category from "./pages/Category/Category";
+import Product from "./pages/Product/Product";
+import { createTheme, ThemeProvider } from "@mui/material";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const SignUp = React.lazy(() => import("./pages/Signup/SignUp"));
@@ -34,7 +35,7 @@ const theme = createTheme({
       main: "#008B8B",
     },
     secondary: {
-      main: "#3F3E3E",
+      main: "#666666",
     },
   },
 });
@@ -66,6 +67,7 @@ const App = () => {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="test" element={<Test />} />
+            <Route path="product/:id/:title" element={<Product />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
           <Route path="dashboard" element={<DashBoardLayout />}>

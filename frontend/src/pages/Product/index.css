@@ -1,0 +1,118 @@
+#productPage {
+  background-color: #efefef;
+}
+#productPage #books {
+  background: #fff;
+  /* box-shadow: -4px 0px 20px rgba(0, 0, 0, 0.25),
+    4px 0px 20px rgba(0, 0, 0, 0.25); */
+    box-shadow: 0.1rem 0.1rem 0.2rem rgb(0 0 0 / 10%);
+  padding: 20px;
+  padding-bottom: 0;
+  margin-bottom: 10px;
+}
+#bookDetail {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 460px;
+  background-color: #fff;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgb(0 0 0 / 10%);
+  /* box-shadow: -4px 0px 20px rgba(0, 0, 0, 0.25),
+    4px 0px 20px rgba(0, 0, 0, 0.25); */
+}
+
+#bookDetail #frame {
+  width: 40%;
+  height: 90%;
+  background: #ffffff;
+  box-shadow: 4px 0px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+#bookDetail #frame img {
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#bookDetail #detail {
+  width: 50%;
+  background-color: #ffffff;
+  box-shadow: 4px 0px 20px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  height: 90%;
+  padding: 10px 40px;
+  position: relative;
+}
+#bookDetail p {
+  margin: 0;
+}
+#bookDetail #caption {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 17px;
+  color: #666;
+}
+#bookDetail #detail #price {
+  font-size: 25px;
+  color: #008b8b;
+  font-weight: 600;
+}
+#detail #bookName {
+  font-size: 22px;
+  font-weight: 700;
+}
+#detail #vat {
+  font-weight: 400;
+  font-style: italic;
+  color: rgb(182, 181, 181);
+}
+#detail #description {
+  font-weight: 600;
+  color: #666;
+  font-size: 18px;
+}
+#detail .selectAmount {
+  padding: 0 9px;
+  line-height: 18px;
+  cursor: pointer;
+  /* padding-bottom: px; */
+}
+#detail #quantity {
+    position: absolute;
+    bottom: 30px;
+    left: 40px;
+}
+#detail #quantity p {
+    margin: 10px 0;
+}
+#detail #quantity div {
+  border: 1px solid #999;
+  border-radius: 3px;
+  width: fit-content;
+  
+}
+#detail div input {
+  border: none;
+  border-left: 1px solid #999;
+  border-right: 1px solid #999;
+  width: 60px;
+  padding: 5px;
+  padding-top: 2px;
+  text-align: center;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

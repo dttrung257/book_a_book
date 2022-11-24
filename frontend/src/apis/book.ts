@@ -2,7 +2,7 @@ import { FilterSearch } from "../models/Filter";
 import axiosInstance from "./axiosInstance";
 
 export const getBookViaId = async (id: number) => {
-  const response = await axiosInstance.get(`book/fetch_by_id/${id}`);
+  const response = await axiosInstance.get(`books/${id}`);
   return response.data;
 };
 
@@ -36,7 +36,8 @@ export const getBooksOfCategory = async (filter: FilterSearch) => {
   if (filter.size !== undefined) {
     query = query.concat(`&size=${filter.size}`);
   }
-  if (filter.page !== undefined) query = `&page=${filter.page}`;
+  if (filter.page !== undefined) query = query.concat(`&page=${filter.page}`);
+  // console.log(query)
   const response = await axiosInstance.get(`books/category${query}`);
   return response.data;
 };

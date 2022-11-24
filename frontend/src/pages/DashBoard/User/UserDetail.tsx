@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Button, Avatar } from "@material-ui/core";
+import { Button, Avatar } from "@mui/material";
 import { Table } from "react-bootstrap";
 import style from "./User.module.css";
 import { UserDetailInfo } from "../../../models";

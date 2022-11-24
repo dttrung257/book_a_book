@@ -77,7 +77,7 @@ const Home = () => {
   if (!isLoggedIn) return <Navigate to="/login" />;
 
   return (
-    <div>
+    <div id="homePage">
       <Slide />
       <div id="content">
         <Span

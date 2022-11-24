@@ -4,7 +4,7 @@ import { HiUserGroup } from "react-icons/hi";
 import { MdLibraryBooks } from "react-icons/md";
 import { RiFileList3Fill } from "react-icons/ri";
 import style from "./DashBoardLayout.module.css";
-import { Avatar } from "@material-ui/core";
+import { Avatar } from "@mui/material";
 import { useAppSelector } from "../../store/hook";
 import { NavLink } from "react-router-dom";
 

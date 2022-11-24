@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import { Table, Form } from "react-bootstrap";
 import { BsSearch } from "react-icons/bs";
 import validator from "validator";

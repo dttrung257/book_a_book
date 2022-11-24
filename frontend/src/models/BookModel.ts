@@ -32,7 +32,7 @@ export interface Book {
   name: string;
   image: string;
   category: Category;
-  author: String;
+  author: string;
   width?: number;
   height?: number;
   isbn?: string;
