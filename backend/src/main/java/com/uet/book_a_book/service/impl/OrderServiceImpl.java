@@ -233,7 +233,6 @@ public class OrderServiceImpl implements OrderService {
 			}
 			book.setAvailableQuantity(book.getAvailableQuantity() + od.getQuantityOrdered());
 			bookRepository.save(book);
-			orderdetailRepository.delete(od);
 		});
 		orderRepository.delete(order);
 	}
@@ -394,6 +393,17 @@ public class OrderServiceImpl implements OrderService {
 		}
 		if (order.getStatus().equals(OrderStatus.STATUS_SHIPPING)) {
 			throw new CannotDeleteShippingOrderException("Cannot delete shipping order");
+		}
+		if (order.getStatus().equals(OrderStatus.STATUS_PENDING)) {
+			List<Orderdetail> orderdetails = orderdetailRepository.findByOrderId(order.getId());
+			orderdetails.forEach(od -> {
+				Book book = orderdetailRepository.findBookByOrderdetailId(od.getId()).orElse(null);
+				if (book == null) {
+					throw new NotFoundBookException("Not found book with orderdetail id: " + od.getId());
+				}
+				book.setAvailableQuantity(book.getAvailableQuantity() + od.getQuantityOrdered());
+				bookRepository.save(book);
+			});
 		}
 		orderRepository.delete(order);
 	}
