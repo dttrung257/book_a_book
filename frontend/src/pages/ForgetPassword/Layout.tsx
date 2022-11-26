@@ -59,7 +59,7 @@ const Layout = () => {
   if (isLoggedIn) return <Navigate to="/" />;
 
   const sendForgetPassword = async () => {
-    return await axios.get(`/user/forgot_password/${email}`);
+    return await axios.get(`/users/forgot_password/${email}`);
   };
 
   return (

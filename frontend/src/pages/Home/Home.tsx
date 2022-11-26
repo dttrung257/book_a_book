@@ -63,12 +63,21 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
+
+      // Promise.all([getBestSeller({ size: 10 }), getBooksOfCategory({ category: "lifestyle", size: 10 }), getBooksOfCategory({ category: "detective", size: 10 }), getBooksOfCategory({ category: "comic", size: 10 })]).then(([bestRes, lifeRes, detectRes, comicRes])=>{
+      //   setBestSeller(bestRes.content as BookInfoBrief[]);
+      //   seteducation(lifeRes.content as BookInfoBrief[]);
+      //   setdetective(detectRes.content as BookInfoBrief[]);
+      //   setcomic(comicRes.content as BookInfoBrief[]);
+      // }).catch(error => {
+      //   console.log(error);
+      // })
   }, []);
 
   if (!isLoggedIn) return <Navigate to="/login" />;
 
   return (
-    <div>
+    <div id="homePage">
       <Slide />
       <div id="content">
         <Span
@@ -78,12 +87,13 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        <div id="books">
+        {bestSeller.length>0&&<div id="books">
           <BookCarousel books={bestSeller} />
-        </div>
+        </div>}
         <img
           className="fit"
           src="https://live.staticflickr.com/65535/52501278981_cf9503fea1_h.jpg"
+          alt="img"
         />
         <Span
           icon={<MdCollectionsBookmark color="fff" fontSize={24} />}
@@ -94,6 +104,7 @@ const Home = () => {
         <img
           className="fit"
           src="https://live.staticflickr.com/65535/52501447434_26eeab198f_h.jpg"
+          alt="img"
         />
         <Span
           icon={<FaBook color="fff" fontSize={24} />}
@@ -102,12 +113,13 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        <div id="books">
+        {comic.length>0&&<div id="books">
           <BookCarousel books={comic} />
-        </div>
+        </div>}
         <img
           className="fit"
           src="https://live.staticflickr.com/65535/52501174531_5d0dc68331_h.jpg"
+          alt="img"
         />
         <Span
           icon={<FaBook color="fff" fontSize={24} />}
@@ -116,9 +128,9 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        <div id="books">
+        {education.length>0&&<div id="books">
           <BookCarousel books={education} />
-        </div>
+        </div>}
         <Span
           icon={<GiBookCover color="fff" fontSize={24} />}
           text="Book of the week"
@@ -126,7 +138,7 @@ const Home = () => {
         />
         <div id="bookOfWeekCont">
           <p>
-            <img src="https://live.staticflickr.com/65535/52447753485_f125a528bd_n.jpg" />
+            <img src="https://live.staticflickr.com/65535/52447753485_f125a528bd_n.jpg" alt="img" />
             <span> Le Chuchoteur - Donato Carrisi</span>
             <br />
             Five little girls have disappeared.
@@ -151,9 +163,9 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        <div id="books">
+        {detective.length>0&&<div id="books">
           <BookCarousel books={detective} />
-        </div>
+        </div>}
 
         <Privacy />
       </div>

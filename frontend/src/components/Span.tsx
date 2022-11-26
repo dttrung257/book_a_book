@@ -19,17 +19,18 @@ const Span = (span: SpanProps) => {
               y="10"
               rx="5"
               ry="5"
-              width={span.rectRightWidth - span.rectLeftWidth - 20}
+              width={span.rectRightWidth}
               height="35"
               style={{ fill: "#fff", stroke: "#E0DFE0", strokeWidth: 0.5 }}
             />
             <text
-              x={span.rectRightWidth - 90}
+              x={span.rectRightWidth + span.rectLeftWidth - 30}
               y="35"
               fill="#008b8b"
               fontSize={17}
               fontFamily="system-ui"
               fontWeight={700}
+              textAnchor="end"
             >
               {span.rectText}
             </text>

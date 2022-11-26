@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
@@ -13,19 +13,23 @@ import ForgetPasswordLayout from "./pages/ForgetPassword/Layout";
 import Forget from "./pages/ForgetPassword/Forget";
 import Reset from "./pages/ForgetPassword/Reset";
 import AuthVerify from "./pages/VerifyEmail/AuthVerify";
-import { createTheme, ThemeProvider } from "@material-ui/core/styles";
-// import DashBoardUser from "./pages/DashBoard/User/User";
-// import DashBoardBook from "./pages/DashBoard/Books/Book";
+import DashBoardUser from "./pages/DashBoard/User/User";
+import DashBoardUserDetail from "./pages/DashBoard/User/UserDetail";
+import DashBoardBook from "./pages/DashBoard/Books/Book";
+import DashBoardOrder from "./pages/DashBoard/Orders/Order";
+import DashBoardOrderDetail from "./pages/DashBoard/Orders/OrderDetail";
 import Category from "./pages/Category/Category";
+import Product from "./pages/Product/Product";
+import { createTheme, ThemeProvider } from "@mui/material";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
 const SignUp = React.lazy(() => import("./pages/Signup/SignUp"));
 const Home = React.lazy(() => import("./pages/Home/Home"));
 const Layout = React.lazy(() => import("./components/Layout"));
 const Loading = React.lazy(() => import("./pages/Loading"));
-// const DashBoardLayout = React.lazy(
-//   () => import("./pages/DashBoard/DashBoardLayout")
-// );
+const DashBoardLayout = React.lazy(
+  () => import("./pages/DashBoard/DashBoardLayout")
+);
 
 const theme = createTheme({
   palette: {
@@ -33,7 +37,7 @@ const theme = createTheme({
       main: "#008B8B",
     },
     secondary: {
-      main: "#3F3E3E",
+      main: "#666666",
     },
   },
 });
@@ -65,12 +69,17 @@ const App = () => {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="test" element={<Test />} />
+            <Route path="product/:id/:title" element={<Product />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
-          {/* <Route path="dashboard" element={<DashBoardLayout />}>
-            <Route index element={<DashBoardUser />} />
+          <Route path="dashboard" element={<DashBoardLayout />}>
+            <Route index element={<Navigate to={"users"} />} />
+            <Route path="users" element={<DashBoardUser />} />
+            <Route path="users/:id" element={<DashBoardUserDetail />} />
             <Route path="books" element={<DashBoardBook />} />
-          </Route> */}
+            <Route path="orders" element={<DashBoardOrder/>} />
+            <Route path="orders/:id" element={<DashBoardOrderDetail/>} />
+          </Route>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
           <Route path="verify-email" element={<AuthVerify />} />

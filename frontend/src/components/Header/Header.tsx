@@ -2,7 +2,7 @@ import { ChangeEvent, Fragment, useState } from "react";
 import { FiSearch, FiUser, FiShoppingCart } from "react-icons/fi";
 import { VscTriangleDown } from "react-icons/vsc";
 import "./index.css";
-import { Avatar, Badge } from "@material-ui/core";
+import { Avatar, Badge } from "@mui/material";
 import { useAppSelector } from "../../store/hook";
 import { Link } from "react-router-dom";
 
@@ -52,7 +52,7 @@ const Header = () => {
         </div>
       </div>
       <div className="search">
-        <input id="searchBar" placeholder="Search book..." />
+        <input id="searchBar" placeholder="Search book..." onChange={onChangeSearchBox}/>
         <FiSearch
           color="008B8B"
           onClick={handleSearch}

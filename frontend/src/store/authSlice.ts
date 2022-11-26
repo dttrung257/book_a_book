@@ -27,8 +27,8 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.user = action.payload.user;
 
-      Cookies.set("user", JSON.stringify(state.user));
-      Cookies.set("token", state.accessToken);
+      Cookies.set("user", JSON.stringify(state.user), { expires: 1 });
+      Cookies.set("token", state.accessToken, { expires: 1 });
     },
     logout(state) {
       state.isLoggedIn = false;
@@ -45,8 +45,8 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.user = action.payload.user;
 
-      Cookies.set("user", JSON.stringify(state.user));
-      Cookies.set("token", state.accessToken);
+      Cookies.set("user", JSON.stringify(state.user), { expires: 1 });
+      Cookies.set("token", state.accessToken, { expires: 1 });
     });
     builder.addCase(login.rejected, (state, action) => {
       throw action.payload;

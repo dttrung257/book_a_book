@@ -25,7 +25,8 @@
   height: 55px;
   font-weight: 500;
   justify-content: space-between;
-  width: 99%;
+  width: 100%;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgb(0 0 0 / 10%);
 }
 
 .search {
@@ -35,6 +36,7 @@
 
 .account {
   font-size: 15px;
+  margin-right: 20px;
 }
 
 .logo {

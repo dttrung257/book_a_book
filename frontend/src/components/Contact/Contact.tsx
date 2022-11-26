@@ -1,4 +1,4 @@
-import { Tooltip, Zoom } from "@material-ui/core";
+import { Tooltip, Zoom } from "@mui/material";
 import { useState } from "react";
 import { BsMessenger } from "react-icons/bs";
 import { HiChevronDoubleUp, HiLocationMarker, HiMail } from "react-icons/hi";
