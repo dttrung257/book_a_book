@@ -139,6 +139,31 @@ public class OrderServiceImpl implements OrderService {
 		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
 	}
 
+	/** Get orders by multiple filters. **/
+	@Override
+	public Page<OrderDTO> getOrdersByFilter(String name, Double fromPrice, Double toPrice, Date orderDate, Integer page,
+			Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<Order> orders = orderRepository.findAll();
+		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
+		if (!name.trim().equals("") && name != null) {
+			orderDTOs = orderDTOs.stream()
+					.filter(oDTO -> ((oDTO.getFullName() != null && oDTO.getFullName().toLowerCase().contains(name.toLowerCase()))
+							|| (oDTO.getEmail() != null && oDTO.getEmail().toLowerCase().contains(name.toLowerCase()))))
+					.collect(Collectors.toList());
+		} 
+		if (orderDate != null) {
+			orderDTOs = orderDTOs.stream().filter(oDTO -> (DateUtils.isSameDay(oDTO.getOrderDate(), orderDate))).collect(Collectors.toList());
+		}
+		orderDTOs = orderDTOs.stream().filter(oDTO -> (oDTO.getTotal() >= fromPrice && oDTO.getTotal() <= toPrice)).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
+		if (start <= orderDTOs.size()) {
+			return new PageImpl<>(orderDTOs.subList(start, end), pageable, orderDTOs.size());
+		}
+		return new PageImpl<>(new ArrayList<>(), pageable, orderDTOs.size());
+	}
+
 	/** Get order by id. **/
 	@Override
 	public OrderDTO getOrderById(UUID id) {
@@ -273,7 +298,8 @@ public class OrderServiceImpl implements OrderService {
 				bookRepository.save(book);
 			});
 		}
-		// CANCELED to SUCCESS => quantity in stock decreased, available quantity decreased.
+		// CANCELED to SUCCESS => quantity in stock decreased, available quantity
+		// decreased.
 		// decreases
 		if (order.getStatus().equals(OrderStatus.STATUS_CANCELED)
 				&& status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS)) {
@@ -332,7 +358,8 @@ public class OrderServiceImpl implements OrderService {
 				bookRepository.save(book);
 			});
 		}
-		// SUCCESS TO PENDING, SHIPPING => Quantity in stock increased, QuantitySold decreased.
+		// SUCCESS TO PENDING, SHIPPING => Quantity in stock increased, QuantitySold
+		// decreased.
 		if (order.getStatus().equals(OrderStatus.STATUS_SUCCESS) && (status.equalsIgnoreCase(OrderStatus.STATUS_PENDING)
 				|| status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING))) {
 			order.setStatus(status.toUpperCase());
@@ -350,7 +377,8 @@ public class OrderServiceImpl implements OrderService {
 				bookRepository.save(book);
 			});
 		}
-		// SUCCESS TO CANCELED => Quantity in stock increased, Available quantity increased, Quantity sold decreased.
+		// SUCCESS TO CANCELED => Quantity in stock increased, Available quantity
+		// increased, Quantity sold decreased.
 		if (order.getStatus().equals(OrderStatus.STATUS_SUCCESS)
 				&& (status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED))) {
 			order.setStatus(status.toUpperCase());

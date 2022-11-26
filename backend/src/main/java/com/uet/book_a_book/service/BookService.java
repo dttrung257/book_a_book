@@ -1,5 +1,8 @@
 package com.uet.book_a_book.service;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 
 import com.uet.book_a_book.dto.book.NewBook;
@@ -22,6 +25,8 @@ public interface BookService {
 
 	Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size);
+	
+	List<Book> getBooksInCart(Set<Long> ids);
 	
 	// For admins
 	Book addBook(NewBook newBook);

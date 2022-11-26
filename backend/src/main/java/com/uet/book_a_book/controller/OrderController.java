@@ -2,6 +2,7 @@ package com.uet.book_a_book.controller;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -123,12 +124,25 @@ public class OrderController {
 	
 	@GetMapping("/manage/orders/date")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> fetchOrdersByDate(
+	public ResponseEntity<Object> getOrdersByDate(
 			@RequestParam("date") @DateTimeFormat(pattern="dd-MM-yyyy") Date orderDate,
 			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) 
 					throws NumberFormatException, ParseException {
-		return ResponseEntity.ok(orderService.getOrdersByDate((orderDate), page, size));
+		return ResponseEntity.ok(orderService.getOrdersByDate(orderDate, page, size));
+	}
+	
+	@GetMapping("/manage/orders/filter")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	public ResponseEntity<Object> getOrdersByFilter(
+			@RequestParam(name = "name", required = false, defaultValue = "") String name,
+			@RequestParam(name = "from", required = false, defaultValue = "0") @DecimalMin(value = "0.0") Double fromPrice,
+			@RequestParam(name = "to", required = false, defaultValue = "100000000000") @DecimalMin(value = "0.1") Double toPrice,
+			@RequestParam(name = "date") @DateTimeFormat(pattern="dd-MM-yyyy") Optional<Date> orderDate,
+			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) 
+					throws NumberFormatException, ParseException {
+		return ResponseEntity.ok(orderService.getOrdersByFilter(name, fromPrice, toPrice, orderDate.orElse(null), page, size));
 	}
 	
 	@DeleteMapping("manage/orders/{id}")

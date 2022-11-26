@@ -1,5 +1,9 @@
 package com.uet.book_a_book.controller;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
@@ -93,6 +97,12 @@ public class BookController {
 			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(bookService.getBooksByFilter(name, category, fromPrice, toPrice, rating, page, size));
+	}
+	
+	@GetMapping("/books/cart")
+	ResponseEntity<Object> getBooksInCart(@RequestParam(name = "ids", required = true) Long... ids) {
+		Set<Long> idList = new HashSet<>(Arrays.asList(ids));
+		return ResponseEntity.ok(bookService.getBooksInCart(idList));
 	}
 	
 	@PostMapping("/manage/books")

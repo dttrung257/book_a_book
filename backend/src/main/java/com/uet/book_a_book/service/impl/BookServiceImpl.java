@@ -2,6 +2,7 @@ package com.uet.book_a_book.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,11 +94,10 @@ public class BookServiceImpl implements BookService {
 	public Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size) {
 		List<Book> books = bookRepository.findAll();
-		System.out.println(books.size());
-		if (!(name.equals("") || name == null)) {
+		if (!(name.trim().equals("") || name == null)) {
 			books = books.stream().filter(book -> book.getName().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
 		}
-		if (!(category.equals("") || category == null)) {
+		if (!(category.trim().equals("") || category == null)) {
 			books = books.stream().filter(book -> book.getCategory().equalsIgnoreCase(category)).collect(Collectors.toList());
 		}
 		if (rating != 0) {
@@ -111,6 +111,13 @@ public class BookServiceImpl implements BookService {
 			return new PageImpl<>(books.subList(start, end), pageable, books.size());
 		}
 		return new PageImpl<>(new ArrayList<>(), pageable, books.size());
+	}
+	
+	/** Get books in cart. **/
+	@Override
+	public List<Book> getBooksInCart(Set<Long> ids) {
+		List<Book> books = bookRepository.findAll();
+		return books.stream().filter(b -> ids.contains(b.getId())).collect(Collectors.toList());
 	}
 	
 	/** Add a new book. **/
