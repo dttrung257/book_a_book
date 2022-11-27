@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +35,7 @@ import com.uet.book_a_book.dto.user.UpdateUserStatus;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.ResetPasswordToken;
 import com.uet.book_a_book.entity.Role;
+import com.uet.book_a_book.entity.constant.Const;
 import com.uet.book_a_book.entity.constant.Gender;
 import com.uet.book_a_book.entity.constant.ResetPasswordUtil;
 import com.uet.book_a_book.entity.constant.RoleName;
@@ -48,9 +50,12 @@ import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
 import com.uet.book_a_book.validator.IdConstraint;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api")
 @Validated
+@Slf4j
 public class UserController {
 	@Autowired
 	private UserSevice userSevice;
@@ -99,6 +104,7 @@ public class UserController {
 		token.setResetToken(resetPasswordUtil.generateResetToken());
 		token.setVerificationCode(resetPasswordUtil.generateVerificationCode());
 		resetPasswordTokenService.save(token);
+		log.info("User with email: {} reset password successfully.", resetPassword.getEmail());
 		return ResponseEntity.ok("Reset password successfully");
 	}
 
@@ -140,16 +146,18 @@ public class UserController {
 		Role roleUser = roleService.findByRoleName(RoleName.ROLE_USER);
 		user.setRole(roleUser);
 		user.setEmailVerified(true);
-
 		userSevice.save(user);
+		log.info("Admin id: {} create account id: {}.",
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				user.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.mapToUserDTO(user));
 	}
 
 	@GetMapping("manage/users")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getAllUsers(
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(userSevice.getAllUsers(page, size));
 	}
 	
@@ -164,8 +172,8 @@ public class UserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getUsersByName(
 			@RequestParam(name = "name", required = true) @NotBlank(message = "Name field cannot be blank") String name,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(userSevice.getUsersByName(name, page, size));
 	}
 
@@ -208,6 +216,9 @@ public class UserController {
 	ResponseEntity<Object> deleteUser(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		userSevice.deleteUser(UUID.fromString(id));
+		log.info("Admin id: {} deleted user id: {}.",
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				id);
 		return ResponseEntity.ok("Delete user id: " + id + " successfully");
 	}
 }

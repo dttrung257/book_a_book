@@ -5,11 +5,10 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
-import com.uet.book_a_book.dto.order.NewOrder;
 import com.uet.book_a_book.dto.order.AdmOrder;
+import com.uet.book_a_book.dto.order.NewOrder;
 import com.uet.book_a_book.dto.order.OrderDTO;
 import com.uet.book_a_book.dto.order.OrderdetailDTO;
-import com.uet.book_a_book.entity.Order;
 
 public interface OrderService {
 	// For users
@@ -33,14 +32,14 @@ public interface OrderService {
 	Page<OrderDTO> getOrdersByFilter(String name, Double fromPrice, Double toPrice, Date orderDate, Integer page, Integer size);
 	
 	// For users
-	Order addOrder(NewOrder newOrder);
+	OrderDTO addOrder(NewOrder newOrder);
 
-	Order addOrderByAdmin(AdmOrder newOrder);
+	OrderDTO addOrderByAdmin(AdmOrder newOrder);
 
 	void cancelOrder(UUID orderId);
 	
 	// For admins
-	Order updateStatus(UUID orderId, String status);
+	OrderDTO updateStatus(UUID orderId, String status);
 
 	void deleteOrder(UUID id);
 }

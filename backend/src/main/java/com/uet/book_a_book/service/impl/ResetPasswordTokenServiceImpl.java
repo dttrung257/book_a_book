@@ -17,7 +17,10 @@ import com.uet.book_a_book.repository.ResetPasswordTokenRepository;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.ResetPasswordTokenService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService {
 	@Autowired
 	private ResetPasswordTokenRepository resetPasswordTokenRepository;
@@ -60,6 +63,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 			String emailBody = emailSenderService.buildEmailForgotPassword(user.getFirstName() + " " + user.getLastName(),
 					token.getVerificationCode());
 			emailSenderService.sendEmail(email, emailBody);
+			
 		} else {
 			resetPasswordToken.setResetToken(resetPasswordUtil.generateResetToken());
 			resetPasswordToken.setVerificationCode(resetPasswordUtil.generateVerificationCode());
@@ -68,6 +72,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 					resetPasswordToken.getVerificationCode());
 			emailSenderService.sendEmail(email, emailBody);
 		}
+		log.info("User with email: {} send email forgot password.", email);
 	}
 
 	/** Get reset password token. **/
@@ -84,6 +89,7 @@ public class ResetPasswordTokenServiceImpl implements ResetPasswordTokenService 
 			throw new AccountNotActivatedException(String.format("Account with email: %s not activated", email));
 		}
 		ResetPasswordToken token = resetPasswordTokenRepository.findByEmail(email).orElse(null);
+		log.info("User with email: {} get reset password token.", email);
 		return token;
 	}
 

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.uet.book_a_book.entity.constant.Const;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class OrderDTO {
 	private UUID userId;
 	private String fullName;
 	private String email;
-	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss", timezone = "GMT+7")
+	@JsonFormat(pattern = Const.DEFAULT_DATETIME_FORMAT, timezone = Const.DEFAULT_TIMEZONE)
 	private Date orderDate;
 	private String address;
 	private Long quantity;

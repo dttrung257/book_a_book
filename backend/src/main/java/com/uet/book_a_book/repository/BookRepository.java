@@ -26,7 +26,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query("SELECT b FROM Book b WHERE b.sellingPrice BETWEEN :fromPrice AND :toPrice")
 	Page<Book> findByPrice(@Param("fromPrice") Double fromPrice, @Param("toPrice") Double toPrice, Pageable pageable);
 	
-	@Query("SELECT b FROM Book b WHERE FLOOR(b.rating) = :rating")
+	@Query("SELECT b FROM Book b WHERE FLOOR(b.rating) >= :rating")
 	Page<Book> findByRating(@Param("rating") Integer rating, Pageable pageable);
 	
 	@Query("SELECT b FROM Book b WHERE b.rating IS NOT NULL")

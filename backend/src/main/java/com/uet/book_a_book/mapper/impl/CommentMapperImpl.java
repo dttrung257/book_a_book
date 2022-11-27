@@ -39,6 +39,8 @@ public class CommentMapperImpl implements CommentMapper {
 			commentDTO.setUserId(user.getId());
 			commentDTO.setAvatar(user.getAvatar());
 		}
+		commentDTO.setCreatedAt(comment.getCreatedAt());
+		commentDTO.setUpdatedAt(comment.getUpdatedAt());
 		return commentDTO;
 	}
 

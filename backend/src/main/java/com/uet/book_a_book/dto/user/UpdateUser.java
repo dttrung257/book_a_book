@@ -3,6 +3,8 @@ package com.uet.book_a_book.dto.user;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import com.uet.book_a_book.entity.constant.Const;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ public class UpdateUser {
 	@NotBlank(message = "gender field is mandatory")
 	private String gender;
 	
-	@Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}", message = "Phone number field is invalid")
+	@Pattern(regexp = Const.PHONE_NUMBER_REGEX, message = "Phone number field is invalid")
 	private String phoneNumber;
 	
 	@NotBlank(message = "address field is mandatory")

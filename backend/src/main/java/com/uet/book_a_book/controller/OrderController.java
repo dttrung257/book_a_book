@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,12 +29,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.uet.book_a_book.dto.order.AdmOrder;
 import com.uet.book_a_book.dto.order.NewOrder;
 import com.uet.book_a_book.dto.order.UpdateOrderStatus;
+import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.entity.constant.Const;
 import com.uet.book_a_book.service.OrderService;
 import com.uet.book_a_book.validator.IdConstraint;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api")
 @Validated
+@Slf4j
 public class OrderController {
 	@Autowired
 	private OrderService orderService;
@@ -45,16 +51,16 @@ public class OrderController {
 
 	@GetMapping("/orders")
 	public ResponseEntity<Object> getUserOrders(
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getUserOrders(page, size));
 	}
 
 	@GetMapping("/orders/{id}/orderdetails")
 	public ResponseEntity<Object> getOrderdetails(
 			@PathVariable(name = "id", required = true) @IdConstraint String id,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(
 				orderService.getOrderdetails(UUID.fromString(id), page, size));
 	}
@@ -62,6 +68,9 @@ public class OrderController {
 	@DeleteMapping("/orders/{id}")
 	public ResponseEntity<Object> cancelOrder(@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		orderService.cancelOrder(UUID.fromString(id));
+		log.info("User id: {} canceled order id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				id);
 		return ResponseEntity.ok("Cancel order successfully");
 	}
 
@@ -82,8 +91,8 @@ public class OrderController {
 	@GetMapping("/manage/orders")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getAllOrders(
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getAllOrders(page, size));
 	}
 	
@@ -98,8 +107,8 @@ public class OrderController {
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getOrdersByUserId(
 			@RequestParam(name = "user_id", required = true) @IdConstraint String userId,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getOrdersByUserId(UUID.fromString(userId), page, size));
 	}
 	
@@ -107,18 +116,18 @@ public class OrderController {
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getOrdersByEmail(
 			@RequestParam("email") @NotBlank(message = "email field is mandatory") String email,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getOrdersByEmail(email, page, size));
 	}
 
 	@GetMapping("/manage/orders/price")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getOrdersByPrice(
-			@RequestParam(name = "from", required = false, defaultValue = "0") @DecimalMin(value = "0.0") Double fromPrice,
-			@RequestParam(name = "to", required = false, defaultValue = "100000000000") @DecimalMin(value = "0.1") Double toPrice,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "from", required = false, defaultValue = Const.DEFAULT_MIN_PRICE) @DecimalMin(value = "0.0") Double fromPrice,
+			@RequestParam(name = "to", required = false, defaultValue = Const.DEFAULT_MAX_PRICE) @DecimalMin(value = "0.1") Double toPrice,
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getOrdersByPrice(fromPrice, toPrice, page, size));
 	}
 	
@@ -126,8 +135,8 @@ public class OrderController {
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getOrdersByDate(
 			@RequestParam("date") @DateTimeFormat(pattern="dd-MM-yyyy") Date orderDate,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) 
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) 
 					throws NumberFormatException, ParseException {
 		return ResponseEntity.ok(orderService.getOrdersByDate(orderDate, page, size));
 	}
@@ -136,11 +145,11 @@ public class OrderController {
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Object> getOrdersByFilter(
 			@RequestParam(name = "name", required = false, defaultValue = "") String name,
-			@RequestParam(name = "from", required = false, defaultValue = "0") @DecimalMin(value = "0.0") Double fromPrice,
-			@RequestParam(name = "to", required = false, defaultValue = "100000000000") @DecimalMin(value = "0.1") Double toPrice,
+			@RequestParam(name = "from", required = false, defaultValue = Const.DEFAULT_MIN_PRICE) @DecimalMin(value = "0.0") Double fromPrice,
+			@RequestParam(name = "to", required = false, defaultValue = Const.DEFAULT_MAX_PRICE) @DecimalMin(value = "0.1") Double toPrice,
 			@RequestParam(name = "date") @DateTimeFormat(pattern="dd-MM-yyyy") Optional<Date> orderDate,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) 
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) 
 					throws NumberFormatException, ParseException {
 		return ResponseEntity.ok(orderService.getOrdersByFilter(name, fromPrice, toPrice, orderDate.orElse(null), page, size));
 	}
@@ -149,6 +158,9 @@ public class OrderController {
 	public ResponseEntity<Object> deleteOrder(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		orderService.deleteOrder(UUID.fromString(id));
+		log.info("Admin id: {} deleted order id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				id);
 		return ResponseEntity.ok("Delete order id: " + id + " successfully");
 	}
 	

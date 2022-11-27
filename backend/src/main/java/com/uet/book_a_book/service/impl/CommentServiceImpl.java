@@ -27,7 +27,10 @@ import com.uet.book_a_book.repository.BookRepository;
 import com.uet.book_a_book.repository.CommentRepository;
 import com.uet.book_a_book.service.CommentService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private CommentRepository commentRepository;
@@ -138,8 +141,9 @@ public class CommentServiceImpl implements CommentService {
 			double newRating = (book.getRating() * numComment + newComment.getStar()) / (numComment + 1);
 			book.setRating(Math.ceil(newRating * 10) / 10);
 		}
-		commentRepository.save(comment);
+		comment = commentRepository.save(comment);
 		bookRepository.save(book);
+		log.info("User id: {} added comment id: {}.", user.getId(), comment.getId());
 		return commentMapper.mapToCommentDTO(comment);
 	}
 
@@ -167,6 +171,7 @@ public class CommentServiceImpl implements CommentService {
 		double newRating = commentRepository.calculateRateOfBook(updateComment.getBookId());
 		book.setRating(Math.ceil(newRating * 10) / 10);
 		bookRepository.save(book);
+		log.info("User id: {} updated comment id: {}.", user.getId(), comment.getId());
 		return commentMapper.mapToCommentDTO(comment);
 	}
 
@@ -191,6 +196,7 @@ public class CommentServiceImpl implements CommentService {
 			book.setRating(Math.ceil(newRating * 10) / 10);
 		}
 		bookRepository.save(book);
+		log.info("User id: {} deleted comment id: {}.", user.getId(), comments.get(0).getId());
 	}
 
 	/** Admin deletes comment. **/
@@ -214,7 +220,6 @@ public class CommentServiceImpl implements CommentService {
 			book.setRating(Math.ceil(newRating * 10) / 10);
 		}
 		bookRepository.save(book);
-		
 	}
 	
 }

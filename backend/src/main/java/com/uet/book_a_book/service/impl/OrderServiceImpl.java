@@ -38,7 +38,10 @@ import com.uet.book_a_book.repository.OrderRepository;
 import com.uet.book_a_book.repository.OrderdetailRepository;
 import com.uet.book_a_book.service.OrderService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
@@ -176,7 +179,7 @@ public class OrderServiceImpl implements OrderService {
 
 	/** User orders online. **/
 	@Override
-	public Order addOrder(NewOrder newOrder) {
+	public OrderDTO addOrder(NewOrder newOrder) {
 		newOrder.getOrderdetails().stream().forEach(od -> {
 			Book book = bookRepository.findById(od.getBookId()).orElse(null);
 			if (book == null) {
@@ -204,13 +207,13 @@ public class OrderServiceImpl implements OrderService {
 			book.setAvailableQuantity(book.getAvailableQuantity() - od.getQuantity());
 			bookRepository.save(book);
 		});
-
-		return order;
+		log.info("User id: {} added new order id: {}.", user.getId(), order.getId());
+		return orderMapper.mapToOrderDTO(order);
 	}
 
 	/** Users buy books at the store **/
 	@Override
-	public Order addOrderByAdmin(AdmOrder newOrder) {
+	public OrderDTO addOrderByAdmin(AdmOrder newOrder) {
 		newOrder.getOrderdetails().stream().forEach(od -> {
 			Book book = bookRepository.findById(od.getBookId()).orElse(null);
 			if (book == null) {
@@ -237,7 +240,10 @@ public class OrderServiceImpl implements OrderService {
 			book.setQuantitySold(book.getQuantitySold() + od.getQuantity());
 			bookRepository.save(book);
 		});
-		return order;
+		log.info("Admin id: {} added new order id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				order.getId());
+		return orderMapper.mapToOrderDTO(order);
 	}
 
 	/** User cancels order. **/
@@ -264,13 +270,13 @@ public class OrderServiceImpl implements OrderService {
 
 	/** Change order status. **/
 	@Override
-	public Order updateStatus(UUID orderId, String status) {
+	public OrderDTO updateStatus(UUID orderId, String status) {
 		Order order = orderRepository.findById(orderId).orElse(null);
 		if (order == null) {
 			throw new NotFoundOrderException("Not found order id: " + orderId);
 		}
 		if (order.getStatus().equalsIgnoreCase(status)) {
-			return order;
+			return orderMapper.mapToOrderDTO(order);
 		}
 		if (!(status.equalsIgnoreCase(OrderStatus.STATUS_PENDING)
 				|| status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING)
@@ -278,6 +284,7 @@ public class OrderServiceImpl implements OrderService {
 				|| status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED))) {
 			throw new NotFoundOrderStatusException("Not found order status: " + status);
 		}
+		String beforeStatus = order.getStatus();
 		// PENDING or SHIPPING to SUCCESS => quantity in stock decreased.
 		if ((order.getStatus().equals(OrderStatus.STATUS_PENDING)
 				|| order.getStatus().equals(OrderStatus.STATUS_SHIPPING))
@@ -405,8 +412,13 @@ public class OrderServiceImpl implements OrderService {
 
 			order.setStatus(status.toUpperCase());
 		}
+		log.info("Admin id: {} changed order id: {} status {} to status {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				order.getId(),
+				beforeStatus,
+				status.toUpperCase());
 		orderRepository.save(order);
-		return order;
+		return orderMapper.mapToOrderDTO(order);
 	}
 
 	/** Delete a order. **/

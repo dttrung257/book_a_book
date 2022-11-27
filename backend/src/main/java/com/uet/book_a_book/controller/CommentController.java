@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uet.book_a_book.dto.comment.NewComment;
+import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.entity.constant.Const;
 import com.uet.book_a_book.service.CommentService;
 import com.uet.book_a_book.validator.IdConstraint;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api")
 @Validated
+@Slf4j
 public class CommentController {
 	@Autowired
 	private CommentService commentService;
@@ -33,8 +39,8 @@ public class CommentController {
 	@GetMapping("/comments")
 	ResponseEntity<Object> getAllComments(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(commentService.getAllComments(bookId, page, size));
 	}
 	
@@ -47,8 +53,8 @@ public class CommentController {
 	@GetMapping("/comments/other_comment")
 	ResponseEntity<Object> getOtherComments(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(commentService.getOtherComments(bookId, page, size));
 	}
 	
@@ -74,8 +80,8 @@ public class CommentController {
 	@GetMapping("/manage/comments")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	ResponseEntity<Object> getAllComments(
-			@RequestParam(name = "page", required = false, defaultValue = "0") @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = "10") @Min(value = 1) Integer size) {
+			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(commentService.getAllComments(page, size));
 	}
 	
@@ -91,6 +97,9 @@ public class CommentController {
 	ResponseEntity<Object> deleteCommentByAdmin(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		commentService.deleteCommentByAdmin(UUID.fromString(id));
-		return ResponseEntity.ok("Delete comment id:" + id + " successfully");
+		log.info("Admin id: {} deleted comment id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), 
+				id);
+		return ResponseEntity.ok("Delete comment id: " + id + " successfully");
 	}
 }

@@ -35,9 +35,12 @@ import com.uet.book_a_book.security.jwt.JwtUtil;
 import com.uet.book_a_book.service.RoleService;
 import com.uet.book_a_book.service.UserSevice;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api/authen")
 @Validated
+@Slf4j
 public class AuthenController {
 	@Autowired
 	private UserSevice userSevice;
@@ -57,6 +60,7 @@ public class AuthenController {
 		Authentication authentication = authenticationManager.authenticate(token);
 		AppUser user = (AppUser) authentication.getPrincipal();
 		String jwtToken = jwtUtil.generateJwtToken(request.getEmail());
+		log.info("User id: {} logged in.", user.getId());
 		return ResponseEntity.ok(new AuthenResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
 				jwtToken, user.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList()).get(0)));
 	}
@@ -84,6 +88,7 @@ public class AuthenController {
 		user.setRole(roleUser);
 
 		userSevice.save(user);
+		log.info("Create account id: {} successfully.", user.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).body("You have successfully created an account. Please verify your email!");
 	}
 
@@ -92,6 +97,7 @@ public class AuthenController {
 			@PathVariable("email") @Email(message = "email field is not valid") String email,
 			@PathVariable("code") @NotBlank(message = "code field cannot be blank") String code) {
 		userSevice.confirmEmailVerification(email, code);
+		log.info("Account with email {} activated successfully.", email);
 		return ResponseEntity.ok("Account activation successful");
 	}
 
@@ -99,6 +105,7 @@ public class AuthenController {
 	public ResponseEntity<Object> resendEmailVerification(
 			@PathVariable("email") @Email(message = "mail field is not valid") String email) {
 		userSevice.sendEmailVerification(email);
+		log.info("Account with email {} send activation email.", email);
 		return ResponseEntity.ok("Send email to " + email + " successfully");
 	}
 }

@@ -42,7 +42,10 @@ import com.uet.book_a_book.repository.OrderRepository;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserServiceImpl implements UserSevice {
 	@Autowired
 	private UserRepository userRepository;
@@ -171,6 +174,7 @@ public class UserServiceImpl implements UserSevice {
 			user.setPassword(passwordEncoder.encode(newPassword));
 			user.setUpdatedAt(new Date());
 			userRepository.save(user);
+			log.info("User id: {} changed password.", user.getId());
 			return;
 		} else {
 			throw new IncorrectOldPasswordException(
@@ -204,6 +208,7 @@ public class UserServiceImpl implements UserSevice {
 		userInfo.setPhoneNumber(user.getPhoneNumber());
 		userInfo.setAddress(user.getAddress());
 		userInfo.setAvatar(user.getAvatar());
+		log.info("User id: {} updated information.", user.getId());
 		return userInfo;
 	}
 
@@ -223,6 +228,9 @@ public class UserServiceImpl implements UserSevice {
 		}
 		user.setLocked(true);
 		userRepository.save(user);
+		log.info("Admin id: {} lock account id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				user.getId());
 	}
 
 	/** Unlock user account. */
@@ -241,6 +249,9 @@ public class UserServiceImpl implements UserSevice {
 		}
 		user.setLocked(false);
 		userRepository.save(user);
+		log.info("Admin id: {} unlock account id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				user.getId());
 	}
 
 	/** Activate account. **/
@@ -256,6 +267,9 @@ public class UserServiceImpl implements UserSevice {
 		user.setEmailVerified(true);
 		user.setEmailVerificationCode(null);
 		userRepository.save(user);
+		log.info("Admin id: {} activate account id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				user.getId());
 	}
 	
 	/** Reset password. **/
@@ -278,6 +292,9 @@ public class UserServiceImpl implements UserSevice {
 		}
 		appUser.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(appUser);
+		log.info("Admin id: {} reset password of account id: {}.", 
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				user.getId());
 	}
 
 	/** Delete user. **/
