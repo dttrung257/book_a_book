@@ -4,7 +4,7 @@ import { AiFillThunderbolt } from "react-icons/ai";
 import { FaStar } from "react-icons/fa";
 import { IoAdd, IoRemove } from "react-icons/io5";
 import { MdCollectionsBookmark } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getBooksOfCategory, getBookViaId } from "../../apis/book";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
 import Span from "../../components/Span";
@@ -14,9 +14,15 @@ import BookDetail from "../../components/BookDetail/BookDetail";
 import { formatStr } from "../../utils";
 import Comment from "../../components/Comment/Comment"
 import { BiCommentDetail } from "react-icons/bi";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { cartActions } from "../../store/cartSlice";
 
 const Product = () => {
   const params = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const { isLoggedIn } = useAppSelector(state=>state.auth);
   const [recommend, setRecommend] = useState<BookInfoBrief[]>([]);
   const [amount, setAmount] = useState<number>(1);
   const [info, setInfo] = useState<Book>({
@@ -50,18 +56,29 @@ const Product = () => {
   }, [useParams()]);
 
   const addAmount = (c: boolean) => {
-    setAmount(c ? (amount + 1 <= info.quantityInStock ? amount + 1 : amount) : (amount - 1 >= 1 ? amount - 1 : amount))
+    setAmount(c ? (amount + 1 <= info.availableQuantity ? amount + 1 : amount) : (amount - 1 >= 1 ? amount - 1 : amount))
   }
-
+  
+  //TODO: check amount can add (already have in cart or not)
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === "") {
       setAmount(1)
       return
     }
     let tmp = event.target.valueAsNumber
-    if (tmp > info.quantityInStock) tmp = info.quantityInStock
+    if (tmp > info.availableQuantity) tmp = info.availableQuantity
     else if (tmp < 1) tmp = 1
     setAmount(tmp)
+  }
+
+  const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      return navigate('/login', {
+        replace: true,
+        state: { from:location }
+      });
+    }
+    dispatch(cartActions.addToCart({id: info.id, stopSelling: info.stopSelling, quantity: amount}));
   }
 
   return (
@@ -129,6 +146,7 @@ const Product = () => {
               variant="contained"
               color="primary"
               style={{ position: "absolute", bottom: "30px", right: "40px" }}
+              onClick={handleAddToCart}
             >
               Add to cart
             </Button>

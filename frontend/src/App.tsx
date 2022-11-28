@@ -1,11 +1,13 @@
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "./App.css";
-import Test from "./pages/Test";
 import { authActions } from "./store/authSlice";
+import { cartActions } from "./store/cartSlice";
 import { useAppDispatch, useAppSelector } from "./store/hook";
 import Cookies from "js-cookie";
 import CodeVerify from "./pages/ForgetPassword/CodeVerify";
@@ -30,6 +32,7 @@ const Loading = React.lazy(() => import("./pages/Loading"));
 const DashBoardLayout = React.lazy(
   () => import("./pages/DashBoard/DashBoardLayout")
 );
+const Cart = React.lazy(() => import("./pages/Cart/Cart"));
 
 const theme = createTheme({
   palette: {
@@ -60,6 +63,9 @@ const App = () => {
         },
       })
     );
+
+    const cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+    dispatch(cartActions.storeInfo(cart));
   }
 
   return (
@@ -68,7 +74,7 @@ const App = () => {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
-            <Route path="test" element={<Test />} />
+            <Route path="cart" element={<Cart />} />
             <Route path="product/:id/:title" element={<Product />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
@@ -77,8 +83,8 @@ const App = () => {
             <Route path="users" element={<DashBoardUser />} />
             <Route path="users/:id" element={<DashBoardUserDetail />} />
             <Route path="books" element={<DashBoardBook />} />
-            <Route path="orders" element={<DashBoardOrder/>} />
-            <Route path="orders/:id" element={<DashBoardOrderDetail/>} />
+            <Route path="orders" element={<DashBoardOrder />} />
+            <Route path="orders/:id" element={<DashBoardOrderDetail />} />
           </Route>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
@@ -92,6 +98,12 @@ const App = () => {
           {/* <Route path='*' element={<Home />} /> */}
         </Routes>
       </Suspense>
+      <ToastContainer
+        pauseOnHover={false}
+        transition={Slide}
+        pauseOnFocusLoss={false}
+        autoClose={4000}
+      />
     </ThemeProvider>
   );
 };

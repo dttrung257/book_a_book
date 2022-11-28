@@ -7,6 +7,7 @@ import style from "./AppModal.module.css";
 
 const Container = styled.div`
   .modal-enter {
+    z-index: 200;
     opacity: 0;
   }
   .modal-enter-active {
@@ -14,6 +15,7 @@ const Container = styled.div`
     transition: all 300ms;
   }
   .modal-exit {
+    z-index: 200;
     opacity: 1;
   }
   .modal-exit-active {

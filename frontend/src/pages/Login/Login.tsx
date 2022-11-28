@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Link, useNavigate, Navigate } from "react-router-dom";
+import { Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { BiHide } from "react-icons/bi";
 import { AiOutlineEye } from "react-icons/ai";
@@ -33,6 +33,7 @@ const Login = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const [isSending, setIsSending] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   if (isLoggedIn) return <Navigate to="/" />;
 
@@ -44,7 +45,7 @@ const Login = () => {
 
       await dispatch(login({ email: email.trim(), password: password.trim() }));
 
-      return navigate("/");
+      return navigate(location.state?.from ? location.state.from : "/");
     } catch (error: unknown) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
