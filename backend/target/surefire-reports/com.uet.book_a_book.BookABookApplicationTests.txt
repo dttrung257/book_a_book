@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.uet.book_a_book.BookABookApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.4 s - in com.uet.book_a_book.BookABookApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.373 s - in com.uet.book_a_book.BookABookApplicationTests
