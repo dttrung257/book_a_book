@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -98,6 +99,32 @@ public class CommentServiceImpl implements CommentService {
 		Pageable pageable = PageRequest.of(page, size);
 		List<CommentDTO> comments = commentRepository.findAll()
 				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
+		if (start <= comments.size()) {
+			return new PageImpl<>(comments.subList(start, end), pageable, comments.size());
+		}
+		return new PageImpl<>(comments, pageable, comments.size());
+	}
+	
+	@Override
+	public Page<CommentDTO> getCommentsByFilters(Long bookId, String bookName, Date date, String fullname,
+			Integer page, Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		List<CommentDTO> comments = commentRepository.findAll()
+				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
+		if (bookId > 0) {
+			comments = comments.stream().filter(comment -> comment.getBookId() == bookId).collect(Collectors.toList());
+		}
+		if (!bookName.equals("") && bookName != null) {
+			comments = comments.stream().filter(comment -> comment.getBookName().toLowerCase().contains(bookName.toLowerCase())).collect(Collectors.toList());
+		}
+		if (date != null) {
+			comments = comments.stream().filter(comment -> DateUtils.isSameDay(date, comment.getCreatedAt())).collect(Collectors.toList());
+		}
+		if (!fullname.equals("") && fullname != null) {
+			comments = comments.stream().filter(comment -> comment.getFullName().toLowerCase().contains(fullname.toLowerCase())).collect(Collectors.toList());
+		}
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
 		if (start <= comments.size()) {

@@ -1,5 +1,6 @@
 package com.uet.book_a_book.service;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -17,6 +18,8 @@ public interface CommentService {
 	
 	// For admins
 	Page<CommentDTO> getAllComments(Integer page, Integer size);
+	
+	Page<CommentDTO> getCommentsByFilters(Long bookId, String bookName, Date date, String fullname, Integer page, Integer size);
 
 	CommentDTO getCommentById(UUID id);
 	
