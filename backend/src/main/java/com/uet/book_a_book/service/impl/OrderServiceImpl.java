@@ -144,17 +144,23 @@ public class OrderServiceImpl implements OrderService {
 
 	/** Get orders by multiple filters. **/
 	@Override
-	public Page<OrderDTO> getOrdersByFilter(String name, Double fromPrice, Double toPrice, Date orderDate, Integer page,
+	public Page<OrderDTO> getOrdersByFilter(String name, String status, Double fromPrice, Double toPrice, Date orderDate, Integer page,
 			Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
-		if (!name.trim().equals("") && name != null) {
+		if (!name.equals("") && name != null) {
 			orderDTOs = orderDTOs.stream()
 					.filter(oDTO -> ((oDTO.getFullName() != null && oDTO.getFullName().toLowerCase().contains(name.toLowerCase()))
 							|| (oDTO.getEmail() != null && oDTO.getEmail().toLowerCase().contains(name.toLowerCase()))))
 					.collect(Collectors.toList());
 		} 
+		if (status.equalsIgnoreCase(OrderStatus.STATUS_PENDING) || status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING)
+				|| status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS) || status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED)) {
+			orderDTOs = orderDTOs.stream()
+					.filter(oDTO -> (oDTO.getStatus()).equalsIgnoreCase(status))
+					.collect(Collectors.toList());
+		}
 		if (orderDate != null) {
 			orderDTOs = orderDTOs.stream().filter(oDTO -> (DateUtils.isSameDay(oDTO.getOrderDate(), orderDate))).collect(Collectors.toList());
 		}
@@ -275,6 +281,7 @@ public class OrderServiceImpl implements OrderService {
 		if (order == null) {
 			throw new NotFoundOrderException("Not found order id: " + orderId);
 		}
+		status = status.trim();
 		if (order.getStatus().equalsIgnoreCase(status)) {
 			return orderMapper.mapToOrderDTO(order);
 		}

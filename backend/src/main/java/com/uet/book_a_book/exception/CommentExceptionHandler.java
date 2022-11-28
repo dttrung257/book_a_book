@@ -14,21 +14,21 @@ import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
 @ControllerAdvice
 public class CommentExceptionHandler {
 	@ExceptionHandler(CommentAlreadyExistsException.class) 
-	ResponseEntity<Object> handleCommentAlreadyExistsException(CommentAlreadyExistsException e) {
+	public ResponseEntity<ErrorDetails> handleCommentAlreadyExistsException(CommentAlreadyExistsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"User have already commented on this book", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(UserHasNotCommentedYetException.class) 
-	ResponseEntity<Object> handleUserHasNotCommentedYetException(UserHasNotCommentedYetException e) {
+	public ResponseEntity<ErrorDetails> handleUserHasNotCommentedYetException(UserHasNotCommentedYetException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"User has not commented yet", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotFoundCommentException.class)
-	ResponseEntity<Object> handleNotFoundCommentException(NotFoundCommentException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundCommentException(NotFoundCommentException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
 				"Not found comment", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);

@@ -17,16 +17,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.uet.book_a_book.dto.RegisterRequest;
 import com.uet.book_a_book.dto.user.UpdateUser;
 import com.uet.book_a_book.dto.user.UserDTO;
 import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Order;
+import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.constant.Gender;
 import com.uet.book_a_book.entity.constant.OrderStatus;
 import com.uet.book_a_book.entity.constant.RoleName;
 import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
+import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
 import com.uet.book_a_book.exception.account.CannotDeleteAdminAccountException;
 import com.uet.book_a_book.exception.account.CannotLockAdminAccountException;
@@ -39,6 +42,7 @@ import com.uet.book_a_book.exception.account.NotFoundGenderException;
 import com.uet.book_a_book.exception.order.CannotDeleteShippingOrderException;
 import com.uet.book_a_book.mapper.UserMapper;
 import com.uet.book_a_book.repository.OrderRepository;
+import com.uet.book_a_book.repository.RoleRepository;
 import com.uet.book_a_book.repository.UserRepository;
 import com.uet.book_a_book.service.UserSevice;
 
@@ -47,6 +51,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserSevice {
+	@Autowired
+	private RoleRepository roleRepository;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
@@ -188,10 +194,10 @@ public class UserServiceImpl implements UserSevice {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		user.setFirstName(updateUser.getFirstName().trim());
 		user.setLastName(updateUser.getLastName().trim());
-		if (updateUser.getGender().equalsIgnoreCase(Gender.GENDER_MALE)
+		if (updateUser.getGender().trim().equalsIgnoreCase(Gender.GENDER_MALE)
 				|| updateUser.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)
 				|| updateUser.getGender().equalsIgnoreCase(Gender.GENDER_OTHER)) {
-			user.setGender(updateUser.getGender().toUpperCase());
+			user.setGender(updateUser.getGender().trim().toUpperCase());
 		} else {
 			throw new NotFoundGenderException("Not found gender: " + updateUser.getGender());
 		}
@@ -211,8 +217,37 @@ public class UserServiceImpl implements UserSevice {
 		log.info("User id: {} updated information.", user.getId());
 		return userInfo;
 	}
+	
+	/** Adm create account. **/
+	@Override
+	public UserDTO createAccount(RegisterRequest request) {
+		if (userRepository.findByEmail(request.getEmail().trim()).orElse(null) != null) {
+			throw new AccountAlreadyExistsException(String.format("User with email %s already exists", request.getEmail()));
+		}
+		AppUser user = new AppUser();
+		user.setEmail(request.getEmail().trim());
+		user.setPassword(passwordEncoder.encode(request.getPassword().trim()));
+		user.setFirstName(request.getFirstName().trim());
+		user.setLastName(request.getLastName().trim());
+		user.setCreatedAt(new Date());
+		if (request.getGender().trim().equalsIgnoreCase(Gender.GENDER_MALE) 
+				|| request.getGender().equalsIgnoreCase(Gender.GENDER_FEMALE)
+				|| request.getGender().equalsIgnoreCase(Gender.GENDER_OTHER)) {
+			user.setGender(request.getGender().trim().toUpperCase());
+		} else {
+			throw new NotFoundGenderException("Not found gender: " + request.getGender());
+		}
+		Role roleUser = roleRepository.findByRoleName(RoleName.ROLE_USER);
+		user.setRole(roleUser);
+		user.setEmailVerified(true);
+		userRepository.save(user);
+		log.info("Admin id: {} create account id: {}.",
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
+				user.getId());
+		return userMapper.mapToUserDTO(user); 
+	}
 
-	/** Lock user account **/
+	/** Adm lock user account **/
 	@Override
 	public void lockAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -233,7 +268,7 @@ public class UserServiceImpl implements UserSevice {
 				user.getId());
 	}
 
-	/** Unlock user account. */
+	/** Adm unlock user account. */
 	@Override
 	public void unlockAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -254,7 +289,7 @@ public class UserServiceImpl implements UserSevice {
 				user.getId());
 	}
 
-	/** Activate account. **/
+	/** Adm activate account. **/
 	@Override
 	public void activeAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
@@ -272,7 +307,7 @@ public class UserServiceImpl implements UserSevice {
 				user.getId());
 	}
 	
-	/** Reset password. **/
+	/** Adm reset password. **/
 	@Override
 	public void updateUserPassword(UUID id, String newPassword) {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -297,7 +332,7 @@ public class UserServiceImpl implements UserSevice {
 				user.getId());
 	}
 
-	/** Delete user. **/
+	/** Adm delete user. **/
 	@Override
 	public void deleteUser(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);

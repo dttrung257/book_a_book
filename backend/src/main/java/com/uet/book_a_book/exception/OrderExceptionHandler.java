@@ -17,42 +17,42 @@ import com.uet.book_a_book.exception.order.NotFoundOrderStatusException;
 @ControllerAdvice
 public class OrderExceptionHandler {
 	@ExceptionHandler(NotFoundOrderException.class)
-	ResponseEntity<Object> handleNotFoundOrderException(NotFoundOrderException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundOrderException(NotFoundOrderException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
 				"Not found order", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 	
 	@ExceptionHandler(CannotCancelOrderException.class)
-	ResponseEntity<Object> handleCannotCancelOrderException(CannotCancelOrderException e) {
+	public ResponseEntity<ErrorDetails> handleCannotCancelOrderException(CannotCancelOrderException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Orders can only be canceled in pending status", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotFoundOrderStatusException.class)
-	ResponseEntity<Object> handleNotFoundOrderStatusException(NotFoundOrderStatusException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundOrderStatusException(NotFoundOrderStatusException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
 				"Not found order status", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotEnoughQuantityException.class)
-	ResponseEntity<Object> handleNotEnoughQuantityException(NotEnoughQuantityException e) {
+	public ResponseEntity<ErrorDetails> handleNotEnoughQuantityException(NotEnoughQuantityException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Not enough quantity", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(CannotDeleteShippingOrderException.class)
-	ResponseEntity<Object> handleCannotDeleteShippingOrderException(CannotDeleteShippingOrderException e) {
+	public ResponseEntity<ErrorDetails> handleCannotDeleteShippingOrderException(CannotDeleteShippingOrderException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Cannot delete shipping order", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(CannotDeleteSuccessOrderException.class)
-	ResponseEntity<Object> handleCannotDeleteSuccessOrderException(CannotDeleteSuccessOrderException e) {
+	public ResponseEntity<ErrorDetails> handleCannotDeleteSuccessOrderException(CannotDeleteSuccessOrderException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Cannot delete success order", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
+import com.uet.book_a_book.dto.RegisterRequest;
 import com.uet.book_a_book.dto.user.UpdateUser;
 import com.uet.book_a_book.dto.user.UserDTO;
 import com.uet.book_a_book.dto.user.UserInfo;
@@ -30,6 +31,8 @@ public interface UserSevice {
 	UserInfo updateUser(UpdateUser userInfo);
 
 	// For admins
+	UserDTO createAccount(RegisterRequest request);
+	
 	void lockAccount(UUID id);
 
 	void unlockAccount(UUID id);

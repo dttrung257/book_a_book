@@ -28,7 +28,7 @@ import com.uet.book_a_book.exception.account.NotFoundUserStatusException;
 @ControllerAdvice
 public class AccountExceptionHandler {
 	@ExceptionHandler(NotFoundAccountException.class)
-	ResponseEntity<Object> handleNotFoundAccountException(NotFoundAccountException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundAccountException(NotFoundAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not found account",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
@@ -36,7 +36,7 @@ public class AccountExceptionHandler {
 	}
 	
 	@ExceptionHandler(NotFoundUserStatusException.class)
-	ResponseEntity<Object> handleNotFoundUserStatusException(NotFoundUserStatusException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundUserStatusException(NotFoundUserStatusException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Not found user status",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
@@ -44,105 +44,105 @@ public class AccountExceptionHandler {
 	}
 
 	@ExceptionHandler(AccountNotActivatedException.class)
-	ResponseEntity<Object> handleAccountNotActivatedException(AccountNotActivatedException e) {
+	public ResponseEntity<ErrorDetails> handleAccountNotActivatedException(AccountNotActivatedException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Account not activated", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(LockedAccountException.class)
-	ResponseEntity<Object> handleLockedAccountException(LockedAccountException e) {
+	public ResponseEntity<ErrorDetails> handleLockedAccountException(LockedAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Account has been locked", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(EmailSendingErrorException.class)
-	ResponseEntity<Object> handleEmailSendingErrorException(EmailSendingErrorException e) {
+	public ResponseEntity<ErrorDetails> handleEmailSendingErrorException(EmailSendingErrorException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Fail to send email", e.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
 	}
 	
 	@ExceptionHandler(EmailNotExistsOnTheInternetException.class)
-	ResponseEntity<Object> handleEmailNotExistsOnTheInternetException(EmailNotExistsOnTheInternetException e) {
+	public ResponseEntity<ErrorDetails> handleEmailNotExistsOnTheInternetException(EmailNotExistsOnTheInternetException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Email does not exist on the internet", e.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
 	}
 	
 	@ExceptionHandler(AccountAlreadyExistsException.class)
-	ResponseEntity<Object> handleAccountAlreadyExistsException(AccountAlreadyExistsException e) {
+	public ResponseEntity<ErrorDetails> handleAccountAlreadyExistsException(AccountAlreadyExistsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Account already exists", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(AccountAlreadyActivatedException.class)
-	ResponseEntity<Object> handleAccountAlreadyActivatedException(AccountAlreadyActivatedException e) {
+	public ResponseEntity<ErrorDetails> handleAccountAlreadyActivatedException(AccountAlreadyActivatedException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Account already activated", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(IncorrectEmailVerificationCodeException.class)
-	ResponseEntity<Object> handleIncorrectEmailVerificationCodeException(IncorrectEmailVerificationCodeException e) {
+	public ResponseEntity<ErrorDetails> handleIncorrectEmailVerificationCodeException(IncorrectEmailVerificationCodeException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Incorrect email verification code", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(IncorrectOldPasswordException.class)
-	ResponseEntity<Object> handleIncorrectOldPasswordException(IncorrectOldPasswordException e) {
+	public ResponseEntity<ErrorDetails> handleIncorrectOldPasswordException(IncorrectOldPasswordException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"The current password is incorrect, the password cannot be changed", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(IncorrectResetPasswordCodeException.class)
-	ResponseEntity<Object> handleIncorrectResetPasswordCodeException(IncorrectResetPasswordCodeException e) {
+	public ResponseEntity<ErrorDetails> handleIncorrectResetPasswordCodeException(IncorrectResetPasswordCodeException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Incorrect reset password verification code", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(IncorrectResetTokenException.class)
-	ResponseEntity<Object> handleIncorrectResetTokenException(IncorrectResetTokenException e) {
+	public ResponseEntity<ErrorDetails> handleIncorrectResetTokenException(IncorrectResetTokenException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Incorrect reset password token", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotFoundResetPasswordTokenException.class)
-	ResponseEntity<Object> handleNotFoundResetPasswordTokenException(NotFoundResetPasswordTokenException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundResetPasswordTokenException(NotFoundResetPasswordTokenException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
 				"Reset password token does not exists", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
 	}
 	
 	@ExceptionHandler(CannotLockAdminAccountException.class)
-	ResponseEntity<Object> handleCannotLockAdminAccountException(CannotLockAdminAccountException e) {
+	public ResponseEntity<ErrorDetails> handleCannotLockAdminAccountException(CannotLockAdminAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Cannot lock admin account", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	
 	@ExceptionHandler(CannotDeleteAdminAccountException.class)
-	ResponseEntity<Object> handleCannotDeleteAdminAccountException(CannotDeleteAdminAccountException e) {
+	public ResponseEntity<ErrorDetails> handleCannotDeleteAdminAccountException(CannotDeleteAdminAccountException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Cannot delete admin account", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	
 	@ExceptionHandler(CannotResetPasswordException.class)
-	ResponseEntity<Object> handleCannotResetPasswordException(CannotResetPasswordException e) {
+	public ResponseEntity<ErrorDetails> handleCannotResetPasswordException(CannotResetPasswordException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Cannot reset password of another admin account", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	
 	@ExceptionHandler(NotFoundGenderException.class)
-	ResponseEntity<Object> handleNotFoundGenderException(NotFoundGenderException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundGenderException(NotFoundGenderException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(),
 				"Not found gender", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);

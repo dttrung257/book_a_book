@@ -129,7 +129,7 @@ public class CommentServiceImpl implements CommentService {
 			throw new CommentAlreadyExistsException("User " + user.getEmail() + " have already commented on the book id: " + book.getId());
 		}
 		Comment comment = new Comment();
-		comment.setContent(newComment.getContent());
+		comment.setContent(newComment.getContent().trim());
 		comment.setStar(newComment.getStar());
 		comment.setCreatedAt(new Date());
 		comment.setBook(book);
@@ -164,7 +164,7 @@ public class CommentServiceImpl implements CommentService {
 		if (updateComment.getContent().equals(comment.getContent()) && updateComment.getStar() == comment.getStar()) {
 			return commentMapper.mapToCommentDTO(comment);
 		}
-		comment.setContent(updateComment.getContent());
+		comment.setContent(updateComment.getContent().trim());
 		comment.setStar(updateComment.getStar());
 		comment.setUpdatedAt(new Date());
 		commentRepository.save(comment);

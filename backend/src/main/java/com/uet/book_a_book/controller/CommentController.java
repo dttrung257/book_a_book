@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uet.book_a_book.dto.comment.CommentDTO;
 import com.uet.book_a_book.dto.comment.NewComment;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.constant.Const;
@@ -37,7 +39,7 @@ public class CommentController {
 	private CommentService commentService;
 	
 	@GetMapping("/comments")
-	ResponseEntity<Object> getAllComments(
+	public ResponseEntity<Page<CommentDTO>> getAllComments(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
@@ -45,13 +47,13 @@ public class CommentController {
 	}
 	
 	@GetMapping("/comments/user_comment")
-	ResponseEntity<Object> getUserComment(
+	public ResponseEntity<CommentDTO> getUserComment(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId) {
 		return ResponseEntity.ok(commentService.getUserComment(bookId));
 	}
 	
 	@GetMapping("/comments/other_comment")
-	ResponseEntity<Object> getOtherComments(
+	public ResponseEntity<Page<CommentDTO>> getOtherComments(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
@@ -59,19 +61,19 @@ public class CommentController {
 	}
 	
 	@PostMapping("/comments")
-	ResponseEntity<Object> addComment(
+	public ResponseEntity<CommentDTO> addComment(
 			@Valid @RequestBody NewComment newComment) {
 		return ResponseEntity.ok(commentService.addComment(newComment));
 	}
 	
 	@PutMapping("/comments")
-	ResponseEntity<Object> updateComment(
+	public ResponseEntity<CommentDTO> updateComment(
 			@Valid @RequestBody NewComment updateComment) {
 		return ResponseEntity.ok(commentService.updateComment(updateComment));
 	}
 	
 	@DeleteMapping("/comments")
-	ResponseEntity<Object> deleteComment(
+	public ResponseEntity<String> deleteComment(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId) {
 		commentService.deleteComment(bookId);
 		return ResponseEntity.ok("Delete comment successfully");
@@ -79,7 +81,7 @@ public class CommentController {
 	
 	@GetMapping("/manage/comments")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	ResponseEntity<Object> getAllComments(
+	public ResponseEntity<Page<CommentDTO>> getAllComments(
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(commentService.getAllComments(page, size));
@@ -87,14 +89,14 @@ public class CommentController {
 	
 	@GetMapping("/manage/comments/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	ResponseEntity<Object> getCommentById(
+	public ResponseEntity<CommentDTO> getCommentById(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		return ResponseEntity.ok(commentService.getCommentById(UUID.fromString(id)));
 	}
 	
 	@DeleteMapping("/manage/comments/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	ResponseEntity<Object> deleteCommentByAdmin(
+	public ResponseEntity<String> deleteCommentByAdmin(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		commentService.deleteCommentByAdmin(UUID.fromString(id));
 		log.info("Admin id: {} deleted comment id: {}.", 

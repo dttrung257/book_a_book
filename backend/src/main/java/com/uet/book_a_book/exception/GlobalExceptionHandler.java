@@ -22,7 +22,7 @@ import com.uet.book_a_book.exception.jwt.InvalidJwtTokenException;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
-	ResponseEntity<ErrorDetails> handleGlobalException(Exception e, WebRequest webRequest) {
+	public ResponseEntity<ErrorDetails> handleGlobalException(Exception e, WebRequest webRequest) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				e.getMessage(), webRequest.getDescription(false));
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("Description", "Error")
@@ -30,21 +30,21 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(IllegalStateException.class)
-	ResponseEntity<Object> handleIllegalStateException(IllegalStateException e) {
+	public ResponseEntity<ErrorDetails> handleIllegalStateException(IllegalStateException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Illegal State",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 
 	@ExceptionHandler(ValidationException.class)
-	ResponseEntity<Object> handleValidationException(ValidationException e) {
+	public ResponseEntity<ErrorDetails> handleValidationException(ValidationException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Incorrect format of request",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException e) {
+	public ResponseEntity<ErrorDetails> handleValidationException(MethodArgumentNotValidException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Incorrect format of request",
 				e.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage())
 						.collect(Collectors.toList()));
@@ -52,35 +52,35 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(AuthenticationException.class)
-	ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
+	public ResponseEntity<ErrorDetails> handleAuthenticationException(AuthenticationException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Unauthorized", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(AccessDeniedException.class)
-	ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e) {
+	public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Access denied", e.getMessage());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	
 	@ExceptionHandler(InvalidJwtTokenException.class)
-	ResponseEntity<Object> handleInvalidJwtTokenException(InvalidJwtTokenException e) {
+	public ResponseEntity<ErrorDetails> handleInvalidJwtTokenException(InvalidJwtTokenException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
 				"Unauthorized", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
 	}
 	
 	@ExceptionHandler(BadCredentialsException.class)
-	ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException e) {
+	public ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(), "Incorrect email address or password",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 
 	@ExceptionHandler(UsernameNotFoundException.class)
-	ResponseEntity<Object> handleNotFoundEmailException(UsernameNotFoundException e) {
+	public ResponseEntity<ErrorDetails> handleNotFoundEmailException(UsernameNotFoundException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.NOT_FOUND.value(), "Incorrect email address or password",
 				e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);

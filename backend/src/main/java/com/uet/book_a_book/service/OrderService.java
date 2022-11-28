@@ -29,7 +29,7 @@ public interface OrderService {
 
 	Page<OrderDTO> getOrdersByEmail(String email, Integer page, Integer size);
 	
-	Page<OrderDTO> getOrdersByFilter(String name, Double fromPrice, Double toPrice, Date orderDate, Integer page, Integer size);
+	Page<OrderDTO> getOrdersByFilter(String name, String status, Double fromPrice, Double toPrice, Date orderDate, Integer page, Integer size);
 	
 	// For users
 	OrderDTO addOrder(NewOrder newOrder);

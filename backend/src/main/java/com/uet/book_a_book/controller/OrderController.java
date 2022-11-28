@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uet.book_a_book.dto.order.AdmOrder;
 import com.uet.book_a_book.dto.order.NewOrder;
+import com.uet.book_a_book.dto.order.OrderDTO;
+import com.uet.book_a_book.dto.order.OrderdetailDTO;
 import com.uet.book_a_book.dto.order.UpdateOrderStatus;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.constant.Const;
@@ -45,19 +48,19 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PostMapping("/orders")
-	public ResponseEntity<Object> addOrder(@Valid @RequestBody NewOrder newOrder) {
+	public ResponseEntity<OrderDTO> addOrder(@Valid @RequestBody NewOrder newOrder) {
 		return ResponseEntity.ok(orderService.addOrder(newOrder));
 	}
 
 	@GetMapping("/orders")
-	public ResponseEntity<Object> getUserOrders(
+	public ResponseEntity<Page<OrderDTO>> getUserOrders(
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getUserOrders(page, size));
 	}
 
 	@GetMapping("/orders/{id}/orderdetails")
-	public ResponseEntity<Object> getOrderdetails(
+	public ResponseEntity<Page<OrderdetailDTO>> getOrderdetails(
 			@PathVariable(name = "id", required = true) @IdConstraint String id,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
@@ -66,7 +69,7 @@ public class OrderController {
 	}
 
 	@DeleteMapping("/orders/{id}")
-	public ResponseEntity<Object> cancelOrder(@PathVariable(name = "id", required = true) @IdConstraint String id) {
+	public ResponseEntity<String> cancelOrder(@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		orderService.cancelOrder(UUID.fromString(id));
 		log.info("User id: {} canceled order id: {}.", 
 				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
@@ -76,21 +79,21 @@ public class OrderController {
 
 	@PutMapping("/manage/orders/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> updateStatus(
+	public ResponseEntity<OrderDTO> updateStatus(
 			@PathVariable(name = "id", required = true) @IdConstraint String id,
 			@Valid @RequestBody UpdateOrderStatus updateOrderStatus) {
-		return ResponseEntity.ok(orderService.updateStatus(UUID.fromString(id), updateOrderStatus.getStatus()));
+		return ResponseEntity.ok(orderService.updateStatus(UUID.fromString(id), updateOrderStatus.getStatus().trim()));
 	}
 
 	@PostMapping("/manage/orders")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> addOrderByAdmin(@Valid @RequestBody AdmOrder admOrder) {
+	public ResponseEntity<OrderDTO> addOrderByAdmin(@Valid @RequestBody AdmOrder admOrder) {
 		return ResponseEntity.ok(orderService.addOrderByAdmin(admOrder));
 	}
 
 	@GetMapping("/manage/orders")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getAllOrders(
+	public ResponseEntity<Page<OrderDTO>> getAllOrders(
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
 		return ResponseEntity.ok(orderService.getAllOrders(page, size));
@@ -98,14 +101,14 @@ public class OrderController {
 	
 	@GetMapping("/manage/orders/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getOrderById(
+	public ResponseEntity<OrderDTO> getOrderById(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		return ResponseEntity.ok(orderService.getOrderById(UUID.fromString(id)));
 	}
 	
 	@GetMapping("/manage/orders/user")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getOrdersByUserId(
+	public ResponseEntity<Page<OrderDTO>> getOrdersByUserId(
 			@RequestParam(name = "user_id", required = true) @IdConstraint String userId,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
@@ -114,16 +117,16 @@ public class OrderController {
 	
 	@GetMapping("/manage/orders/email")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getOrdersByEmail(
+	public ResponseEntity<Page<OrderDTO>> getOrdersByEmail(
 			@RequestParam("email") @NotBlank(message = "email field is mandatory") String email,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(orderService.getOrdersByEmail(email, page, size));
+		return ResponseEntity.ok(orderService.getOrdersByEmail(email.trim(), page, size));
 	}
 
 	@GetMapping("/manage/orders/price")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getOrdersByPrice(
+	public ResponseEntity<Page<OrderDTO>> getOrdersByPrice(
 			@RequestParam(name = "from", required = false, defaultValue = Const.DEFAULT_MIN_PRICE) @DecimalMin(value = "0.0") Double fromPrice,
 			@RequestParam(name = "to", required = false, defaultValue = Const.DEFAULT_MAX_PRICE) @DecimalMin(value = "0.1") Double toPrice,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
@@ -133,7 +136,7 @@ public class OrderController {
 	
 	@GetMapping("/manage/orders/date")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getOrdersByDate(
+	public ResponseEntity<Page<OrderDTO>> getOrdersByDate(
 			@RequestParam("date") @DateTimeFormat(pattern="dd-MM-yyyy") Date orderDate,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) 
@@ -143,19 +146,20 @@ public class OrderController {
 	
 	@GetMapping("/manage/orders/filter")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Object> getOrdersByFilter(
+	public ResponseEntity<Page<OrderDTO>> getOrdersByFilter(
 			@RequestParam(name = "name", required = false, defaultValue = "") String name,
+			@RequestParam(name = "status", required = false, defaultValue = "") String status,
 			@RequestParam(name = "from", required = false, defaultValue = Const.DEFAULT_MIN_PRICE) @DecimalMin(value = "0.0") Double fromPrice,
 			@RequestParam(name = "to", required = false, defaultValue = Const.DEFAULT_MAX_PRICE) @DecimalMin(value = "0.1") Double toPrice,
 			@RequestParam(name = "date") @DateTimeFormat(pattern="dd-MM-yyyy") Optional<Date> orderDate,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) 
 					throws NumberFormatException, ParseException {
-		return ResponseEntity.ok(orderService.getOrdersByFilter(name, fromPrice, toPrice, orderDate.orElse(null), page, size));
+		return ResponseEntity.ok(orderService.getOrdersByFilter(name.trim(), status.trim(), fromPrice, toPrice, orderDate.orElse(null), page, size));
 	}
 	
 	@DeleteMapping("manage/orders/{id}")
-	public ResponseEntity<Object> deleteOrder(
+	public ResponseEntity<String> deleteOrder(
 			@PathVariable(name = "id", required = true) @IdConstraint String id) {
 		orderService.deleteOrder(UUID.fromString(id));
 		log.info("Admin id: {} deleted order id: {}.", 

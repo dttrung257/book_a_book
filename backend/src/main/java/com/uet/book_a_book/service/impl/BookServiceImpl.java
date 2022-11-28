@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.uet.book_a_book.dto.book.NewBook;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Book;
+import com.uet.book_a_book.entity.constant.Const;
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.repository.BookRepository;
@@ -55,7 +56,7 @@ public class BookServiceImpl implements BookService {
 		if (name.equals("")) {
 			return bookRepository.findAll(pageable);
 		}
-		return bookRepository.findByName(name.trim(), pageable);
+		return bookRepository.findByName(name, pageable);
 	}
 
 	/** Get books by category. **/
@@ -65,7 +66,7 @@ public class BookServiceImpl implements BookService {
 		if (category.equals("")) {
 			return bookRepository.findAll(pageable);
 		}
-		return bookRepository.findByCategory(category.trim().toUpperCase(), pageable);
+		return bookRepository.findByCategory(category.toUpperCase(), pageable);
 	}
 
 	/** Get books in price range. **/
@@ -80,7 +81,7 @@ public class BookServiceImpl implements BookService {
 	public Page<Book> getBooksByRating(Integer rating, Integer page, Integer size) {
 		Sort sort = Sort.by("rating").descending();
 		Pageable pageable = PageRequest.of(page, size, sort);
-		if (rating == 0) {
+		if (rating == Const.MIN_STAR_NUMBER) {
 			return bookRepository.findByHighestRating(pageable); 
 		}
 		return bookRepository.findByRating(rating, pageable);
@@ -99,15 +100,15 @@ public class BookServiceImpl implements BookService {
 	public Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size) {
 		List<Book> books = bookRepository.findAll();
-		if (!(name.trim().equals("") || name == null)) {
+		if (!(name.equals("") || name == null)) {
 			books = books.stream().filter(book -> book.getName().toLowerCase().contains(name.toLowerCase()))
 					.collect(Collectors.toList());
 		}
-		if (!(category.trim().equals("") || category == null)) {
+		if (!(category.equals("") || category == null)) {
 			books = books.stream().filter(book -> book.getCategory().equalsIgnoreCase(category))
 					.collect(Collectors.toList());
 		}
-		if (rating != 0) {
+		if (rating > 0) {
 			books = books.stream().
 					filter(book -> (book.getRating() != null && book.getRating().intValue() >= rating))
 					.sorted(Comparator.comparing(Book::getRating).reversed())
@@ -143,9 +144,9 @@ public class BookServiceImpl implements BookService {
 		Book book = new Book();
 		book.setName(newBook.getName().trim());
 		book.setAuthor(newBook.getAuthor().trim());
-		book.setCategory(newBook.getCategory().toUpperCase());
-		book.setIsbn(newBook.getIsbn());
-		book.setPublisher(newBook.getPublisher());
+		book.setCategory(newBook.getCategory().trim().toUpperCase());
+		book.setIsbn(newBook.getIsbn().trim());
+		book.setPublisher(newBook.getPublisher().trim());
 		book.setBuyPrice(newBook.getBuyPrice());
 		book.setSellingPrice(newBook.getSellingPrice());
 		book.setNumberOfPages(newBook.getNumberOfPages());
@@ -156,7 +157,7 @@ public class BookServiceImpl implements BookService {
 		book.setAvailableQuantity(newBook.getQuantityInStock());
 		book.setQuantitySold(0L);
 		book.setStopSelling(false);
-		book.setDescription(newBook.getDescription());
+		book.setDescription(newBook.getDescription().trim());
 		book.setRating(null);
 		book.setOrderdetails(new ArrayList<>());
 		book.setComments(new ArrayList<>());
@@ -182,10 +183,10 @@ public class BookServiceImpl implements BookService {
 		}
 		book.setName(updateBook.getName().trim());
 		book.setAuthor(updateBook.getAuthor().trim());
-		book.setCategory(updateBook.getCategory().toUpperCase());
-		book.setIsbn(updateBook.getIsbn());
+		book.setCategory(updateBook.getCategory().trim().toUpperCase());
+		book.setIsbn(updateBook.getIsbn().trim());
 		book.setWidth(updateBook.getWidth());
-		book.setPublisher(updateBook.getPublisher());
+		book.setPublisher(updateBook.getPublisher().trim());
 		book.setBuyPrice(updateBook.getBuyPrice());
 		book.setSellingPrice(updateBook.getSellingPrice());
 		book.setNumberOfPages(updateBook.getNumberOfPages());
@@ -193,7 +194,7 @@ public class BookServiceImpl implements BookService {
 		book.setHeight(updateBook.getHeight());
 		book.setImage(updateBook.getImage());
 		book.setQuantityInStock(updateBook.getQuantityInStock());
-		book.setDescription(updateBook.getDescription());
+		book.setDescription(updateBook.getDescription().trim());
 		bookRepository.save(book);
 		log.info("Admin id: {} updated book id: {}.",
 				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
