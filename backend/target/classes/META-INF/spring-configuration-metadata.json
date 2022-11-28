@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "my.server",
+      "type": "com.uet.book_a_book.config.MyServerProperties",
+      "sourceType": "com.uet.book_a_book.config.MyServerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "my.server.mailcheck-api-key",
+      "type": "java.lang.String",
+      "sourceType": "com.uet.book_a_book.config.MyServerProperties"
+    },
+    {
+      "name": "my.server.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "com.uet.book_a_book.config.MyServerProperties"
+    }
+  ],
+  "hints": []
+}
