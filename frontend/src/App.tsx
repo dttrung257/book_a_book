@@ -22,6 +22,7 @@ import DashBoardOrder from "./pages/DashBoard/Orders/Order";
 import DashBoardOrderDetail from "./pages/DashBoard/Orders/OrderDetail";
 import Category from "./pages/Category/Category";
 import Product from "./pages/Product/Product";
+import AboutUs from "./pages/AboutUs/AboutUs";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 const Login = React.lazy(() => import("./pages/Login/Login"));
@@ -76,6 +77,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="cart" element={<Cart />} />
             <Route path="product/:id/:title" element={<Product />} />
+            <Route path="about-us" element={<AboutUs />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
           <Route path="dashboard" element={<DashBoardLayout />}>
