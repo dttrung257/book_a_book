@@ -52,7 +52,11 @@ const Header = () => {
         </div>
       </div>
       <div className="search">
-        <input id="searchBar" placeholder="Search book..." onChange={onChangeSearchBox}/>
+        <input
+          id="searchBar"
+          placeholder="Search book..."
+          onChange={onChangeSearchBox}
+        />
         <FiSearch
           color="008B8B"
           onClick={handleSearch}

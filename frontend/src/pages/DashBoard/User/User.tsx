@@ -12,16 +12,15 @@ import axios, { isAxiosError } from "../../../apis/axiosInstance";
 import AppModal from "../../../components/AppModal/AppModal";
 
 interface InfoError {
-  firstName?: string,
-  lastName?: string,
-  email?: string,
-  gender?: string,
-  password?: string,
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  gender?: string;
+  password?: string;
 }
 
-const validationInfo = (info: UserSignUp) : InfoError => {
-  const error:InfoError = {
-  };
+const validationInfo = (info: UserSignUp): InfoError => {
+  const error: InfoError = {};
 
   if (!info.firstName) error.firstName = "First name is required";
   else if (!validator.isAlpha(info.firstName))
@@ -139,7 +138,7 @@ const User = () => {
 
     try {
       const err = validationInfo(userAddInfo);
-      console.log(err)
+      console.log(err);
       if (err && Object.keys(err).length !== 0) return setError(err);
       setError({});
 
@@ -207,10 +206,7 @@ const User = () => {
             </thead>
             <tbody className={`${style.tableBody}`}>
               {usersList.map((user) => (
-                <UserItem
-                  key={user.email}
-                  user={user}
-                />
+                <UserItem key={user.email} user={user} />
               ))}
             </tbody>
           </Table>
@@ -270,7 +266,10 @@ const User = () => {
                 placeholder=""
                 value={userAddInfo.firstName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUserAddInfo({ ...userAddInfo, firstName: e.target.value.trim() })
+                  setUserAddInfo({
+                    ...userAddInfo,
+                    firstName: e.target.value.trim(),
+                  })
                 }
               />
               {error?.firstName ? (
@@ -285,7 +284,10 @@ const User = () => {
                 placeholder=""
                 value={userAddInfo.lastName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUserAddInfo({ ...userAddInfo, lastName: e.target.value.trim() })
+                  setUserAddInfo({
+                    ...userAddInfo,
+                    lastName: e.target.value.trim(),
+                  })
                 }
               />
               {error?.lastName ? (
@@ -300,7 +302,10 @@ const User = () => {
                 placeholder="Enter email"
                 value={userAddInfo.email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUserAddInfo({ ...userAddInfo, email: e.target.value.trim() })
+                  setUserAddInfo({
+                    ...userAddInfo,
+                    email: e.target.value.trim(),
+                  })
                 }
               />
               {error?.email ? (
@@ -340,7 +345,10 @@ const User = () => {
                 placeholder=""
                 value={userAddInfo.password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setUserAddInfo({ ...userAddInfo, password: e.target.value.trim() })
+                  setUserAddInfo({
+                    ...userAddInfo,
+                    password: e.target.value.trim(),
+                  })
                 }
               />
               {error?.password ? (

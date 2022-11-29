@@ -42,6 +42,8 @@
   margin-top: 20px;
 }
 
-.frame img, #bookName, #cart {
+.frame img,
+#bookName,
+#cart {
   cursor: pointer;
 }

@@ -13,15 +13,11 @@ interface MessageStatus {
   message: string;
 }
 
-const UserItem = ({
-  user: userInfo,
-}: {
-  user: UserDetailInfo;
-}) => {
+const UserItem = ({ user: userInfo }: { user: UserDetailInfo }) => {
   const [locked, setLocked] = useState<boolean>(userInfo.locked);
   const [lockModal, setLockModal] = useState<boolean>(false);
   const [message, setMessage] = useState<MessageStatus | null>(null);
-  const {accessToken, user} = useAppSelector((state) => state.auth);
+  const { accessToken, user } = useAppSelector((state) => state.auth);
 
   const closeModal = (show: boolean) => {
     setLockModal(show);

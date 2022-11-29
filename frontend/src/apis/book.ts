@@ -22,9 +22,7 @@ export const getBestSeller = async (filter: FilterSearch) => {
     if (filter.page !== undefined) query = query.concat(`&page=${filter.page}`);
   }
   if (filter.page !== undefined) query = `?page=${filter.page}`;
-  const response = await axiosInstance.get(
-    `books/best_selling${query}`
-  );
+  const response = await axiosInstance.get(`books/best_selling${query}`);
   return response.data;
 };
 
