@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
 	
 	/** Get all comments of a book. (When user not login) **/
 	@Override
-	public Page<CommentDTO> getAllComments(Long bookId, Integer page, Integer size) {
+	public Page<CommentDTO> getCommentsByBookId(Long bookId, Integer page, Integer size) {
 		Book book = bookRepository.findById(bookId).orElse(null);
 		if (book == null) {    
 			throw new NotFoundBookException("Not found book id: " + bookId);
@@ -93,22 +93,8 @@ public class CommentServiceImpl implements CommentService {
 		return new PageImpl<>(comments, pageable, comments.size());
 	}
 	
-	/** Get all comments. **/
 	@Override
-	public Page<CommentDTO> getAllComments(Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		List<CommentDTO> comments = commentRepository.findAll()
-				.stream().map(c -> commentMapper.mapToCommentDTO(c)).collect(Collectors.toList());
-		Integer start = (int) pageable.getOffset();
-		Integer end = Math.min((start + pageable.getPageSize()), comments.size());
-		if (start <= comments.size()) {
-			return new PageImpl<>(comments.subList(start, end), pageable, comments.size());
-		}
-		return new PageImpl<>(comments, pageable, comments.size());
-	}
-	
-	@Override
-	public Page<CommentDTO> getCommentsByFilters(Long bookId, String bookName, Date date, String fullname,
+	public Page<CommentDTO> getComments(Long bookId, String bookName, Date date, String fullname,
 			Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<CommentDTO> comments = commentRepository.findAll()

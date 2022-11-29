@@ -19,14 +19,6 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
 	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role WHERE u.id = :id")
 	Optional<AppUser> findById(@Param("id") UUID id);
 	
-	@Query("SELECT u FROM AppUser u LEFT JOIN FETCH u.role"
-			+ " WHERE u.email LIKE %:name%"
-			+ " OR u.firstName LIKE %:name%"
-			+ " OR u.lastName LIKE %:name%"
-			+ " OR CONCAT(u.firstName, ' ', u.lastName) LIKE %:name%"
-			+ " OR CONCAT(u.lastName, ' ', u.firstName) LIKE %:name%")
-	List<AppUser> findByName(@Param("name") String name);
-	
 	@Query("SELECT u FROM AppUser u JOIN FETCH u.role")
 	List<AppUser> findAll();
 	

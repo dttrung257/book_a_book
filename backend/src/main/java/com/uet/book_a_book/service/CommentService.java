@@ -9,27 +9,30 @@ import com.uet.book_a_book.dto.comment.CommentDTO;
 import com.uet.book_a_book.dto.comment.NewComment;
 
 public interface CommentService {
-	//
-	Page<CommentDTO> getAllComments(Long bookId, Integer page, Integer size);
+	// Get comments by book id
+	Page<CommentDTO> getCommentsByBookId(Long bookId, Integer page, Integer size);
 
+	// Get user comment in book page
 	CommentDTO getUserComment(Long bookId);
 
+	// Get other user comment in book page
 	Page<CommentDTO> getOtherComments(Long bookId, Integer page, Integer size);
 	
-	// For admins
-	Page<CommentDTO> getAllComments(Integer page, Integer size);
-	
-	Page<CommentDTO> getCommentsByFilters(Long bookId, String bookName, Date date, String fullname, Integer page, Integer size);
+	// Adm get comments
+	Page<CommentDTO> getComments(Long bookId, String bookName, Date date, String fullname, Integer page, Integer size);
 
+	// Adm get comment by id
 	CommentDTO getCommentById(UUID id);
 	
-	//
+	// Add new comment
 	CommentDTO addComment(NewComment newComment);
 
+	// Update comment
 	CommentDTO updateComment(NewComment updateComment);
 
+	// User delete comment
 	void deleteComment(Long bookId);
 	
-	// For admins
+	// Adm delete comment
 	void deleteCommentByAdmin(UUID id);
 }

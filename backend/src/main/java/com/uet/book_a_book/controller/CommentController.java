@@ -42,11 +42,11 @@ public class CommentController {
 	private CommentService commentService;
 
 	@GetMapping("/comments")
-	public ResponseEntity<Page<CommentDTO>> getAllComments(
+	public ResponseEntity<Page<CommentDTO>> getCommentsByBookId(
 			@RequestParam(name = "book_id", required = true) @Min(value = 1L) Long bookId,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(commentService.getAllComments(bookId, page, size));
+		return ResponseEntity.ok(commentService.getCommentsByBookId(bookId, page, size));
 	}
 
 	@GetMapping("/comments/user_comment")
@@ -82,14 +82,6 @@ public class CommentController {
 
 	@GetMapping("/manage/comments")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Page<CommentDTO>> getAllComments(
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(commentService.getAllComments(page, size));
-	}
-
-	@GetMapping("/manage/comments/filter")
-	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public ResponseEntity<Page<CommentDTO>> getCommentsByFilters(
 			@RequestParam(name = "book_id", required = false, defaultValue = "0") Long bookId,
 			@RequestParam(name = "book_name", required = false, defaultValue = "") String bookName,
@@ -97,7 +89,7 @@ public class CommentController {
 			@RequestParam(name = "fullname", required = false, defaultValue = "") String fullname,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(commentService.getCommentsByFilters(bookId, bookName.trim(), date.orElse(null),
+		return ResponseEntity.ok(commentService.getComments(bookId, bookName.trim(), date.orElse(null),
 				fullname.trim(), page, size));
 	}
 

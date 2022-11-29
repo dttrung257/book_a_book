@@ -7,7 +7,7 @@ public interface ResetPasswordTokenService {
 
 	void forgotPassword(String email);
 
-	ResetPasswordToken getResetPasswordToken(String email, String code);
+	String getResetPasswordToken(String email, String code);
 
-	ResetPasswordToken resetPassword(String email, String resetToken, String newPassword);
+	void resetPassword(String email, String resetToken, String newPassword);
 }

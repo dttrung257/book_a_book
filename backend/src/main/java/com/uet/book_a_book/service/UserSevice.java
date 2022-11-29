@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import com.uet.book_a_book.dto.RegisterRequest;
 import com.uet.book_a_book.dto.user.UpdateUser;
+import com.uet.book_a_book.dto.user.UpdateUserStatus;
 import com.uet.book_a_book.dto.user.UserDTO;
 import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.entity.AppUser;
@@ -15,9 +16,7 @@ public interface UserSevice {
 	UserInfo getUserInfo();
 	
 	// For admins
-	Page<UserDTO> getAllUsers(Integer page, Integer size);
-
-	Page<UserDTO> getUsersByName(String name, Integer page, Integer size);
+	Page<UserDTO> getUsers(String name, Integer page, Integer size);
 
 	UserDTO getUserById(UUID id);
 
@@ -33,11 +32,7 @@ public interface UserSevice {
 	// For admins
 	UserDTO createAccount(RegisterRequest request);
 	
-	void lockAccount(UUID id);
-
-	void unlockAccount(UUID id);
-
-	void activeAccount(UUID id);
+	String updateUserStatus(UpdateUserStatus updateUserStatus, UUID id);
 
 	void updateUserPassword(UUID id, String newPassword);
 

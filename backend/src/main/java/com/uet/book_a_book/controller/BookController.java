@@ -34,64 +34,17 @@ import com.uet.book_a_book.service.BookService;
 @RestController
 @RequestMapping("/api")
 @Validated
-//@Slf4j
 public class BookController {
 	@Autowired
 	private BookService bookService;
-
-	@GetMapping("/books")
-	public ResponseEntity<Page<Book>> getAllBooks(
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getAllBooks(page, size));
-	}
 
 	@GetMapping("books/{id}")
 	public ResponseEntity<Book> getBookById(@PathVariable(name = "id", required = true) @Min(value = 1L) Long id) {
 		return ResponseEntity.ok(bookService.getBookById(id));
 	}
 
-	@GetMapping("books/name")
-	public ResponseEntity<Page<Book>> getBooksByName(@RequestParam(name = "name", required = true) String name,
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooksByName(name.trim(), page, size));
-	}
-
-	@GetMapping("books/category")
-	public ResponseEntity<Page<Book>> getBooksByCategory(@RequestParam(name = "category", required = true) String category,
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooksByCategory(category.trim(), page, size));
-	}
-
-	@GetMapping("books/price")
-	public ResponseEntity<Page<Book>> getBooksByPrice(
-			@RequestParam(name = "from", required = false, defaultValue = Const.DEFAULT_MIN_PRICE) @DecimalMin(value = "0.0") Double fromPrice,
-			@RequestParam(name = "to", required = false, defaultValue = Const.DEFAULT_MAX_PRICE) @DecimalMin(value = "0.1") Double toPrice,
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooksByPrice(fromPrice, toPrice, page, size));
-	}
-
-	@GetMapping("/books/rating")
-	public ResponseEntity<Page<Book>> getBooksByRating(
-			@RequestParam(name = "rating", required = false, defaultValue = "0") 
-			@Min(value = Const.MIN_STAR_NUMBER) @Max(value = Const.MAX_STAR_NUMBER) Integer rating,
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooksByRating(rating, page, size));
-	}
-
-	@GetMapping("/books/best_selling")
-	public ResponseEntity<Page<Book>> getBooksByBestSelling(
-			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
-			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooksByBestSelling(page, size));
-	}
-
-	@GetMapping("/books/filter")
-	public ResponseEntity<Page<Book>> getBooksByFilter(
+	@GetMapping("/books")
+	public ResponseEntity<Page<Book>> getBooks(
 			@RequestParam(name = "name", required = false, defaultValue = "") String name,
 			@RequestParam(name = "category", required = false, defaultValue = "") String category,
 			@RequestParam(name = "from", required = false, defaultValue = Const.DEFAULT_MIN_PRICE) @DecimalMin(value = "0.0") Double fromPrice,
@@ -100,7 +53,7 @@ public class BookController {
 			@Min(value = Const.MIN_STAR_NUMBER) @Max(value = Const.MAX_STAR_NUMBER) Integer rating,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooksByFilter(name.trim(), category.trim(), fromPrice, toPrice, rating, page, size));
+		return ResponseEntity.ok(bookService.getBooks(name.trim(), category.trim(), fromPrice, toPrice, rating, page, size));
 	}
 
 	@GetMapping("/books/cart")

@@ -11,14 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.uet.book_a_book.dto.book.NewBook;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Book;
-import com.uet.book_a_book.entity.constant.Const;
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.repository.BookRepository;
@@ -32,13 +30,6 @@ public class BookServiceImpl implements BookService {
 	@Autowired
 	private BookRepository bookRepository;
 
-	/** Get all books. **/
-	@Override
-	public Page<Book> getAllBooks(Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return bookRepository.findAll(pageable);
-	}
-
 	/** Get book by id. **/
 	@Override
 	public Book getBookById(Long id) {
@@ -49,55 +40,9 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
-	/** Get books by name. **/
+	/** Get books. **/
 	@Override
-	public Page<Book> getBooksByName(String name, Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		if (name.equals("")) {
-			return bookRepository.findAll(pageable);
-		}
-		return bookRepository.findByName(name, pageable);
-	}
-
-	/** Get books by category. **/
-	@Override
-	public Page<Book> getBooksByCategory(String category, Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		if (category.equals("")) {
-			return bookRepository.findAll(pageable);
-		}
-		return bookRepository.findByCategory(category.toUpperCase(), pageable);
-	}
-
-	/** Get books in price range. **/
-	@Override
-	public Page<Book> getBooksByPrice(Double fromPrice, Double toPrice, Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return bookRepository.findByPrice(fromPrice, toPrice, pageable);
-	}
-
-	/** Get books by rating. **/
-	@Override
-	public Page<Book> getBooksByRating(Integer rating, Integer page, Integer size) {
-		Sort sort = Sort.by("rating").descending();
-		Pageable pageable = PageRequest.of(page, size, sort);
-		if (rating == Const.MIN_STAR_NUMBER) {
-			return bookRepository.findByHighestRating(pageable); 
-		}
-		return bookRepository.findByRating(rating, pageable);
-	}
-
-	/** Get best selling books. **/
-	@Override
-	public Page<Book> getBooksByBestSelling(Integer page, Integer size) {
-		Sort sort = Sort.by("quantitySold").descending();
-		Pageable pageable = PageRequest.of(page, size, sort);
-		return bookRepository.findByBestSelling(pageable);
-	}
-
-	/** Get books by many criteria. **/
-	@Override
-	public Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
+	public Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size) {
 		List<Book> books = bookRepository.findAll();
 		if (!(name.equals("") || name == null)) {

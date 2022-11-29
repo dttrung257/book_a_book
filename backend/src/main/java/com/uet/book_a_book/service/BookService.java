@@ -9,31 +9,25 @@ import com.uet.book_a_book.dto.book.NewBook;
 import com.uet.book_a_book.entity.Book;
 
 public interface BookService {
-	Page<Book> getAllBooks(Integer page, Integer size);
-
+	// Get books
 	Book getBookById(Long id);
 
-	Page<Book> getBooksByName(String name, Integer page, Integer size);
-
-	Page<Book> getBooksByCategory(String category, Integer page, Integer size);
-
-	Page<Book> getBooksByPrice(Double fromPrice, Double toPrice, Integer page, Integer size);
-
-	Page<Book> getBooksByRating(Integer rating, Integer page, Integer size);
-
-	Page<Book> getBooksByBestSelling(Integer page, Integer size);
-
-	Page<Book> getBooksByFilter(String name, String category, Double fromPrice, Double toPrice, Integer rating,
+	// Get book by id
+	Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating,
 			Integer page, Integer size);
 	
+	// Get books in shopping cart
 	List<Book> getBooksInCart(Set<Long> ids);
 	
-	// For admins
+	// Adm add new book
 	Book addBook(NewBook newBook);
 
+	// Adm update book
 	Book updateBook(NewBook updateBook, Long id);
 
+	// Adm update book status
 	Book updateStatus(Long id, Boolean stopSelling);
 
+	// Adm delete book
 	void deleteBook(Long id);
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.uet.book_a_book.dto.RegisterRequest;
 import com.uet.book_a_book.dto.user.UpdateUser;
+import com.uet.book_a_book.dto.user.UpdateUserStatus;
 import com.uet.book_a_book.dto.user.UserDTO;
 import com.uet.book_a_book.dto.user.UserInfo;
 import com.uet.book_a_book.email.EmailSenderService;
@@ -28,6 +29,7 @@ import com.uet.book_a_book.entity.Role;
 import com.uet.book_a_book.entity.constant.Gender;
 import com.uet.book_a_book.entity.constant.OrderStatus;
 import com.uet.book_a_book.entity.constant.RoleName;
+import com.uet.book_a_book.entity.constant.UserStatus;
 import com.uet.book_a_book.exception.account.AccountAlreadyActivatedException;
 import com.uet.book_a_book.exception.account.AccountAlreadyExistsException;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
@@ -39,6 +41,7 @@ import com.uet.book_a_book.exception.account.IncorrectOldPasswordException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
 import com.uet.book_a_book.exception.account.NotFoundAccountException;
 import com.uet.book_a_book.exception.account.NotFoundGenderException;
+import com.uet.book_a_book.exception.account.NotFoundUserStatusException;
 import com.uet.book_a_book.exception.order.CannotDeleteShippingOrderException;
 import com.uet.book_a_book.mapper.UserMapper;
 import com.uet.book_a_book.repository.OrderRepository;
@@ -74,24 +77,15 @@ public class UserServiceImpl implements UserSevice {
 		return userMapper.mapToUserDTO(user);
 	}
 
-	/** Get all users. **/
-	@Override
-	public Page<UserDTO> getAllUsers(Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = userRepository.findAll().stream().map(u -> userMapper.mapToUserDTO(u)).collect(Collectors.toList());
-		Integer start = (int) pageable.getOffset();
-		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
-		if (start <= userDTOs.size()) {
-			return new PageImpl<>(userDTOs.subList(start, end), pageable, userDTOs.size());
-		}
-		return new PageImpl<>(new ArrayList<>(), pageable, userDTOs.size());
-	}
-
 	/** Get user by name or email. **/
 	@Override
-	public Page<UserDTO> getUsersByName(String name, Integer page, Integer size) {
+	public Page<UserDTO> getUsers(String name, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
-		List<UserDTO> userDTOs = userRepository.findByName(name.trim()).stream().map(u -> userMapper.mapToUserDTO(u)).collect(Collectors.toList());
+		List<UserDTO> userDTOs = userRepository.findAll().stream().map(u -> userMapper.mapToUserDTO(u)).collect(Collectors.toList());
+		if (!name.equals("") && name != null) {
+			userDTOs = userDTOs.stream().filter(uDTO -> ((uDTO.getFirstName() + " " + uDTO.getLastName()).toLowerCase().contains(name.toLowerCase())
+					|| uDTO.getEmail().toLowerCase().contains(name.toLowerCase()))).collect(Collectors.toList());
+		}
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), userDTOs.size());
 		if (start <= userDTOs.size()) {
@@ -248,8 +242,7 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	/** Adm lock user account **/
-	@Override
-	public void lockAccount(UUID id) {
+	private void lockAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user id: " + id);
@@ -269,8 +262,7 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	/** Adm unlock user account. */
-	@Override
-	public void unlockAccount(UUID id) {
+	private void unlockAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user id: " + id);
@@ -290,8 +282,7 @@ public class UserServiceImpl implements UserSevice {
 	}
 
 	/** Adm activate account. **/
-	@Override
-	public void activeAccount(UUID id) {
+	private void activeAccount(UUID id) {
 		AppUser user = userRepository.findById(id).orElse(null);
 		if (user == null) {
 			throw new NotFoundAccountException("Not found user id: " + id);
@@ -303,8 +294,31 @@ public class UserServiceImpl implements UserSevice {
 		user.setEmailVerificationCode(null);
 		userRepository.save(user);
 		log.info("Admin id: {} activate account id: {}.", 
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				user.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), user.getId());
+	}
+	
+	/** Adm update user status. **/
+	@Override
+	public String updateUserStatus(UpdateUserStatus updateUserStatus, UUID id) {
+		if (updateUserStatus.getStatus().trim().equalsIgnoreCase(UserStatus.STATUS_LOCKED)) {
+			if (updateUserStatus.getState() == true) {
+				lockAccount(id);
+				return "Lock user id: " + id + " successfully";
+			} else {
+				unlockAccount(id);
+				return "Unlock user id: " + id + " successfully";
+			}
+		} else if (updateUserStatus.getStatus().trim().equalsIgnoreCase(UserStatus.STATUS_ACTIVATED)) {
+			if (updateUserStatus.getState() == true) {
+				activeAccount(id);
+				return "Activate user id: " + id + " successfully";
+			} else {
+				return "System does not support this feature";
+			}
+		} else {
+			throw new NotFoundUserStatusException("Not found user status: " + updateUserStatus.getStatus());
+		}
+		
 	}
 	
 	/** Adm reset password. **/
