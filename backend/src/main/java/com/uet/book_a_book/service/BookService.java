@@ -13,7 +13,7 @@ public interface BookService {
 	Book getBookById(Long id);
 
 	// Get book by id
-	Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating,
+	Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating, Boolean bestSelling,
 			Integer page, Integer size);
 	
 	// Get books in shopping cart

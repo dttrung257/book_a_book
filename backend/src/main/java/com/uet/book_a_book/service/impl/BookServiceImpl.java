@@ -42,7 +42,7 @@ public class BookServiceImpl implements BookService {
 
 	/** Get books. **/
 	@Override
-	public Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating,
+	public Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating, Boolean bestSelling,
 			Integer page, Integer size) {
 		List<Book> books = bookRepository.findAll();
 		if (!(name.equals("") || name == null)) {
@@ -57,6 +57,10 @@ public class BookServiceImpl implements BookService {
 			books = books.stream().
 					filter(book -> (book.getRating() != null && book.getRating().intValue() >= rating))
 					.sorted(Comparator.comparing(Book::getRating).reversed())
+					.collect(Collectors.toList());
+		}
+		if (bestSelling) {
+			books = books.stream().sorted(Comparator.comparing(Book::getQuantitySold).reversed())
 					.collect(Collectors.toList());
 		}
 		books = books.stream()

@@ -51,9 +51,10 @@ public class BookController {
 			@RequestParam(name = "to", required = false, defaultValue = Const.DEFAULT_MAX_PRICE) @DecimalMin(value = "0.1") Double toPrice,
 			@RequestParam(name = "rating", required = false, defaultValue = "0") 
 			@Min(value = Const.MIN_STAR_NUMBER) @Max(value = Const.MAX_STAR_NUMBER) Integer rating,
+			@RequestParam(name = "best_selling", required = false, defaultValue = "false") Boolean bestSelling,
 			@RequestParam(name = "page", required = false, defaultValue = Const.DEFAULT_PAGE_NUMBER) @Min(value = 0) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = Const.DEFAULT_PAGE_SIZE) @Min(value = 1) Integer size) {
-		return ResponseEntity.ok(bookService.getBooks(name.trim(), category.trim(), fromPrice, toPrice, rating, page, size));
+		return ResponseEntity.ok(bookService.getBooks(name.trim(), category.trim(), fromPrice, toPrice, rating, bestSelling, page, size));
 	}
 
 	@GetMapping("/books/cart")

@@ -97,7 +97,7 @@ public class OrderController {
 	
 	@GetMapping("/manage/orders")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public ResponseEntity<Page<OrderDTO>> getOrdersByFilter(
+	public ResponseEntity<Page<OrderDTO>> getOrders(
 			@RequestParam(name = "user_id", required = false, defaultValue = "") String userId,
 			@RequestParam(name = "name", required = false, defaultValue = "") String name,
 			@RequestParam(name = "status", required = false, defaultValue = "") String status,
