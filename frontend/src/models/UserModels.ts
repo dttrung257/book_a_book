@@ -57,4 +57,5 @@ export interface UserDetailInfo extends UserInfo {
   address?: string;
   locked: boolean;
   createdAt: string;
+  emailVerified: boolean;
 }

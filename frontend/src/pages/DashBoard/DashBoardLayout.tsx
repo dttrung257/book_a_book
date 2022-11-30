@@ -86,7 +86,7 @@ const DashBoardLayout = () => {
   if (!isLoggedIn || user.authority !== "ADMIN") return <Navigate to="/" />;
 
   return (
-    <div>
+    <div id={style.dashboard}>
       <Header />
       <div className={`${style.container} d-flex flex-row`}>
         <Navbar />

@@ -34,10 +34,10 @@ const Reset = () => {
       setIsSending(true);
 
       const passwordError = checkPassword(password, confirmPassword);
-      if (passwordError && Object.keys(passwordError).length !== 0)
-        return setErr(passwordError);
+      setErr(passwordError);
+      if (passwordError && Object.keys(passwordError).length !== 0) return;
 
-      await axios.post("/users/forgot_password/reset_password", {
+      await axios.put("/users/forgot_password/reset_password", {
         email,
         resetToken,
         newPassword: password,

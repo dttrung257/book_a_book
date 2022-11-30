@@ -15,7 +15,7 @@ export const checkPassword = (password: string, confirmPassword: string) => {
 
   if (!confirmPassword) error.confirmPassword = "Confirm password is required";
   else if (password !== confirmPassword)
-    error.confirmPassword = "Password are not matching";
+    error.confirmPassword = "Passwords do not match";
 
   return error;
 };
