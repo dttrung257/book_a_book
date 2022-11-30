@@ -236,8 +236,7 @@ public class UserServiceImpl implements UserSevice {
 		user.setEmailVerified(true);
 		userRepository.save(user);
 		log.info("Admin id: {} create account id: {}.",
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				user.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), user.getId());
 		return userMapper.mapToUserDTO(user); 
 	}
 
@@ -257,8 +256,7 @@ public class UserServiceImpl implements UserSevice {
 		user.setLocked(true);
 		userRepository.save(user);
 		log.info("Admin id: {} lock account id: {}.", 
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				user.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), user.getId());
 	}
 
 	/** Adm unlock user account. */
@@ -277,8 +275,7 @@ public class UserServiceImpl implements UserSevice {
 		user.setLocked(false);
 		userRepository.save(user);
 		log.info("Admin id: {} unlock account id: {}.", 
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				user.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), user.getId());
 	}
 
 	/** Adm activate account. **/
@@ -342,8 +339,7 @@ public class UserServiceImpl implements UserSevice {
 		appUser.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(appUser);
 		log.info("Admin id: {} reset password of account id: {}.", 
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				user.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), user.getId());
 	}
 
 	/** Adm delete user. **/

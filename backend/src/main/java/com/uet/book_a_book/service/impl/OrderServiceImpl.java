@@ -77,8 +77,8 @@ public class OrderServiceImpl implements OrderService {
 
 	/** Get orders by multiple filters. **/
 	@Override
-	public Page<OrderDTO> getOrders(String userId, String name, String status, Double fromPrice, Double toPrice, Date orderDate, Integer page,
-			Integer size) {
+	public Page<OrderDTO> getOrders(String userId, String name, String status, Double fromPrice, Double toPrice,
+			Date orderDate, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
@@ -89,20 +89,23 @@ public class OrderServiceImpl implements OrderService {
 		}
 		if (!name.equals("") && name != null) {
 			orderDTOs = orderDTOs.stream()
-					.filter(oDTO -> ((oDTO.getFullName() != null && oDTO.getFullName().toLowerCase().contains(name.toLowerCase()))
+					.filter(oDTO -> ((oDTO.getFullName() != null
+							&& oDTO.getFullName().toLowerCase().contains(name.toLowerCase()))
 							|| (oDTO.getEmail() != null && oDTO.getEmail().toLowerCase().contains(name.toLowerCase()))))
 					.collect(Collectors.toList());
-		} 
+		}
 		if (status.equalsIgnoreCase(OrderStatus.STATUS_PENDING) || status.equalsIgnoreCase(OrderStatus.STATUS_SHIPPING)
-				|| status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS) || status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED)) {
-			orderDTOs = orderDTOs.stream()
-					.filter(oDTO -> (oDTO.getStatus()).equalsIgnoreCase(status))
+				|| status.equalsIgnoreCase(OrderStatus.STATUS_SUCCESS)
+				|| status.equalsIgnoreCase(OrderStatus.STATUS_CANCELED)) {
+			orderDTOs = orderDTOs.stream().filter(oDTO -> (oDTO.getStatus()).equalsIgnoreCase(status))
 					.collect(Collectors.toList());
 		}
 		if (orderDate != null) {
-			orderDTOs = orderDTOs.stream().filter(oDTO -> (DateUtils.isSameDay(oDTO.getOrderDate(), orderDate))).collect(Collectors.toList());
+			orderDTOs = orderDTOs.stream().filter(oDTO -> (DateUtils.isSameDay(oDTO.getOrderDate(), orderDate)))
+					.collect(Collectors.toList());
 		}
-		orderDTOs = orderDTOs.stream().filter(oDTO -> (oDTO.getTotal() >= fromPrice && oDTO.getTotal() <= toPrice)).collect(Collectors.toList());
+		orderDTOs = orderDTOs.stream().filter(oDTO -> (oDTO.getTotal() >= fromPrice && oDTO.getTotal() <= toPrice))
+				.collect(Collectors.toList());
 		Integer start = (int) pageable.getOffset();
 		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
 		if (start <= orderDTOs.size()) {
@@ -184,9 +187,8 @@ public class OrderServiceImpl implements OrderService {
 			book.setQuantitySold(book.getQuantitySold() + od.getQuantity());
 			bookRepository.save(book);
 		});
-		log.info("Admin id: {} added new order id: {}.", 
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				order.getId());
+		log.info("Admin id: {} added new order id: {}.",
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), order.getId());
 		return orderMapper.mapToOrderDTO(order);
 	}
 
@@ -357,11 +359,8 @@ public class OrderServiceImpl implements OrderService {
 
 			order.setStatus(status.toUpperCase());
 		}
-		log.info("Admin id: {} changed order id: {} status {} to status {}.", 
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				order.getId(),
-				beforeStatus,
-				status.toUpperCase());
+		log.info("Admin id: {} changed order id: {} status {} to status {}.",
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), order.getId(), beforeStatus, status.toUpperCase());
 		orderRepository.save(order);
 		return orderMapper.mapToOrderDTO(order);
 	}

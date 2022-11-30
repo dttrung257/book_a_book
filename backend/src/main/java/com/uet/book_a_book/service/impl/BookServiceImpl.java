@@ -45,25 +45,26 @@ public class BookServiceImpl implements BookService {
 	public Page<Book> getBooks(String name, String category, Double fromPrice, Double toPrice, Integer rating, Boolean bestSelling,
 			Integer page, Integer size) {
 		List<Book> books = bookRepository.findAll();
-		if (!(name.equals("") || name == null)) {
+		if (!(name.equals("") || name == null)) { // If search by book name
 			books = books.stream().filter(book -> book.getName().toLowerCase().contains(name.toLowerCase()))
 					.collect(Collectors.toList());
 		}
-		if (!(category.equals("") || category == null)) {
+		if (!(category.equals("") || category == null)) { // If search by category
 			books = books.stream().filter(book -> book.getCategory().equalsIgnoreCase(category))
 					.collect(Collectors.toList());
 		}
-		if (rating > 0) {
+		if (rating > 0) { // If search by rating
 			books = books.stream().
 					filter(book -> (book.getRating() != null && book.getRating().intValue() >= rating))
 					.sorted(Comparator.comparing(Book::getRating).reversed())
 					.collect(Collectors.toList());
 		}
-		if (bestSelling) {
+		if (bestSelling) { // If search by best selling
 			books = books.stream().sorted(Comparator.comparing(Book::getQuantitySold).reversed())
 					.collect(Collectors.toList());
 		}
-		books = books.stream()
+		// Price range
+		books = books.stream() 
 				.filter(book -> (book.getSellingPrice() >= fromPrice && book.getSellingPrice() <= toPrice))
 				.collect(Collectors.toList());
 		Pageable pageable = PageRequest.of(page, size);
@@ -112,8 +113,7 @@ public class BookServiceImpl implements BookService {
 		book.setComments(new ArrayList<>());
 		bookRepository.save(book);
 		log.info("Admin id: {} added new book id: {}.",
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				book.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());
 		return book;
 	}
 
@@ -146,8 +146,7 @@ public class BookServiceImpl implements BookService {
 		book.setDescription(updateBook.getDescription().trim());
 		bookRepository.save(book);
 		log.info("Admin id: {} updated book id: {}.",
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				book.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());
 		return book;
 	}
 
@@ -165,12 +164,10 @@ public class BookServiceImpl implements BookService {
 		bookRepository.save(book);
 		if (stopSelling == true) {
 			log.info("Admin id: {} changed the status of book id: {} to stop selling.",
-					((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-					book.getId());
+					((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());
 		} else {
 			log.info("Admin id: {} changed the status of book id: {} to keep selling.",
-					((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-					book.getId());
+					((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());
 		}
 		return book;
 	}
@@ -183,8 +180,7 @@ public class BookServiceImpl implements BookService {
 			throw new NotFoundBookException("Not found book id: " + id);
 		}
 		log.info("Admin id: {} deleted book id: {}.",
-				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(),
-				book.getId());
+				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());
 		bookRepository.delete(book);
 	}
 }

@@ -80,7 +80,7 @@ public class UserController {
 		return ResponseEntity.ok(resetPasswordTokenService.getResetPasswordToken(email.trim(), code.trim()));
 	}
 
-	@PutMapping("/users/forgot_password")
+	@PutMapping("/users/forgot_password/reset_password")
 	public ResponseEntity<String> resetPassword(@RequestBody ResetPassword resetPassword) {
 		resetPasswordTokenService.resetPassword(resetPassword.getEmail().trim(), resetPassword.getResetToken().trim(),
 				resetPassword.getNewPassword().trim());
