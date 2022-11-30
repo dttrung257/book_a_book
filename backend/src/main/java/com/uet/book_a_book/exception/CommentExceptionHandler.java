@@ -2,6 +2,8 @@ package com.uet.book_a_book.exception;
 
 import java.util.Date;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,6 +14,7 @@ import com.uet.book_a_book.exception.comment.NotFoundCommentException;
 import com.uet.book_a_book.exception.comment.UserHasNotCommentedYetException;
 
 @ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CommentExceptionHandler {
 	@ExceptionHandler(CommentAlreadyExistsException.class) 
 	public ResponseEntity<ErrorDetails> handleCommentAlreadyExistsException(CommentAlreadyExistsException e) {

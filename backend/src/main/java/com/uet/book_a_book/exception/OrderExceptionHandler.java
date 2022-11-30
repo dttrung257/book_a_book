@@ -2,6 +2,8 @@ package com.uet.book_a_book.exception;
 
 import java.util.Date;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +17,7 @@ import com.uet.book_a_book.exception.order.NotFoundOrderException;
 import com.uet.book_a_book.exception.order.NotFoundOrderStatusException;
 
 @ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OrderExceptionHandler {
 	@ExceptionHandler(NotFoundOrderException.class)
 	public ResponseEntity<ErrorDetails> handleNotFoundOrderException(NotFoundOrderException e) {

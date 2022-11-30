@@ -2,6 +2,8 @@ package com.uet.book_a_book.exception;
 
 import java.util.Date;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,6 +28,7 @@ import com.uet.book_a_book.exception.account.NotFoundResetPasswordTokenException
 import com.uet.book_a_book.exception.account.NotFoundUserStatusException;
 
 @ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AccountExceptionHandler {
 	@ExceptionHandler(NotFoundAccountException.class)
 	public ResponseEntity<ErrorDetails> handleNotFoundAccountException(NotFoundAccountException e) {

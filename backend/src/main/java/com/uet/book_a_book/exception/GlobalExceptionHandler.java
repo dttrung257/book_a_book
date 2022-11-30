@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.ValidationException;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,14 +21,14 @@ import org.springframework.web.context.request.WebRequest;
 import com.uet.book_a_book.exception.jwt.InvalidJwtTokenException;
 
 @ControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorDetails> handleGlobalException(Exception e, WebRequest webRequest) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				e.getMessage(), webRequest.getDescription(false));
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("Description", "Error")
-				.body(errorDetails);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
 	}
 	
 	@ExceptionHandler(IllegalStateException.class)
