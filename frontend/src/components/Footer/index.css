@@ -64,6 +64,13 @@
   padding-right: 100px !important;
 }
 
+#footer {
+  border-top: 1px solid #f0f0f0;
+  position: relative;
+  z-index: 90;
+  background-color: white;
+}
+
 #subscribe {
   height: 33px;
   position: absolute;

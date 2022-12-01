@@ -64,7 +64,7 @@ const Comment = (props: { id: number; rate: number | undefined }) => {
         setOtherComments(res);
       });
     }
-  }, [sent]);
+  }, [sent, accessToken, isLoggedIn, page, props.id]);
 
   const changeToggle = () => {
     setToggle(toggle ? false : true);
@@ -248,6 +248,7 @@ const Comment = (props: { id: number; rate: number | undefined }) => {
       </Modal>
       <div style={{ width: "100%" }}>
         <Pagination
+          className="nextPage"
           count={totalPage}
           page={page + 1}
           color="primary"

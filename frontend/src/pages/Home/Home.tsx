@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { Navigate, useNavigate } from "react-router-dom";
 import Slide from "../../components/SlideShow";
 import Span from "../../components/Span";
 import "./index.css";
-
-import { authActions } from "../../store/authSlice";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { getBestSeller, getBooksOfCategory } from "../../apis/book";
 import { BookInfoBrief } from "../../models";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
@@ -17,19 +13,11 @@ import Privacy from "../../components/Privacy/Privacy";
 import { FaBook } from "react-icons/fa";
 
 const Home = () => {
-  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
-
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { user, accessToken } = useAppSelector((state) => state.auth);
-
-  const onLogout = () => {
-    dispatch(authActions.logout());
-  };
   const [bestSeller, setBestSeller] = useState<BookInfoBrief[]>([]);
   const [education, seteducation] = useState<BookInfoBrief[]>([]);
   const [detective, setdetective] = useState<BookInfoBrief[]>([]);
   const [comic, setcomic] = useState<BookInfoBrief[]>([]);
+
   useEffect(() => {
     getBestSeller({ size: 10 })
       .then((res) => {
@@ -39,7 +27,7 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
-    getBooksOfCategory({ category: "lifestyle", size: 10 })
+    getBooksOfCategory({ category: "education", size: 10 })
       .then((res) => {
         seteducation(res.content as BookInfoBrief[]);
         console.log(education);
@@ -74,7 +62,7 @@ const Home = () => {
     // })
   }, []);
 
-  if (!isLoggedIn) return <Navigate to="/login" />;
+  // if (!isLoggedIn) return <Navigate to="/login" />;
 
   return (
     <div id="homePage">
@@ -84,7 +72,7 @@ const Home = () => {
           icon={<AiFillThunderbolt color="fff" fontSize={24} />}
           text="Best Seller"
           rectLeftWidth={140}
-          rectRightWidth={window.screen.width - 60 - 60}
+          rectRightWidth={window.screen.width - 60 - 60 - 147}
           rectText="All"
         />
         {bestSeller.length > 0 && (

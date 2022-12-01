@@ -13,9 +13,9 @@ import "./index.css";
 import BookDetail from "../../components/BookDetail/BookDetail";
 import { formatStr } from "../../utils";
 import Comment from "../../components/Comment/Comment";
-import { BiCommentDetail } from "react-icons/bi";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { cartActions } from "../../store/cartSlice";
+import AlertSuccess from "../../components/AlertSuccess";
 
 const Product = () => {
   const params = useParams();
@@ -25,6 +25,7 @@ const Product = () => {
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [recommend, setRecommend] = useState<BookInfoBrief[]>([]);
   const [amount, setAmount] = useState<number>(1);
+  const [isSending, setIsSending] = useState(false);
   const [info, setInfo] = useState<Book>({
     id: 0,
     name: "",
@@ -53,7 +54,7 @@ const Product = () => {
         });
     });
     window.scrollTo(0, 0);
-  }, [useParams()]);
+  }, [params.id]);
 
   const addAmount = (c: boolean) => {
     setAmount(
@@ -93,25 +94,36 @@ const Product = () => {
         quantity: amount,
       })
     );
+    setIsSending(true);
   };
 
   return (
     <div id="productPage">
+      {isSending ? (
+        <AlertSuccess
+          setIsSending={() => setIsSending(false)}
+          content="Successfully added to cart"
+        />
+      ) : (
+        <></>
+      )}
       <div style={{ margin: "0 60px", paddingTop: "10px" }}>
         <Span
           icon={<MdCollectionsBookmark color="fff" fontSize={24} />}
           text="Collections"
           rectLeftWidth={150}
           rectRightWidth={
-            info.category.length <= 7
-              ? info.category.length * 28
-              : info.category.length * 20
+            info.category.length < 7
+              ? info.category.length * 20 + 45
+              : info.category.length * 17 + 45 > 190
+              ? 170
+              : info.category.length * 17 + 45
           }
           rectText={info.category.toUpperCase()}
         />
         <div id="bookDetail">
           <div id="frame">
-            <img src={info.image} />
+            <img src={info.image} alt={info.name} />
           </div>
           <div id="detail">
             <p id="bookName">{formatStr(info.name.toUpperCase(), 63)}</p>
@@ -150,7 +162,7 @@ const Product = () => {
             {/* <p>{info.description}</p> */}
             {/* <p style={{textAlign: "justify"}}>What I Learned from the Trees delves into the intricate relationship between humans and nature, and how these often overlooked, everyday interactions affect us as individuals, families, and communities. </p> */}
             <p style={{ textAlign: "justify" }}>
-              {formatStr(info.description, info.name.length > 60 ? 330 : 400)}
+              {formatStr(info.description, 330)}
             </p>
             <div id="quantity">
               <span id="description">Quantity:</span>
@@ -173,7 +185,7 @@ const Product = () => {
             <Button
               variant="contained"
               color="primary"
-              style={{ position: "absolute", bottom: "30px", right: "40px" }}
+              style={{ position: "absolute", bottom: "20px", right: "40px" }}
               onClick={handleAddToCart}
             >
               Add to cart

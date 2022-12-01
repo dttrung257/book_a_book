@@ -7,4 +7,5 @@ export interface FilterSearch {
   rating?: number;
   from?: number;
   to?: number;
+  best_selling?: boolean;
 }

@@ -1,6 +1,5 @@
 #text {
   max-width: 100%;
-  margin-left: 10px;
 }
 
 #text a {
@@ -21,21 +20,19 @@
 #cart {
   position: absolute;
   right: 20px;
-  bottom: 0px;
+  bottom: 20px;
 }
-
+.frame #info {
+  padding: 10px 10px 0px 10px;
+}
 .frame {
   width: 100%;
   border: 1px solid #f0f0f0;
-  height: 370px;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
 }
-
-#info {
-  position: relative;
-  top: 20px;
-}
-
 #text > #price {
   font-size: 20px;
   color: #008b8b;
@@ -46,4 +43,11 @@
 #bookName,
 #cart {
   cursor: pointer;
+}
+
+#alert-success {
+  width: 400px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.534);
+  color: white;
 }

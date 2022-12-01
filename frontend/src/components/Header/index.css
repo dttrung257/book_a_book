@@ -27,6 +27,10 @@
   justify-content: space-between;
   width: 100%;
   box-shadow: 0.1rem 0.1rem 0.2rem rgb(0 0 0 / 10%);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: white;
 }
 
 .search {
@@ -48,6 +52,7 @@
   width: 50%;
   justify-content: space-around;
 }
+
 .logo a {
   text-decoration: none;
 }
@@ -73,11 +78,17 @@
 .navAddr > a {
   margin: 0 20px;
   position: relative;
+  text-decoration: none;
+  color: black;
 }
 
 .account > span {
   font-weight: 400;
   margin: 0 10px;
+}
+.account a {
+  text-decoration: none;
+  color: black;
 }
 
 #searchBar {
@@ -112,6 +123,58 @@
   font-family: "system-ui";
   font-size: 12px;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content::before,
+.dropdown-content::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 100%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.dropdown-content::after {
+  right: calc(50% - 7px);
+  border-color: transparent transparent #fff transparent;
+  border-width: 7px;
+}
+
+.dropdown-content::before {
+  right: calc(50% - 7px);
+  border-color: transparent transparent #666 transparent;
+  border-width: 7px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 5px;
+  background-color: #f9f9f9;
+  filter: drop-shadow(rgba(0, 0, 0, 0.4) 0 2px 3px);
+  z-index: 1;
+}
+
+/* .dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+} */
+
+.dropdown-content a:hover {
+  color: #008b8b;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 @media screen and (max-width: 1200px) {
   .navAddr > a {
     margin: 0 10px;

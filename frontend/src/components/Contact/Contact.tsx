@@ -26,7 +26,7 @@ const Contact = () => {
   };
 
   return (
-    <div>
+    <div style={{ zIndex: 95, position: "relative" }}>
       <Tooltip
         title="Chat with us via Facebook"
         placement="left"

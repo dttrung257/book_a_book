@@ -28,3 +28,15 @@
   font-weight: 700;
   margin-right: 10px;
 }
+
+.carousel-control-next,
+.carousel-control-prev {
+  top: 50%;
+  bottom: auto;
+  width: auto;
+  padding: 10px;
+}
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background-color: #008b8b;
+}
