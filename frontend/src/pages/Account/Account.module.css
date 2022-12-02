@@ -1,0 +1,146 @@
+#accountPage {
+  background-color: #efefef;
+  height: 90vh;
+}
+#containerNo1 {
+  background: #ffffff;
+  box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.2), -4px 0px 10px rgba(0, 0, 0, 0.2);
+  height: 100vh;
+  margin: 0 15%;
+}
+#containerNo2 {
+  background: #ffffff;
+  border-width: 0px 1px;
+  border-style: solid;
+  border-color: #999999;
+  box-shadow: 3px 0px 10px rgba(0, 0, 0, 0.2);
+  height: 100vh;
+  margin: 0 15px;
+  position: relative;
+  display: flex;
+}
+#containerNo4 {
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2), -3px 0px 7px rgba(0, 0, 0, 0.2);
+  height: 100vh;
+  right: 0;
+  top: 0;
+  width: 73%;
+  position: absolute;
+  padding: 30px 50px;
+  text-align: center;
+}
+#containerNo3 {
+  background: #ffffff;
+  height: 100vh;
+  width: 27%;
+  text-align: center;
+}
+#containerNo4 h4 {
+  font-size: 26px;
+  text-align: start;
+}
+#containerNo3 h4 {
+  font-weight: 400;
+}
+#containerNo4 .mb-3 {
+  margin: 0 !important;
+}
+.formField {
+  --height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: start;
+}
+
+.formField > input {
+  width: 200px;
+  height: var(--height);
+  border-radius: 7px;
+  padding: 0 1rem;
+}
+.indexBtn {
+  position: relative;
+  width: 65%;
+}
+.indexBtn > button {
+  height: var(--height);
+  position: absolute;
+  right: 0;
+  top: 0;
+  outline: none;
+  border: none;
+  padding-right: 10px;
+  background-color: transparent;
+  color: #666;
+  font-size: 14px;
+}
+
+.titleActive {
+  height: 60px;
+  background-color: #008b8b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 11;
+}
+.titleActive span {
+  font-size: 20px;
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.titleNormal {
+  height: 60px;
+  background-color: white;
+  color: #008b8b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.titleActive::before {
+  content: "➧";
+  color: #008b8b;
+  font-size: 30px;
+  z-index: 10;
+  position: absolute;
+  right: -10px;
+}
+.titleNormal span {
+  font-size: 20px;
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.titleActive:hover,
+.titleNormal:hover {
+  cursor: pointer;
+}
+
+/* Tablet - medium */
+@media screen and (max-width: 991px) {
+  .formField > input {
+    width: 440px;
+    height: 52px;
+  }
+}
+
+/* Tablet - small */
+@media screen and (max-width: 767px) {
+  .formField {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formField > input {
+    width: 100%;
+  }
+
+  .formField > button {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}

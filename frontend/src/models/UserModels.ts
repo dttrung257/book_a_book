@@ -34,7 +34,16 @@ export interface AuthError {
   password?: string;
   confirmPassword?: string;
   gender?: string;
+  address?: string;
+  phoneNumber?: string;
+  avatar?: string;
   acceptPrivacy?: string;
+}
+
+export interface PassError {
+  oldPassword?: string;
+  cfPassword?: string;
+  newPassword?: string;
 }
 
 export interface UserInfo {
@@ -49,6 +58,22 @@ export interface LoginInfo {
   user: UserInfo;
 }
 
+export interface UserDetail {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  phoneNumber: string;
+  address: string;
+  avatar: string;
+}
+
+export interface changePass {
+  oldPassword: string;
+  newPassword: string;
+  cfPassword: string;
+}
+
 export interface UserDetailInfo extends UserInfo {
   id: string;
   email: string;
@@ -57,4 +82,5 @@ export interface UserDetailInfo extends UserInfo {
   address?: string;
   locked: boolean;
   createdAt: string;
+  emailVerified: boolean;
 }

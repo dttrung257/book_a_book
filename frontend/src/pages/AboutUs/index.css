@@ -1,0 +1,45 @@
+.about-us {
+  font-family: "Poppins";
+  font-style: normal;
+  color: black;
+
+  display: flex;
+  margin: auto;
+  margin-left: 150px;
+  margin-right: 100px;
+}
+
+.para {
+  margin-top: 70px;
+  margin-bottom: 160px;
+
+  font-style: normal;
+  font-weight: 300;
+  text-align: justify;
+  font-size: 32px;
+  line-height: 64px;
+}
+
+p > span {
+  color: #008b8b;
+}
+
+/* BookaBook */
+#BookABook {
+  position: relative;
+  top: 80px;
+  left: 150px;
+  margin-bottom: 150px;
+
+  font: "Inter";
+  font-weight: 600;
+  font-size: 100px;
+  line-height: 121px;
+}
+
+/* Our commitments */
+#Commitments {
+  font-weight: 500;
+  font-size: 60px;
+  line-height: 90px;
+}

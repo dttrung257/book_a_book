@@ -1,70 +1,70 @@
-header,
-footer {
+#dashboard header,
+#dashboard footer {
   position: relative;
   z-index: 100;
 }
 
-header,
-.account {
+#dashboard header,
+#dashboard .account {
   display: flex;
   align-items: center;
 }
 
-.logo,
-.account {
+#dashboard .logo,
+#dashboard .account {
   cursor: pointer;
 }
 
-header {
+#dashboard header {
   height: 50px;
   font-weight: 500;
   justify-content: space-between;
   box-shadow: 0px 0 4px 0 #111;
 }
 
-.account {
+#dashboard .account {
   justify-content: space-between;
   font-size: 17px;
 }
 
-.logo {
+#dashboard .logo {
   margin: auto 20px;
 }
 
-#headerLeft {
+#dashboard #headerLeft {
   display: flex;
   width: 50%;
   justify-content: start;
   align-items: center;
 }
-.logo a {
+#dashboard .logo a {
   text-decoration: none;
 }
 
-.logo p {
+#dashboard .logo p {
   font-size: 26px !important;
   margin: 0;
   color: black;
   font-weight: 500;
 }
-.logo p span {
+#dashboard .logo p span {
   color: #008b8b;
   font-weight: bolder;
   font-size: 26;
 }
 
-.title {
+#dashboard .title {
   margin: 0;
   font-weight: 400;
   color: #604d4d;
 }
 
-.account > span {
+#dashboard .account > span {
   font-weight: 400;
   margin: 0 10px;
 }
 
-#copyright {
+#dashboard #copyright {
   background-color: var(--primary-color);
   color: white;
   font-weight: 500;
@@ -73,17 +73,16 @@ header {
   line-height: 30px;
 }
 
-.container {
+#dashboard .container {
   background-color: #efefef;
 }
 
-nav {
+#dashboard nav {
   background-color: white;
   width: 240px;
-  height: 100vh;
 }
 
-nav a {
+#dashboard nav a {
   width: 100%;
   display: inline-block;
   background-color: white;
@@ -97,12 +96,12 @@ nav a {
   align-items: center;
 }
 
-nav a svg {
+#dashboard nav a svg {
   margin: 0 12px;
 }
 
-nav a.isActive,
-nav a:hover {
+#dashboard nav a.isActive,
+#dashboard nav a:hover {
   color: white;
   background-color: var(--primary-color);
   border-color: var(--primary-color);

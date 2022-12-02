@@ -1,6 +1,5 @@
 #text {
   max-width: 100%;
-  margin-left: 10px;
 }
 
 #text a {
@@ -21,13 +20,14 @@
 #cart {
   position: absolute;
   right: 20px;
-  bottom: 0px;
+  bottom: 20px;
 }
-
+.frame #info {
+  padding: 10px 10px 0px 10px;
+}
 .frame {
   width: 100%;
   border: 1px solid #f0f0f0;
-  height: 370px;
   background-color: white;
 }
 
@@ -35,32 +35,99 @@
   width: 200px;
   border: 1px solid #f0f0f0;
   height: 300px;
+
+  margin-top: 20px;
 }
 #CardName {
   font-size: 20px;
   cursor: pointer;
 }
-#CardFrame div img{
+#CardFrame div img {
   cursor: pointer;
 }
-#CardName:hover{
+#CardName:hover {
   text-decoration: underline;
 }
 #info {
   position: relative;
   top: 20px;
 }
-
 #text > #price {
   font-size: 20px;
   color: #008b8b;
   margin-top: 20px;
 }
-.CartAdd {
+
+.frame img,
+#bookName,
+#cart {
   cursor: pointer;
 }
-
-.frame img, #bookName, #cart, 
-.CartAdd {
+.CardFrame > div > img {
   cursor: pointer;
+  object-fit: cover;
+}
+#CardImg {
+  position: relative;
+  width: fit-content;
+  height: 200px;
+  object-fit: cover;
+  z-index: 1;
+}
+#AddContainer {
+  width: 160px;
+  background-color: white;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  height: 40px;
+  transition: top 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#QuickAdd {
+  border: 2px solid #008b8b;
+  color: #008b8b;
+  width: 80%;
+  align-self: center;
+  line-height: 30px;
+  background-color: white;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 5px;
+}
+#CardImg:hover + #CardInfor > #AddContainer {
+  top: -40px;
+}
+#AddContainer:hover {
+  top: -40px;
+}
+#CardInfor {
+  position: relative;
+  padding-top: 10px;
+}
+#CardText {
+  width: 100%;
+  position: absolute;
+  background-color: white;
+  z-index: 3;
+  top: 0;
+}
+#CardText > p {
+  margin: 0;
+}
+
+#alert-success {
+  width: 400px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.534);
+  color: white;
+}
+
+#alert-success {
+  width: 400px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.534);
+  color: white;
 }

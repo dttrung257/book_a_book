@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { Navigate, useNavigate } from "react-router-dom";
 import Slide from "../../components/SlideShow";
 import Span from "../../components/Span";
 import "./index.css";
-
-import { authActions } from "../../store/authSlice";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { getBestSeller, getBooksOfCategory } from "../../apis/book";
 import { BookInfoBrief } from "../../models";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
@@ -17,19 +13,11 @@ import Privacy from "../../components/Privacy/Privacy";
 import { FaBook } from "react-icons/fa";
 
 const Home = () => {
-  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
-
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { user, accessToken } = useAppSelector((state) => state.auth);
-
-  const onLogout = () => {
-    dispatch(authActions.logout());
-  };
   const [bestSeller, setBestSeller] = useState<BookInfoBrief[]>([]);
   const [education, seteducation] = useState<BookInfoBrief[]>([]);
   const [detective, setdetective] = useState<BookInfoBrief[]>([]);
   const [comic, setcomic] = useState<BookInfoBrief[]>([]);
+
   useEffect(() => {
     getBestSeller({ size: 10 })
       .then((res) => {
@@ -39,7 +27,7 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
-    getBooksOfCategory({ category: "lifestyle", size: 10 })
+    getBooksOfCategory({ category: "education", size: 10 })
       .then((res) => {
         seteducation(res.content as BookInfoBrief[]);
         console.log(education);
@@ -64,17 +52,17 @@ const Home = () => {
         console.log(err);
       });
 
-      // Promise.all([getBestSeller({ size: 10 }), getBooksOfCategory({ category: "lifestyle", size: 10 }), getBooksOfCategory({ category: "detective", size: 10 }), getBooksOfCategory({ category: "comic", size: 10 })]).then(([bestRes, lifeRes, detectRes, comicRes])=>{
-      //   setBestSeller(bestRes.content as BookInfoBrief[]);
-      //   seteducation(lifeRes.content as BookInfoBrief[]);
-      //   setdetective(detectRes.content as BookInfoBrief[]);
-      //   setcomic(comicRes.content as BookInfoBrief[]);
-      // }).catch(error => {
-      //   console.log(error);
-      // })
+    // Promise.all([getBestSeller({ size: 10 }), getBooksOfCategory({ category: "lifestyle", size: 10 }), getBooksOfCategory({ category: "detective", size: 10 }), getBooksOfCategory({ category: "comic", size: 10 })]).then(([bestRes, lifeRes, detectRes, comicRes])=>{
+    //   setBestSeller(bestRes.content as BookInfoBrief[]);
+    //   seteducation(lifeRes.content as BookInfoBrief[]);
+    //   setdetective(detectRes.content as BookInfoBrief[]);
+    //   setcomic(comicRes.content as BookInfoBrief[]);
+    // }).catch(error => {
+    //   console.log(error);
+    // })
   }, []);
 
-  if (!isLoggedIn) return <Navigate to="/login" />;
+  // if (!isLoggedIn) return <Navigate to="/login" />;
 
   return (
     <div id="homePage">
@@ -84,12 +72,14 @@ const Home = () => {
           icon={<AiFillThunderbolt color="fff" fontSize={24} />}
           text="Best Seller"
           rectLeftWidth={140}
-          rectRightWidth={window.screen.width - 60 - 60}
+          rectRightWidth={window.screen.width - 60 - 60 - 147}
           rectText="All"
         />
-        {bestSeller.length>0&&<div id="books">
-          <BookCarousel books={bestSeller} />
-        </div>}
+        {bestSeller.length > 0 && (
+          <div id="books">
+            <BookCarousel books={bestSeller} />
+          </div>
+        )}
         <img
           className="fit"
           src="https://live.staticflickr.com/65535/52501278981_cf9503fea1_h.jpg"
@@ -113,9 +103,11 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        {comic.length>0&&<div id="books">
-          <BookCarousel books={comic} />
-        </div>}
+        {comic.length > 0 && (
+          <div id="books">
+            <BookCarousel books={comic} />
+          </div>
+        )}
         <img
           className="fit"
           src="https://live.staticflickr.com/65535/52501174531_5d0dc68331_h.jpg"
@@ -128,9 +120,11 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        {education.length>0&&<div id="books">
-          <BookCarousel books={education} />
-        </div>}
+        {education.length > 0 && (
+          <div id="books">
+            <BookCarousel books={education} />
+          </div>
+        )}
         <Span
           icon={<GiBookCover color="fff" fontSize={24} />}
           text="Book of the week"
@@ -138,7 +132,10 @@ const Home = () => {
         />
         <div id="bookOfWeekCont">
           <p>
-            <img src="https://live.staticflickr.com/65535/52447753485_f125a528bd_n.jpg" alt="img" />
+            <img
+              src="https://live.staticflickr.com/65535/52447753485_f125a528bd_n.jpg"
+              alt="img"
+            />
             <span> Le Chuchoteur - Donato Carrisi</span>
             <br />
             Five little girls have disappeared.
@@ -163,9 +160,11 @@ const Home = () => {
           rectRightWidth={window.screen.width - 60 - 60}
           rectText="All"
         />
-        {detective.length>0&&<div id="books">
-          <BookCarousel books={detective} />
-        </div>}
+        {detective.length > 0 && (
+          <div id="books">
+            <BookCarousel books={detective} />
+          </div>
+        )}
 
         <Privacy />
       </div>

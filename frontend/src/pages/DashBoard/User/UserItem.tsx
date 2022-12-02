@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SlSettings } from "react-icons/sl";
 import { Button } from "@mui/material";
+import { toast } from "react-toastify";
 import style from "./User.module.css";
 import { UserDetailInfo } from "../../../models";
 import { Link } from "react-router-dom";
@@ -8,91 +9,99 @@ import AppModal from "../../../components/AppModal/AppModal";
 import axios, { isAxiosError } from "../../../apis/axiosInstance";
 import { useAppSelector } from "../../../store/hook";
 
-interface MessageStatus {
-  status: "success" | "fail" | "";
-  message: string;
-}
-
-const UserItem = ({
-  user: userInfo,
-}: {
-  user: UserDetailInfo;
-}) => {
+const UserItem = ({ user: userInfo }: { user: UserDetailInfo }) => {
   const [locked, setLocked] = useState<boolean>(userInfo.locked);
-  const [lockModal, setLockModal] = useState<boolean>(false);
-  const [message, setMessage] = useState<MessageStatus | null>(null);
-  const {accessToken, user} = useAppSelector((state) => state.auth);
+  const [modal, setModal] = useState<boolean>(false);
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalType, setModalType] = useState<"LOCK" | "ACTIVATE">("LOCK");
+  const [errMessage, setErrMessage] = useState<string>("");
+  const { accessToken, user } = useAppSelector((state) => state.auth);
+
+  console.log(userInfo.emailVerified, userInfo.email, userInfo.locked);
 
   const closeModal = (show: boolean) => {
-    setLockModal(show);
-    setMessage(null);
+    setModal(show);
+    setErrMessage("");
   };
 
   const toggleLockUser = async () => {
     if (userInfo.authority === "ADMIN") {
-      return setMessage({
-        status: "fail",
-        message: "Can not change this user status!",
-      });
+      return toast.error("Can not change this user status!");
     }
-    //TODO: change req body: state
+
     try {
-      setMessage(null);
-      if (locked) {
-        const res = await axios.put(
-          `manage/users/${userInfo.id}/status`,
-          {
-            status: "locked",
-            state: "true",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+      setErrMessage("");
 
-        setLocked(false);
-        setMessage({
-          status: "success",
-          message: res.data,
-        });
-      } else {
-        const res = await axios.put(
-          `manage/users/${userInfo.id}/status`,
-          {
-            status: "activated",
-            state: "true",
+      const res = await axios.put(
+        `manage/users/${userInfo.id}/status`,
+        {
+          status: "locked",
+          state: !locked,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        }
+      );
 
-        setLocked(true);
-        setMessage({
-          status: "success",
-          message: res.data,
-        });
-      }
+      setLocked(!locked);
+      closeModal(false);
+      toast.success(res.data);
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
-
-        setMessage({
-          status: "fail",
-          message: data.message,
-        });
+        setErrMessage(data?.message);
       } else {
-        setMessage({
-          status: "fail",
-          message: "Unknow error!!!",
-        });
-        console.log(error);
+        setErrMessage("Unknow error!!!");
       }
+      console.log(error);
     }
+  };
+
+  const activateUser = async () => {
+    try {
+      if (userInfo.emailVerified === true) {
+        return toast.error("This user has been activated!");
+      }
+
+      const res = await axios.put(
+        `manage/users/${userInfo.id}/status`,
+        {
+          status: "activated",
+          state: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(res);
+
+      closeModal(false);
+      toast.success(res.data);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        setErrMessage(data?.message);
+      } else {
+        setErrMessage("Unknow error!!!");
+      }
+      console.log(error);
+    }
+  };
+
+  const showToggleLockUserModal = () => {
+    setModalTitle(`${userInfo.locked ? "Unlock" : "Lock"} user ${userInfo.id}`);
+    setModalType("LOCK");
+    setModal(true);
+  };
+
+  const showActivateUserModal = () => {
+    setModalTitle(`Active user ${userInfo.id}`);
+    setModalType("ACTIVATE");
+    setModal(true);
   };
 
   return (
@@ -114,27 +123,19 @@ const UserItem = ({
               <Link to={`/dashboard/users/${userInfo.id}`}>Details</Link>
             </div>
             <div className={style.divider}></div>
-            <div onClick={() => setLockModal(true)}>
+            <div onClick={showToggleLockUserModal}>
               {locked ? "Unlock" : "Lock"}
             </div>
+            <div className={style.divider}></div>
+            <div onClick={showActivateUserModal}>Activate</div>
           </div>
           <div>
             <AppModal
-              title={`${userInfo.locked ? "Unlock" : "Lock"} user ${
-                userInfo.id
-              }`}
-              showModal={lockModal}
+              title={modalTitle}
+              showModal={modal}
               setShowModal={closeModal}
             >
-              {message ? (
-                <div
-                  style={{
-                    color: message.status === "fail" ? "red" : "green",
-                  }}
-                >
-                  {message?.message}
-                </div>
-              ) : null}
+              <div style={{ color: "red" }}>{errMessage}</div>
               <div
                 className={`${style.lockModal} d-flex justify-content-end mt-3`}
               >
@@ -146,7 +147,9 @@ const UserItem = ({
                 </Button>
                 <Button
                   className={`${style.toggleLockBtn}`}
-                  onClick={() => toggleLockUser()}
+                  onClick={() =>
+                    modalType === "LOCK" ? toggleLockUser() : activateUser()
+                  }
                 >
                   Confirm
                 </Button>

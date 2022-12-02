@@ -40,11 +40,10 @@ const CodeVerify = () => {
     try {
       e.preventDefault();
       setIsSending(true);
-      const response = await verifyEmail({
+      const resetToken = await verifyEmail({
         email: email,
         verifyCode: verifyCode,
       });
-      const resetToken = response.data;
 
       return navigate(`../reset/${resetToken}`);
     } catch (error) {

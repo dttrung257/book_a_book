@@ -10,7 +10,7 @@ export enum Category {
   LITERARY = "LITERARY",
   COMIC = "COMIC",
 }
-export const Subject=[
+export const Subject = [
   "FANTASY",
   "LIFESTYLE",
   "BUSINESS",
@@ -29,27 +29,13 @@ export const priceRanges = [
   "$25 - $50",
   "Over $50",
 ];
-export enum SortType {
-  LOWTOHIGH = "Increasing Price",
-  HIGHTOLOW = "Decreasing Price",
-  ALPHABET = "From A-Z",
-  ALPHABETREVERT = "From Z-A"
-
-}
 export interface BookInfoBrief {
   id: number;
   name: string;
   image: string;
   author: string;
   sellingPrice: number;
-}
-export interface BookInfo {
-  id: number;
-  name: string;
-  image: string;
-  author: string;
-  sellingPrice: number;
-  rating: number;
+  rating?: number;
 }
 
 export interface Book {

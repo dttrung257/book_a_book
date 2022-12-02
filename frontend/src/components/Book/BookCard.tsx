@@ -1,34 +1,37 @@
-import { BsCartPlus } from "react-icons/bs";
 import "./index.css";
-
-const BookCard = (props: {
-  id?: number;
-  name: string;
-  image: string;
-  author?: string;
-  sellingPrice: number;
-  rating: number;
-}) => {
-  const formatStr = (s: string) => {
-    if (s.length < 18) return s;
-    else {
-      return s.slice(0, 15).concat("...");
-    }
+import { BookInfoBrief } from "../../models";
+import { useNavigate } from "react-router-dom";
+import { formatStr } from "../../utils";
+const BookCard = (props: { book: BookInfoBrief }) => {
+  const navigate = useNavigate();
+  let path = `/product/${props.book.id}/${props.book.name
+    .split(" ")
+    .join("-")
+    .toLowerCase()}`;
+  const handleProductClick = () => {
+    navigate(path);
   };
   return (
     <div className="CardFrame">
-      <div>
-        <img src={props.image} width={140} height={160}  alt="error"/>
+      <div id="CardImg">
+        <img
+          src={props.book.image}
+          width={160}
+          height={200}
+          alt="error"
+          onClick={handleProductClick}
+        />
       </div>
-      <div id="info">
-        <div id="text">
-          <h3 id="CardName">
-            {formatStr(props.name)}</h3>
-          <h4>{props.author}</h4>
-          <p>{`${props.sellingPrice}$`}</p>
+      <div id="CardInfor">
+        <div id="AddContainer">
+          <div id="QuickAdd">Quick Add</div>
         </div>
-        <div id="cart">
-          <BsCartPlus fontSize={30} color="008b8b" className="CartAdd"/>
+        <div id="CardText">
+          <h3 id="CardName" onClick={handleProductClick}>
+            {formatStr(props.book.name, 16)}
+          </h3>
+          <p style={{ color: "#008b8b" }}>{formatStr(props.book.author, 15)}</p>
+          <p style={{ fontSize: "10" }}>{`${props.book.sellingPrice}$`}</p>
         </div>
       </div>
     </div>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button, Avatar } from "@mui/material";
-import { Table } from "react-bootstrap";
+import { Table, Form } from "react-bootstrap";
 import style from "./User.module.css";
 import { UserDetailInfo } from "../../../models";
 import AppModal from "../../../components/AppModal/AppModal";
 import axios, { isAxiosError } from "../../../apis/axiosInstance";
 import { useAppSelector } from "../../../store/hook";
+import PasswordError, { checkPassword } from "../../../utils/checkPassword";
 
 interface Order {
   id: string;
@@ -24,6 +26,12 @@ const UserDetail = () => {
   const [userInfo, setUserInfo] = useState<UserDetailInfo | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
+  const [editModal, setEditModal] = useState<boolean>(false);
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
+  const [editPassErrMessage, setEditPassErrMessage] = useState<PasswordError>(
+    {}
+  );
   const [errMessage, setErrMessage] = useState<string>("");
 
   useEffect(() => {
@@ -35,9 +43,10 @@ const UserDetail = () => {
           },
         });
         setUserInfo(responseUser.data);
+        console.log(responseUser.data);
 
         const responseOrder = await axios.get(
-          `manage/orders/email?email=${responseUser.data.email}`,
+          `manage/orders?user_id=${responseUser.data.id}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -63,7 +72,7 @@ const UserDetail = () => {
 
   const deleteUser = async () => {
     if (userInfo && userInfo.authority === "ADMIN") {
-      return setErrMessage("Can not change this user status!");
+      return toast.error("Can not delete this user!");
     }
 
     try {
@@ -74,13 +83,52 @@ const UserDetail = () => {
       });
       console.log(res);
 
-      navigate("/dashboard");
+      toast.success(
+        `User ${
+          userInfo?.firstName + " " + userInfo?.lastName
+        } has been deleted`
+      );
+      navigate(-1);
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
-        setErrMessage(data?.message);
+        toast.error(data?.message);
       } else {
-        setErrMessage("Unknow error!!!");
+        toast.error("Unknow error!!!");
+        console.log(error);
+      }
+    }
+  };
+
+  const editPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const passwordError = checkPassword(newPassword, confirmNewPassword);
+      setEditPassErrMessage(passwordError);
+      if (passwordError && Object.keys(passwordError).length !== 0) return;
+
+      const response = await axios.put(
+        `/manage/users/${userInfo?.id}/password`,
+        {
+          newPassword: newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(response);
+
+      toast.success("Change password successfully");
+      setEditModal(false);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        toast.error(data?.message);
+      } else {
+        toast.error("Unknow error!!!");
         console.log(error);
       }
     }
@@ -96,13 +144,12 @@ const UserDetail = () => {
           >
             Save
           </Button> */}
-          <Button
-            style={{ backgroundColor: "var(--primary-color)", color: "white" }}
-          >
-            Edit
+          <Button variant="contained" onClick={() => setEditModal(true)}>
+            Edit password
           </Button>
           <Button
-            style={{ backgroundColor: "red", color: "white" }}
+            variant="contained"
+            color="error"
             onClick={() => setDeleteModal(true)}
           >
             Delete
@@ -233,6 +280,55 @@ const UserDetail = () => {
               Confirm
             </Button>
           </div>
+        </div>
+      </AppModal>
+      <AppModal
+        title="Edit password"
+        showModal={editModal}
+        setShowModal={setEditModal}
+      >
+        <div style={{ minWidth: "500px" }}>
+          <Form onSubmit={editPassword}>
+            <Form.Group className="mb-3" controlId="newPassword">
+              <Form.Label>New password</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setNewPassword(e.target.value.trim())
+                }
+              />
+              {editPassErrMessage?.password ? (
+                <Form.Text className="text-danger">
+                  {editPassErrMessage.password}
+                </Form.Text>
+              ) : null}
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="confirmNewPassword">
+              <Form.Label>Confirm password</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Confirm password"
+                value={confirmNewPassword}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setConfirmNewPassword(e.target.value.trim())
+                }
+              />
+              {editPassErrMessage?.confirmPassword ? (
+                <Form.Text className="text-danger">
+                  {editPassErrMessage.confirmPassword}
+                </Form.Text>
+              ) : null}
+            </Form.Group>
+
+            <div className="float-end">
+              <Button variant="contained" type="submit">
+                Submit
+              </Button>
+            </div>
+          </Form>
         </div>
       </AppModal>
     </div>

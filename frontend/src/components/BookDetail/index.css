@@ -1,39 +1,38 @@
 #bookDetailCont {
-        display: flex;
-        width: 100%;
-        height: fit-content;
-        background-color: rgb(182, 181, 181);
-        box-shadow: 0.1rem 0.1rem 0.2rem rgb(0 0 0 / 10%);
-        /* // boxShadow:
+  display: flex;
+  width: 100%;
+  height: fit-content;
+  background-color: rgb(182, 181, 181);
+  box-shadow: 0.1rem 0.1rem 0.2rem rgb(0 0 0 / 10%);
+  /* // boxShadow:
         //   "-4px 0px 20px rgba(0, 0, 0, 0.25), 4px 0px 20px rgba(0, 0, 0, 0.25)", */
-        margin: 20px 0;
+  margin: 20px 0;
 }
 
 #bookSpecification {
-        width: 50%;
-        display: block;
-        background-color: #fff;
-        padding: 30px 60px;
+  width: 50%;
+  display: block;
+  background-color: #fff;
+  padding: 30px 60px;
 }
 
 #bookDetailCont .title {
-
-        font-size: 22px;
-        font-weight: 600;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 #bookSpecification .specificationTitle {
-        font-size: 16px;
-        font-weight: 600;
-        color: #666;
-        min-width: 125px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #666;
+  min-width: 125px;
 }
 
 #bookDetailCont #privacy {
-        width: 45%;
-        display: block;
-        margin: auto;
-        background-color: #fff;
-        padding: 25px 40px;
-        text-align: justify;
+  width: 45%;
+  display: block;
+  margin: auto;
+  background-color: #fff;
+  padding: 25px 40px;
+  text-align: justify;
 }

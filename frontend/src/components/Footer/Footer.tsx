@@ -6,7 +6,7 @@ import "./index.css";
 
 const Footer = () => {
   return (
-    <div style={{ borderTop: "1px solid #F0F0F0" }}>
+    <div id="footer">
       <div id="container">
         <div id="support">
           <div id="privacy">

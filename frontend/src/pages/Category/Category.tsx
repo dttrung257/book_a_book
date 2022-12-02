@@ -1,17 +1,15 @@
 import React, { useState, useLayoutEffect } from "react";
 import styled from "styled-components";
-import style from "./Category.module.css";
-import { FaStar, FaChevronDown, FaBookOpen } from "react-icons/fa";
-import bookStyle from "./Book.module.css";
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
+import "./index.css";
+import { FaStar, FaBookOpen } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import * as bookSearch from "../../apis/book";
 import BookCard from "../../components/Book/BookCard";
-import { BookInfo,Subject, priceRanges,SortType} from "../../models";
+import { Subject, priceRanges, BookInfoBrief } from "../../models";
 import ReactPaginate from "react-paginate";
-import { useAppSelector} from "../../store/hook";
+import { useAppSelector } from "../../store/hook";
 import { BookFilter } from "../../models/Filter";
+import { isAxiosError } from "../../apis/axiosInstance";
 const Wrapper = styled.div`
   background-color: #ffffff;
   position: relative;
@@ -22,94 +20,131 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-
-
 const price = [0, 5, 10, 25, 50, 100000000];
 
 const CategoryPage = () => {
-  const [sortType, setSortType] = useState(SortType.LOWTOHIGH);
-  const [searchResult, setSearchResult] = useState<BookInfo[]>([]);
-  const [page,setPage] = useState<number>(0);
+  const [searchResult, setSearchResult] = useState<BookInfoBrief[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const [hover, setHover] = useState(-1);
   const [filter, setFilter] = useState<BookFilter>({
     page: 0,
-    category:"",
+    category: "",
     rating: 0,
-    from: 0,
-    to: 1000000,
+    from: 0.1,
+    to: 100000000,
     size: 12,
   });
   const stars = Array(5).fill(0);
 
   const name = useAppSelector((state) => state.search.name);
 
-  const handleSortClick = (sort:SortType) => {
-    setSortType(sort);
+  const handleHoverStar = (value: number) => {
+    setHover(value);
   };
-
-  const handlePageClick = (data:any) => {
+  const handlePageClick = (value: number) => {
     setFilter({
       ...filter,
-      page:data.selected,
-    })
+      page: value,
+    });
   };
 
   const handlePriceChange = (id: number) => {
-    setFilter({
-      ...filter,
-      from: price[id],
-      to: price[id+1],
-    });
-  }
-  const handleCategoryClick = (category:string) =>{
-    setFilter({
-      ...filter,
-      category:category,
-    });
+    if (filter.from !== price[id]) {
+      setFilter({
+        ...filter,
+        from: price[id],
+        to: price[id + 1],
+        page: 0,
+      });
+    } else {
+      setFilter({
+        ...filter,
+        from: 0.1,
+        to: 100000000,
+        page: 0,
+      });
+    }
   };
-  const handleRatingClick = (value:number) => {
-    setFilter({
-      ...filter,
-      rating: value,
-    });
-  }
+  const handleCategoryClick = (category: string) => {
+    if (filter.category === category) {
+      setFilter({
+        ...filter,
+        category: "",
+        page: 0,
+      });
+    } else {
+      setFilter({
+        ...filter,
+        category: category,
+        page: 0,
+      });
+    }
+  };
+  const handleRatingClick = (value: number) => {
+    if (filter.rating === value) {
+      setFilter({
+        ...filter,
+        rating: 0,
+        page: 0,
+      });
+    } else {
+      setFilter({
+        ...filter,
+        rating: value,
+        page: 0,
+      });
+    }
+  };
 
   useLayoutEffect(() => {
     const fetchApi = async () => {
       try {
-        const result = await bookSearch.getBookByFilter(filter,name);
+        const result = await bookSearch.getBookByFilter(filter, name);
         setSearchResult(result.content);
         setPage(result.totalPages);
-        console.log(name);
+        console.log(result);
       } catch (error) {
-        console.log(error);
+        if (isAxiosError(error)) {
+          console.log(error);
+        }
       }
     };
     fetchApi();
-  }, [name,filter]);
+  }, [name, filter]);
   console.log(searchResult);
   return (
     <Wrapper>
-      <Header />
-      <div className={`${style.container}`}>
-        <div className={`${style.filter}`}>
-          <div className={`${style.filterField}`}>
-            <div className={style.filterTitle}>CATEGORY</div>
+      <div className="container">
+        <div className="filter">
+          <div className="filterArea">
+            <div className="filterTitle">
+              <span>CATEGORY</span>
+            </div>
             {Subject.map((subject, index) => (
               <div
                 key={index}
                 onClick={() => handleCategoryClick(subject)}
-                className={style.criterionTitle}
+                className={
+                  subject === filter.category
+                    ? "TitleOnClick"
+                    : "criterionTitle"
+                }
               >
                 {subject}
               </div>
             ))}
-
           </div>
-          <div className={`${style.filterField}`}>
-            <div className={style.filterTitle}>PRICES</div>
+          <div className="filterArea">
+            <div className="filterTitle">
+              <span>PRICES</span>
+            </div>
             {priceRanges.map((priceRange, index) => (
               <div
-                className={style.criterionTitle}
+                className={
+                  price[index] === filter.from
+                    ? "TitleOnClick"
+                    : "criterionTitle"
+                }
                 key={index}
                 onClick={() => handlePriceChange(index)}
               >
@@ -117,105 +152,70 @@ const CategoryPage = () => {
               </div>
             ))}
           </div>
-          <div className={`${style.filterField}`}>
-            <div className={style.filterTitle}>review</div>
-            <div className={`${style.starContainer} `}>
+          <div className="filterArea">
+            <div className="filterTitle">
+              <span>review</span>
+            </div>
+            <div className="starContainer">
               {stars.map((_, index) => {
                 return (
                   <FaStar
                     key={index}
+                    className="starItem"
                     size={24}
                     style={
-                      filter.rating > index
+                      filter.rating > index || index <= hover
                         ? {
                             color: "#dcd13a",
                           }
                         : { color: "#989898" }
                     }
                     onClick={() => handleRatingClick(index + 1)}
-                    className={`${style.starItem}`}
+                    onMouseOver={() => handleHoverStar(index)}
+                    onMouseLeave={() => handleHoverStar(-1)}
                   />
                 );
               })}
             </div>
           </div>
         </div>
-        <div className={`${style.content}`}>
-          <div className={`${bookStyle.header}`}>
-            <div className={`${bookStyle.mainSubject}`}>
-              {filter.category === "" ? "The Book Store" : filter.category}
-            </div>
-            <label className={`${bookStyle.dropDown}`}>
-              {sortType}
-              <FaChevronDown className={`${bookStyle.dropIcon}`} />
-              <ul className={`${bookStyle.dropDownList}`}>
-                <li
-                  className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(SortType.LOWTOHIGH)}
-                >
-                  {SortType.LOWTOHIGH}
-                </li>
-                <li
-                  className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(SortType.HIGHTOLOW)}
-                >
-                  {SortType.HIGHTOLOW}
-                </li>
-                <li
-                  className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(SortType.ALPHABET)}
-                >
-                  {SortType.ALPHABET}
-                </li>
-                <li
-                  className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(SortType.ALPHABETREVERT)}
-                >
-                  {SortType.ALPHABETREVERT}
-                </li>
-              </ul>
-            </label>
+        <div className="content">
+          <div className="header">
+            <h2>
+              <span>
+                {filter.category === "" ? "The Book Store" : filter.category}
+              </span>
+            </h2>
           </div>
-
-          <div className={`${bookStyle.headBanner}`}>
+          <div className="headBanner">
             <FaBookOpen size={14} className="mx-2" />
             Have a good day at Book a book. Get it at our home page
             <Link to={"#"} className="mx-2">
               Home
             </Link>
           </div>
-          <div className={`${style.bookContainer}`}>
+          <div className="bookContainer">
             {searchResult.map((result) => {
-              return (
-                <BookCard
-                  key={result.id}
-                  id={result.id}
-                  name={result.name}
-                  image={result.image}
-                  sellingPrice={result.sellingPrice}
-                  rating={result.rating}
-                />
-              );
+              return <BookCard key={result.id} book={result} />;
             })}
           </div>
-          <ReactPaginate 
-          pageCount={page}
-          nextLabel={'next'}
-          previousLabel={'previous'}
-          breakLabel={' . . . '}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={3}
-          containerClassName={`${style.pageContainer}`}
-          pageClassName={`${style.pageItem}`}
-          previousClassName={`${style.pageItem}`}
-          nextClassName={`${style.pageItem}`}
-          onPageChange={handlePageClick}
-          activeClassName={`${style.currentPage}`}
+          <ReactPaginate
+            pageCount={page}
+            nextLabel={">>"}
+            previousLabel={"<<"}
+            breakLabel={" . . . "}
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={2}
+            containerClassName={page <= 1 ? "pageNull" : "pageContainer"}
+            pageClassName="pageItem"
+            previousClassName="pageItem"
+            nextClassName="pageItem"
+            onPageChange={(data) => handlePageClick(data.selected)}
+            activeClassName="currentPage"
+            forcePage={filter.page}
           />
         </div>
       </div>
-      <Footer />
-      
     </Wrapper>
   );
 };

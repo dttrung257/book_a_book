@@ -2,28 +2,38 @@ import { ChangeEvent, Fragment, useState } from "react";
 import { FiSearch, FiUser, FiShoppingCart } from "react-icons/fi";
 import { VscTriangleDown } from "react-icons/vsc";
 import "./index.css";
-import { Avatar, Badge } from "@mui/material";
-import { useAppSelector, useAppDispatch } from "../../store/hook";
+import {
+  Avatar,
+  Badge,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { Link, useNavigate } from "react-router-dom";
-import { searchActions } from "../../store/searchSlice";
+import { authActions } from "../../store/authSlice";
 
 const Header = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
-  const { user, accessToken } = useAppSelector((state) => state.auth);
-  const [searchKey, setSearchKey] = useState("");
-  const [name, setName] = useState("");
-  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const totalQuantity = useAppSelector((state) => state.cart.totalQuantity);
   const navigate = useNavigate();
+  const [searchKey, setSearchKey] = useState("");
 
-  const handleSearch = () => { 
+  const handleSearch = () => {
     //redux
-    dispatch(searchActions.setNameSearch({name}));
+    dispatch(searchActions.setNameSearch({ name }));
     navigate("/books");
   };
 
   const onChangeSearchBox = (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.currentTarget.value);
     setSearchKey(event.currentTarget.value.trim());
+  };
+
+  const onLogout = () => {
+    dispatch(authActions.logout());
   };
 
   return (
@@ -41,43 +51,120 @@ const Header = () => {
         </div>
         <div className="nav">
           <div className="navAddr">
-            <a>Home</a>
+            <Link to="/">Home</Link>
           </div>
           <div className="navAddr">
-            <a>
-              Collections <VscTriangleDown />
-            </a>
+            <Link to="/books">
+              Collections
+              <VscTriangleDown />
+            </Link>
           </div>
 
           <div className="navAddr">
-            <a>Blogs</a>
+            <Link to="/blogs">Blogs</Link>
           </div>
           <div className="navAddr">
-            <a>About us</a>
+            <Link to="/about-us">About us</Link>
           </div>
         </div>
       </div>
       <div className="search">
-        <input id="searchBar" placeholder="Search book..." value={name} onChange={e => setName(e.target.value)}onChange={onChangeSearchBox}/>
-          <FiSearch
-              color="008B8B"
-              onClick={handleSearch}
-              id="searchIcon"
-            ></FiSearch>
+        <input
+          id="searchBar"
+          placeholder="Search book..."
+          value={name}
+          onChange={(e) =>
+            setName(e.target.value)
+          } /*onChange={onChangeSearchBox}*/
+        />
+        <FiSearch
+          color="008B8B"
+          onClick={handleSearch}
+          id="searchIcon"
+        ></FiSearch>
       </div>
       <div className="account">
         {isLoggedIn ? (
           <Fragment>
-            <Avatar src={user.avatar} style={{ maxWidth: 25, maxHeight: 25 }} />
-            <span>{`${user.firstName} ${user.lastName}`}</span>
-            <Badge overlap="rectangular" badgeContent={4} color="error">
+            <div className="dropdown">
+              <div
+                style={{
+                  display: "flex",
+                }}
+                className="dropbtn"
+              >
+                <Avatar
+                  src={user.avatar}
+                  style={{ maxWidth: 25, maxHeight: 25 }}
+                />
+                &nbsp;&nbsp;
+                <span>{`${user.firstName} ${user.lastName}`}</span>
+              </div>
+              <div className="dropdown-content">
+                <List>
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      style={{ padding: "3px 30px 3px 15px" }}
+                      component="a"
+                      href="/account"
+                    >
+                      <ListItemText
+                        primaryTypographyProps={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                        }}
+                        primary="My Account"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      style={{ padding: "3px 30px 3px 15px" }}
+                      component="a"
+                      href="#simple-list"
+                    >
+                      <ListItemText
+                        primaryTypographyProps={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                        }}
+                        primary="My Purchase"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      style={{ padding: "3px 30px 3px 15px" }}
+                      component="a"
+                      href=""
+                      onClick={onLogout}
+                    >
+                      <ListItemText
+                        primaryTypographyProps={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                        }}
+                        primary="Log out"
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </div>
+            </div>
+
+            <Badge
+              overlap="rectangular"
+              badgeContent={totalQuantity}
+              color="error"
+              onClick={() => navigate("/cart")}
+            >
               <FiShoppingCart fontSize={20} />
             </Badge>
           </Fragment>
         ) : (
           <Fragment>
             <FiUser style={{ marginRight: "10px" }} fontSize={20} />
-            <a>Log in</a>
+            <Link to="/login">Log in</Link>
             <svg height="30" width="30">
               <line
                 x1="15"
@@ -87,7 +174,7 @@ const Header = () => {
                 style={{ stroke: "#999999", strokeWidth: 2 }}
               />
             </svg>
-            <a>Sign up</a>
+            <Link to="/signup">Sign up</Link>
           </Fragment>
         )}
       </div>
