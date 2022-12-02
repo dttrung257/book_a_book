@@ -1,0 +1,38 @@
+.orderContainer {
+  height: 400px;
+  display: flex;
+  justify-content: center;
+}
+#orderHead {
+  border: 1px solid grey;
+}
+.iconSetting {
+  position: relative;
+}
+.icon {
+  cursor: pointer;
+}
+.iconSetting a {
+  text-decoration: none;
+  color: inherit;
+}
+.iconSetting:hover > .action {
+  display: block;
+}
+.iconSetting > .action {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  top: 100%;
+  background-color: white;
+  width: 100%;
+  display: none;
+  border: 1px solid grey;
+}
+.divider {
+  line-height: 0.5px;
+  border-bottom: 1px solid grey;
+}
+.deleteBt {
+  cursor: pointer;
+}

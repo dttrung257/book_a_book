@@ -1,11 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import emailVerifyReducer from "./emailVerifySlice";
-
+import searchReducer from "./searchSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
     emailVerify: emailVerifyReducer,
+    search: searchReducer,
   },
 });
 

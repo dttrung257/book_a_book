@@ -1,4 +1,5 @@
-import { FilterSearch } from "../models/Filter";
+
+import { BookFilter, FilterSearch } from "../models/Filter";
 import axiosInstance from "./axiosInstance";
 
 export const getBookViaId = async (id: number) => {
@@ -6,10 +7,10 @@ export const getBookViaId = async (id: number) => {
   return response.data;
 };
 
-export const getAllBook = async () => {
+export const getAllBook = async (currentPage:number) => {
   try {
-    const response = await axiosInstance.get("/books");
-    return response.data.content;
+    const response = await axiosInstance.get(`books?page=${currentPage}&size=12`);
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -41,3 +42,25 @@ export const getBooksOfCategory = async (filter: FilterSearch) => {
   const response = await axiosInstance.get(`books/category${query}`);
   return response.data;
 };
+
+export const getBookByName = async (name:string, page:number) =>{
+  try {
+    const response = await axiosInstance.get(`books/name?name=${name}&page=${page}&size=12`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getBookByFilter = async(filter: BookFilter, name :any) =>{
+  let query = `?name=${name}`;
+  query = query.concat(`&category=${filter.category}`);
+  query = query.concat(`&from=${filter.from}&to=${filter.to}&rating=${filter.rating}
+                        &page=${filter.page}&size=12`);
+
+  const response = await axiosInstance.get(`books/filter${query}`);
+  console.log(query);
+  console.log(name);
+  return response.data;
+
+}

@@ -8,3 +8,12 @@ export interface FilterSearch {
   from?: number;
   to?: number;
 }
+
+export interface BookFilter {
+  size?: number;
+  page: number;
+  category?: string;
+  rating: number;
+  from: number;
+  to: number;
+}

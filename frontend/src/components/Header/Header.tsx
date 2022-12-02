@@ -3,16 +3,22 @@ import { FiSearch, FiUser, FiShoppingCart } from "react-icons/fi";
 import { VscTriangleDown } from "react-icons/vsc";
 import "./index.css";
 import { Avatar, Badge } from "@mui/material";
-import { useAppSelector } from "../../store/hook";
-import { Link } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "../../store/hook";
+import { Link, useNavigate } from "react-router-dom";
+import { searchActions } from "../../store/searchSlice";
 
 const Header = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const { user, accessToken } = useAppSelector((state) => state.auth);
   const [searchKey, setSearchKey] = useState("");
+  const [name, setName] = useState("");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const handleSearch = () => {
+  const handleSearch = () => { 
     //redux
+    dispatch(searchActions.setNameSearch({name}));
+    navigate("/books");
   };
 
   const onChangeSearchBox = (event: ChangeEvent<HTMLInputElement>) => {
@@ -52,12 +58,12 @@ const Header = () => {
         </div>
       </div>
       <div className="search">
-        <input id="searchBar" placeholder="Search book..." onChange={onChangeSearchBox}/>
-        <FiSearch
-          color="008B8B"
-          onClick={handleSearch}
-          id="searchIcon"
-        ></FiSearch>
+        <input id="searchBar" placeholder="Search book..." value={name} onChange={e => setName(e.target.value)}onChange={onChangeSearchBox}/>
+          <FiSearch
+              color="008B8B"
+              onClick={handleSearch}
+              id="searchIcon"
+            ></FiSearch>
       </div>
       <div className="account">
         {isLoggedIn ? (

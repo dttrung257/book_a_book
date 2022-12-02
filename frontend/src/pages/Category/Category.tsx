@@ -8,7 +8,10 @@ import Header from "../../components/Header/Header";
 import { Link } from "react-router-dom";
 import * as bookSearch from "../../apis/book";
 import BookCard from "../../components/Book/BookCard";
-import { BookInfo } from "../../models";
+import { BookInfo,Subject, priceRanges,SortType} from "../../models";
+import ReactPaginate from "react-paginate";
+import { useAppSelector} from "../../store/hook";
+import { BookFilter } from "../../models/Filter";
 const Wrapper = styled.div`
   background-color: #ffffff;
   position: relative;
@@ -19,63 +22,70 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const subjects = [
-  "Literary",
-  "Lifestyle",
-  "Education",
-  "Technology",
-  "Science",
-  "Comic",
-  "Romance",
-  "Business",
-  "Detective",
-];
-const priceRanges = [
-  "Under $5",
-  "$5 - $10",
-  "$10 - $25",
-  "$25 - $50",
-  "Over $50",
-];
-const price = [0, 5, 10, 25, 50];
-const LOWHIGH = "Price - Low to High";
-const BESTSELL = "Best Sellers";
-const HIGHLOW = "Price - High to Low";
-const Category = () => {
-  const [type, setType] = useState("");
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000);
-  const [starValue, setStarValue] = useState(0);
-  const [sortType, setSortType] = useState(BESTSELL);
+
+
+const price = [0, 5, 10, 25, 50, 100000000];
+
+const CategoryPage = () => {
+  const [sortType, setSortType] = useState(SortType.LOWTOHIGH);
   const [searchResult, setSearchResult] = useState<BookInfo[]>([]);
+  const [page,setPage] = useState<number>(0);
+  const [filter, setFilter] = useState<BookFilter>({
+    page: 0,
+    category:"",
+    rating: 0,
+    from: 0,
+    to: 1000000,
+    size: 12,
+  });
   const stars = Array(5).fill(0);
 
-  const handleStarClick = (value: number) => {
-    setStarValue(value);
-  };
-  const handleSortClick = (sort: string) => {
+  const name = useAppSelector((state) => state.search.name);
+
+  const handleSortClick = (sort:SortType) => {
     setSortType(sort);
   };
 
-  const handleTypeClick = (category: string) => {
-    setType(category);
+  const handlePageClick = (data:any) => {
+    setFilter({
+      ...filter,
+      page:data.selected,
+    })
   };
 
-  const handlePriceClick = (id: number) => {
-    setMinPrice(price[id]);
-    setMaxPrice(price[id + 1]);
+  const handlePriceChange = (id: number) => {
+    setFilter({
+      ...filter,
+      from: price[id],
+      to: price[id+1],
+    });
+  }
+  const handleCategoryClick = (category:string) =>{
+    setFilter({
+      ...filter,
+      category:category,
+    });
   };
+  const handleRatingClick = (value:number) => {
+    setFilter({
+      ...filter,
+      rating: value,
+    });
+  }
+
   useLayoutEffect(() => {
     const fetchApi = async () => {
       try {
-        const result = await bookSearch.getAllBook();
-        setSearchResult(result);
+        const result = await bookSearch.getBookByFilter(filter,name);
+        setSearchResult(result.content);
+        setPage(result.totalPages);
+        console.log(name);
       } catch (error) {
         console.log(error);
       }
     };
     fetchApi();
-  }, [type]);
+  }, [name,filter]);
   console.log(searchResult);
   return (
     <Wrapper>
@@ -84,15 +94,16 @@ const Category = () => {
         <div className={`${style.filter}`}>
           <div className={`${style.filterField}`}>
             <div className={style.filterTitle}>CATEGORY</div>
-            {subjects.map((subject, index) => (
+            {Subject.map((subject, index) => (
               <div
                 key={index}
-                onClick={() => handleTypeClick(subject)}
+                onClick={() => handleCategoryClick(subject)}
                 className={style.criterionTitle}
               >
                 {subject}
               </div>
             ))}
+
           </div>
           <div className={`${style.filterField}`}>
             <div className={style.filterTitle}>PRICES</div>
@@ -100,7 +111,7 @@ const Category = () => {
               <div
                 className={style.criterionTitle}
                 key={index}
-                onClick={() => handlePriceClick(index)}
+                onClick={() => handlePriceChange(index)}
               >
                 {priceRange}
               </div>
@@ -115,13 +126,13 @@ const Category = () => {
                     key={index}
                     size={24}
                     style={
-                      starValue > index
+                      filter.rating > index
                         ? {
-                            color: "#faeb07",
+                            color: "#dcd13a",
                           }
                         : { color: "#989898" }
                     }
-                    onClick={() => handleStarClick(index + 1)}
+                    onClick={() => handleRatingClick(index + 1)}
                     className={`${style.starItem}`}
                   />
                 );
@@ -132,7 +143,7 @@ const Category = () => {
         <div className={`${style.content}`}>
           <div className={`${bookStyle.header}`}>
             <div className={`${bookStyle.mainSubject}`}>
-              {type === "" ? "The Book Store" : type}
+              {filter.category === "" ? "The Book Store" : filter.category}
             </div>
             <label className={`${bookStyle.dropDown}`}>
               {sortType}
@@ -140,21 +151,27 @@ const Category = () => {
               <ul className={`${bookStyle.dropDownList}`}>
                 <li
                   className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(BESTSELL)}
+                  onClick={() => handleSortClick(SortType.LOWTOHIGH)}
                 >
-                  Best Sellers
+                  {SortType.LOWTOHIGH}
                 </li>
                 <li
                   className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(LOWHIGH)}
+                  onClick={() => handleSortClick(SortType.HIGHTOLOW)}
                 >
-                  Price - Low to High
+                  {SortType.HIGHTOLOW}
                 </li>
                 <li
                   className={`${bookStyle.dropDownItem}`}
-                  onClick={() => handleSortClick(HIGHLOW)}
+                  onClick={() => handleSortClick(SortType.ALPHABET)}
                 >
-                  Price - High to Low
+                  {SortType.ALPHABET}
+                </li>
+                <li
+                  className={`${bookStyle.dropDownItem}`}
+                  onClick={() => handleSortClick(SortType.ALPHABETREVERT)}
+                >
+                  {SortType.ALPHABETREVERT}
                 </li>
               </ul>
             </label>
@@ -175,17 +192,31 @@ const Category = () => {
                   id={result.id}
                   name={result.name}
                   image={result.image}
-                  author={result.author}
                   sellingPrice={result.sellingPrice}
                   rating={result.rating}
                 />
               );
             })}
           </div>
+          <ReactPaginate 
+          pageCount={page}
+          nextLabel={'next'}
+          previousLabel={'previous'}
+          breakLabel={' . . . '}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={3}
+          containerClassName={`${style.pageContainer}`}
+          pageClassName={`${style.pageItem}`}
+          previousClassName={`${style.pageItem}`}
+          nextClassName={`${style.pageItem}`}
+          onPageChange={handlePageClick}
+          activeClassName={`${style.currentPage}`}
+          />
         </div>
       </div>
       <Footer />
+      
     </Wrapper>
   );
 };
-export default Category;
+export default CategoryPage;

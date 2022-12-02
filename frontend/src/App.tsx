@@ -18,7 +18,7 @@ import DashBoardUserDetail from "./pages/DashBoard/User/UserDetail";
 import DashBoardBook from "./pages/DashBoard/Books/Book";
 import DashBoardOrder from "./pages/DashBoard/Orders/Order";
 import DashBoardOrderDetail from "./pages/DashBoard/Orders/OrderDetail";
-import Category from "./pages/Category/Category";
+import CategoryPage from "./pages/Category/Category";
 import Product from "./pages/Product/Product";
 import { createTheme, ThemeProvider } from "@mui/material";
 
@@ -88,7 +88,7 @@ const App = () => {
             <Route path="verify" element={<CodeVerify />} />
             <Route path="reset/:resetToken" element={<Reset />} />
           </Route>
-          <Route path="books" element={<Category />} />
+          <Route path="books" element={<CategoryPage />} />
           {/* <Route path='*' element={<Home />} /> */}
         </Routes>
       </Suspense>

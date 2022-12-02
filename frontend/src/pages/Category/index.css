@@ -1,3 +1,6 @@
+:root {
+  --head-banner: #e8ebe6;
+}
 .container {
   width: 1400px;
   min-height: 500px;
@@ -26,14 +29,14 @@
   height: fit-content;
   min-height: 500px;
 }
-.filterField {
+.filterArea {
   margin-bottom: 20px;
   border-bottom: 1px solid black;
   margin-right: 50px;
   padding-bottom: 30px;
 }
-.filterField:nth-last-child() {
-  border-bottom: transparent;
+.filterArea:nth-child(3) {
+  border: 0px;
 }
 .filterTitle {
   font-size: 20px;
@@ -42,18 +45,25 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 20px;
- 
 }
-.criterionTitle {
+.criterionTitle,
+.TitleOnClick {
   font-size: 14px;
   cursor: pointer;
   line-height: 26px;
-  color:#008b8b;
-  margin-left: 20px;
+  color: #008b8b;
+  padding-left: 20px;
   letter-spacing: 1px;
 }
-.criterionTitle:hover {
+.criterionTitle:hover,
+.TitleOnClick:hover {
   text-decoration: underline;
+}
+.TitleOnClick {
+  background-color: #008b8b;
+  color: white;
+  border-radius: 15px;
+  border-collapse: collapse;
 }
 .starContainer {
   display: flex;
@@ -62,10 +72,6 @@
 .starItem {
   margin-right: 5px;
   cursor: pointer;
-}
-#footer {
-  position: absolute;
-  bottom: 0;
 }
 .pageContainer {
   list-style-type: none;
@@ -83,7 +89,8 @@
   text-align: center;
   padding: 2;
 }
-.pageItem >a:hover,.pageItem:hover{
+.pageItem > a:hover,
+.pageItem:hover {
   color: #008b8b;
 }
 .pageItem a {
@@ -92,10 +99,44 @@
   text-align: center;
   font-weight: 500;
 }
-.currentPage{
+.currentPage {
   background-color: #008b8b;
   color: white;
 }
-.currentPage:hover{
+.currentPage:hover {
   color: white;
+}
+.pageNull {
+  display: none;
+}
+
+.header,
+.headBanner {
+  width: 100%;
+}
+.header {
+  height: 100px;
+}
+.headBanner {
+  line-height: 30px;
+  background-color: var(--head-banner);
+  vertical-align: middle;
+  text-align: center;
+  font-size: 12px;
+}
+
+h2 {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #000;
+  line-height: 0.1em;
+  margin: 10px 0 20px;
+  font-family: Poynter, Georgia, serif;
+  letter-spacing: 2px;
+  font-weight: 300;
+}
+
+h2 span {
+  background: #fff;
+  padding: 0 10px;
 }
