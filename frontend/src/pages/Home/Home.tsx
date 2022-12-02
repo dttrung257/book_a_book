@@ -19,7 +19,7 @@ const Home = () => {
   const [comic, setcomic] = useState<BookInfoBrief[]>([]);
 
   useEffect(() => {
-    getBestSeller({ size: 10 })
+    getBestSeller({ size: 10, rating: 0 })
       .then((res) => {
         setBestSeller(res.content as BookInfoBrief[]);
         console.log(bestSeller);
@@ -27,7 +27,7 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
-    getBooksOfCategory({ category: "education", size: 10 })
+    getBooksOfCategory({ category: "education", size: 10, rating: 0 })
       .then((res) => {
         seteducation(res.content as BookInfoBrief[]);
         console.log(education);
@@ -35,7 +35,7 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
-    getBooksOfCategory({ category: "detective", size: 10 })
+    getBooksOfCategory({ category: "detective", size: 10, rating: 0 })
       .then((res) => {
         setdetective(res.content as BookInfoBrief[]);
         console.log(detective);
@@ -43,7 +43,7 @@ const Home = () => {
       .catch((err) => {
         console.log(err);
       });
-    getBooksOfCategory({ category: "comic", size: 10 })
+    getBooksOfCategory({ category: "comic", size: 10, rating: 0 })
       .then((res) => {
         setcomic(res.content as BookInfoBrief[]);
         console.log(comic);

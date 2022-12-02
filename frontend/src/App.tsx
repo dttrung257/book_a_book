@@ -77,6 +77,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="cart" element={<Cart />} />
             <Route path="product/:id/:title" element={<Product />} />
+            <Route path="books" element={<CategoryPage />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
           <Route path="dashboard" element={<DashBoardLayout />}>

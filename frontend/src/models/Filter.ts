@@ -4,17 +4,8 @@ export interface FilterSearch {
   page?: number;
   name?: string;
   category?: string;
-  rating?: number;
+  rating: number;
   from?: number;
   to?: number;
   best_selling?: boolean;
-}
-
-export interface BookFilter {
-  size?: number;
-  page: number;
-  category?: string;
-  rating: number;
-  from: number;
-  to: number;
 }

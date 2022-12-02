@@ -45,7 +45,7 @@ const Product = () => {
     getBookViaId(params.id as unknown as number).then((res) => {
       setAmount(1);
       setInfo(res);
-      getBooksOfCategory({ category: res.category, size: 10 })
+      getBooksOfCategory({ category: res.category, size: 10, rating: 0 })
         .then((res) => {
           setRecommend(res.content as BookInfoBrief[]);
         })

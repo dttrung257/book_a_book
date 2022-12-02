@@ -13,6 +13,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { Link, useNavigate } from "react-router-dom";
 import { authActions } from "../../store/authSlice";
+import { searchActions } from "../../store/searchSlice";
 
 const Header = () => {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
@@ -20,7 +21,8 @@ const Header = () => {
   const totalQuantity = useAppSelector((state) => state.cart.totalQuantity);
   const navigate = useNavigate();
   const [searchKey, setSearchKey] = useState("");
-
+  const dispatch = useAppDispatch();
+  const [name, setName] = useState("");
   const handleSearch = () => {
     //redux
     dispatch(searchActions.setNameSearch({ name }));

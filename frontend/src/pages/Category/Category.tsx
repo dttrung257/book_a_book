@@ -8,7 +8,7 @@ import BookCard from "../../components/Book/BookCard";
 import { Subject, priceRanges, BookInfoBrief } from "../../models";
 import ReactPaginate from "react-paginate";
 import { useAppSelector } from "../../store/hook";
-import { BookFilter } from "../../models/Filter";
+import { FilterSearch } from "../../models/Filter";
 import { isAxiosError } from "../../apis/axiosInstance";
 const Wrapper = styled.div`
   background-color: #ffffff;
@@ -26,17 +26,18 @@ const CategoryPage = () => {
   const [searchResult, setSearchResult] = useState<BookInfoBrief[]>([]);
   const [page, setPage] = useState<number>(0);
   const [hover, setHover] = useState(-1);
-  const [filter, setFilter] = useState<BookFilter>({
+  const name = useAppSelector((state) => state.search.name);
+  const [filter, setFilter] = useState<FilterSearch>({
     page: 0,
     category: "",
     rating: 0,
     from: 0.1,
     to: 100000000,
     size: 12,
+    best_selling: false,
+    name: name,
   });
   const stars = Array(5).fill(0);
-
-  const name = useAppSelector((state) => state.search.name);
 
   const handleHoverStar = (value: number) => {
     setHover(value);
@@ -99,7 +100,7 @@ const CategoryPage = () => {
   useLayoutEffect(() => {
     const fetchApi = async () => {
       try {
-        const result = await bookSearch.getBookByFilter(filter, name);
+        const result = await bookSearch.getBooks(filter);
         setSearchResult(result.content);
         setPage(result.totalPages);
         console.log(result);

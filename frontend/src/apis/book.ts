@@ -6,16 +6,6 @@ export const getBookViaId = async (id: number) => {
   return response.data;
 };
 
-export const getAllBook = async (currentPage: number) => {
-  try {
-    const response = await axiosInstance.get(
-      `books?page=${currentPage}&size=12`
-    );
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-};
 //param page size
 export const getBestSeller = async (filter: FilterSearch) => {
   let query = "";
@@ -53,13 +43,13 @@ export const getBookByName = async (name: string, page: number) => {
   }
 };
 
-export const getBookByFilter = async (filter: FilterSearch, name: any) => {
-  let query = `?name=${name}`;
+export const getBooks = async (filter: FilterSearch) => {
+  let query = `?name=${filter.name}`;
   query = query.concat(`&category=${filter.category}`);
   query =
     query.concat(`&from=${filter.from}&to=${filter.to}&rating=${filter.rating}
                         &page=${filter.page}&size=12`);
 
-  const response = await axiosInstance.get(`books/filter${query}`);
+  const response = await axiosInstance.get(`books/${query}`);
   return response.data;
 };
