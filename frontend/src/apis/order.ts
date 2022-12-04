@@ -16,3 +16,11 @@ export const deleteOrder = async (accessToken: string, id: string) => {
     },
   });
 };
+export const getOrderDetails = async (accessToken: string, id: string) => {
+  const response = await axiosInstance.get(`orders/${id}/orderdetails`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.data;
+};

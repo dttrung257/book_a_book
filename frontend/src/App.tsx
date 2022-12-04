@@ -24,7 +24,7 @@ import CategoryPage from "./pages/Category/Category";
 import Product from "./pages/Product/Product";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import { createTheme, ThemeProvider } from "@mui/material";
-import PersonalOrder from "./pages/PersonalOrder/PersonalOrder";
+import Purchase from "./pages/Purchase/Purchase";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Layout from "./components/Layout";
@@ -78,6 +78,7 @@ const App = () => {
             <Route path="cart" element={<Cart />} />
             <Route path="product/:id/:title" element={<Product />} />
             <Route path="books" element={<CategoryPage />} />
+            <Route path="user/purchase" element={<Purchase />} />
             {/* Product Collection Account AboutUs Blog Checkout Order */}
           </Route>
           <Route path="dashboard" element={<DashBoardLayout />}>

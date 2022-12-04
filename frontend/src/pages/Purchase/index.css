@@ -1,7 +1,9 @@
 .orderContainer {
-  height: 400px;
+  min-height: 400px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 #orderHead {
   border: 1px solid grey;
@@ -35,4 +37,19 @@
 }
 .deleteBt {
   cursor: pointer;
+}
+.itemContainer {
+  width: 80%;
+  border: 0.5px solid rgb(147, 145, 145);
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.item {
+  margin: 20px;
+  display: flex;
+  flex-direction: row;
+}
+.infor {
+  padding-left: 20px;
 }

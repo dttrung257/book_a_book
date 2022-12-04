@@ -17,14 +17,14 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const OrderDetail = () => {
+const Purchase = () => {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [orderList, setOrderList] = useState<PersonalOrder[]>([]);
-
   useLayoutEffect(() => {
     const fetchApi = async () => {
       try {
         const result = await getOrder(accessToken);
+        console.log(result);
         setOrderList(result.content);
       } catch (error) {
         if (isAxiosError(error)) {
@@ -34,37 +34,16 @@ const OrderDetail = () => {
     };
 
     fetchApi();
-  }, [orderList]);
+  }, [accessToken]);
 
   return (
     <Wrapper>
       <div className="orderContainer">
-        <Table
-          className="m-3"
-          style={{ width: "700px" }}
-          striped
-          hover
-          responsive
-        >
-          <thead id="orderHead">
-            <tr>
-              <th>Id</th>
-              <th>Date</th>
-              <th>Address</th>
-              <th>quantity</th>
-              <th>total</th>
-              <th>status</th>
-              <th>Setting</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderList.map((order) => (
-              <OrderItem key={order.id} order={order} />
-            ))}
-          </tbody>
-        </Table>
+        {orderList.map((order) => (
+          <OrderItem key={order.id} order={order} />
+        ))}
       </div>
     </Wrapper>
   );
 };
-export default OrderDetail;
+export default Purchase;

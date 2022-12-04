@@ -125,7 +125,7 @@
   font-size: 12px;
 }
 
-h2 {
+.categoryTitle {
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #000;
@@ -134,9 +134,21 @@ h2 {
   font-family: Poynter, Georgia, serif;
   letter-spacing: 2px;
   font-weight: 300;
+  font-size: 36px;
 }
 
-h2 span {
+.categoryTitle > span {
   background: #fff;
   padding: 0 10px;
+}
+.banner {
+  width: 100%;
+}
+.bannerContainer {
+  display: flex;
+  justify-items: center;
+  margin-bottom: 15px;
+}
+.imgBanner {
+  object-fit: cover;
 }

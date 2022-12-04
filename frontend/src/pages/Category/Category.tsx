@@ -10,6 +10,7 @@ import ReactPaginate from "react-paginate";
 import { useAppSelector } from "../../store/hook";
 import { FilterSearch } from "../../models/Filter";
 import { isAxiosError } from "../../apis/axiosInstance";
+import CategoryBanner from "../../components/CategoryBanner/CategoryBanner";
 const Wrapper = styled.div`
   background-color: #ffffff;
   position: relative;
@@ -182,11 +183,14 @@ const CategoryPage = () => {
         </div>
         <div className="content">
           <div className="header">
-            <h2>
+            <div className="categoryTitle">
               <span>
                 {filter.category === "" ? "The Book Store" : filter.category}
               </span>
-            </h2>
+            </div>
+          </div>
+          <div className="bannerContainer">
+            <CategoryBanner category={"FANTASY"} />
           </div>
           <div className="headBanner">
             <FaBookOpen size={14} className="mx-2" />
