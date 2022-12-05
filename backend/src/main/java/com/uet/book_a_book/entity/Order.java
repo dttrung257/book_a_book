@@ -51,6 +51,9 @@ public class Order {
 	@Column(nullable = true)
 	private String address;
 	
+	@Column(nullable = true)
+	private String phoneNumber;
+	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "id", nullable = true)

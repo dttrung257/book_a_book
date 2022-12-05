@@ -23,6 +23,7 @@ public class OrderDTO {
 	@JsonFormat(pattern = Const.DEFAULT_DATETIME_FORMAT, timezone = Const.DEFAULT_TIMEZONE)
 	private Date orderDate;
 	private String address;
+	private String phoneNumber;
 	private Long quantity;
 	private Double total;
 	private String status;

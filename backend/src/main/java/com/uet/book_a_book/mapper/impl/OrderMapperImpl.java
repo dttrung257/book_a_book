@@ -23,6 +23,7 @@ public class OrderMapperImpl implements OrderMapper {
 		orderDTO.setId(order.getId());
 		orderDTO.setOrderDate(order.getOrderDate());
 		orderDTO.setAddress(order.getAddress());
+		orderDTO.setPhoneNumber(order.getPhoneNumber());
 		orderDTO.setStatus(order.getStatus());
 		AppUser user = orderRepository.findUserByOrderId(order.getId()).orElse(null);
 		if (user == null) {
