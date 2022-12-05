@@ -14,7 +14,7 @@ import PasswordError, { checkPassword } from "../../../utils/checkPassword";
 interface Order {
   id: string;
   address: string;
-  order_date: string;
+  orderDate: string;
   status: string;
   user_id: string;
 }
@@ -250,7 +250,7 @@ const UserDetail = () => {
                   {orders.map((order) => (
                     <tr key={order.id}>
                       <td>{order.id}</td>
-                      <td>{order.order_date}</td>
+                      <td>{order.orderDate}</td>
                       <td>{order.status}</td>
                       <td>{order.address}</td>
                     </tr>

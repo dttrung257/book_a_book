@@ -109,6 +109,8 @@ const OrderDetail = () => {
         }
       );
       //setOrderStatus(status);
+      setOrderInfo({ ...orderInfo, status } as OrderInfo);
+      setStatusModal(false);
       console.log(res);
     } catch (error) {
       if (isAxiosError(error)) {
@@ -302,6 +304,7 @@ const OrderDetail = () => {
                 value={orderStatus}
                 onChange={(e) => {
                   setOrderStatus(e.target.value);
+                  console.log(e.target.value);
                 }}
               >
                 <option value="PENDING">PENDING</option>

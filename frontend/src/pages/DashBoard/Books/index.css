@@ -1,0 +1,29 @@
+.bookinfo .detail div {
+  margin-bottom: 5px;
+}
+.bookinfo #bookframe {
+  width: 350px;
+  height: 450px;
+  box-shadow: 4px 0px 20px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+.bookinfo .detail {
+  max-width: 650px;
+}
+#bookbrief #bookcap {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 17px;
+  color: #666;
+}
+.bookinfo #bookframe img {
+  max-width: 300px;
+  max-height: 400px;
+  display: block;
+  margin: 50px auto;
+}
+.bookinfo .detail #book-description {
+  text-align: justify;
+  margin: 0;
+}

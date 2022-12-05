@@ -20,6 +20,7 @@ import DashBoardUserDetail from "./pages/DashBoard/User/UserDetail";
 import DashBoardBook from "./pages/DashBoard/Books/Book";
 import DashBoardOrder from "./pages/DashBoard/Orders/Order";
 import DashBoardOrderDetail from "./pages/DashBoard/Orders/OrderDetail";
+import DashBoardBookDetail from "./pages/DashBoard/Books/BookDetail";
 import CategoryPage from "./pages/Category/Category";
 import Product from "./pages/Product/Product";
 import AboutUs from "./pages/AboutUs/AboutUs";
@@ -86,6 +87,7 @@ const App = () => {
             <Route path="users" element={<DashBoardUser />} />
             <Route path="users/:id" element={<DashBoardUserDetail />} />
             <Route path="books" element={<DashBoardBook />} />
+            <Route path="books/:id" element={<DashBoardBookDetail />} />
             <Route path="orders" element={<DashBoardOrder />} />
             <Route path="orders/:id" element={<DashBoardOrderDetail />} />
           </Route>

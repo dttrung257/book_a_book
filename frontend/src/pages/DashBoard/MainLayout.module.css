@@ -11,11 +11,11 @@
   background-color: white;
   border-radius: 8px;
   padding: 1rem;
-  min-height: 748px;
+  min-height: 85vh;
 }
 
-th,
-td {
+.tableHeader th,
+.tableBody td {
   text-align: center;
   max-width: 300px;
 }
@@ -52,45 +52,6 @@ td {
 .searchForm input:focus {
   border-color: var(--primary-color);
   outline: none;
-}
-
-.iconSetting {
-  position: relative;
-}
-
-.iconSetting a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.iconSetting .action {
-  z-index: 100;
-  position: absolute;
-  left: 0;
-  top: 100%;
-  background-color: white;
-  width: 100%;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-  display: none;
-}
-
-.iconSetting .action > div:hover {
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.iconSetting .divider {
-  height: 1px;
-  width: 100%;
-  background-color: #cecece;
-}
-
-.iconSetting:hover .action {
-  display: block;
-}
-
-.searchForm {
 }
 
 .searchForm > div:first-child {
@@ -136,31 +97,6 @@ td {
   background-color: var(--primary-color);
   opacity: 0.7;
 }
-
-#userDetail .header button + button {
-  margin-left: 12px;
-}
-
-#userDetail .left {
-  flex-basis: 400px;
-  border-right: 2px solid #cbcbcb;
-  display: flex;
-  flex-direction: column;
-}
-
-#userDetail .avatar {
-  border-bottom: 1px solid #cbcbcb;
-}
-
-#userDetail .avatar div:last-child p {
-  display: inline-block;
-}
-
-#userDetail .title {
-  font-weight: 600;
-  font-size: 1.5rem;
-}
-
-.addUserModal {
-  width: 400px;
+.deleteModal {
+  min-width: 300px;
 }

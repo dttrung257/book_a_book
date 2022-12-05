@@ -59,3 +59,20 @@ export interface Book {
   stopSelling: boolean;
   rating?: number;
 }
+
+export interface BookAddInfo {
+  name: string;
+  image: string;
+  category: Category;
+  author: string;
+  width?: number | string;
+  height?: number | string;
+  isbn?: string | string;
+  publisher?: string;
+  numberOfPages?: number | string;
+  yearOfPublication?: string;
+  buyPrice: string;
+  sellingPrice: string;
+  description: string;
+  quantityInStock: number | string;
+}
