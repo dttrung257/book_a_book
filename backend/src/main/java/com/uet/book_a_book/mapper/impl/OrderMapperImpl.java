@@ -36,7 +36,7 @@ public class OrderMapperImpl implements OrderMapper {
 			orderDTO.setFullName(user.getFirstName() + " " + user.getLastName());
 		}
 		orderDTO.setQuantity(orderdetailRepository.countTotalQuantity(order.getId()));
-		orderDTO.setTotal(orderdetailRepository.calculateTotalPrice(order.getId()));
+		orderDTO.setTotal(Math.ceil(orderdetailRepository.calculateTotalPrice(order.getId()) * 100) / 100);
 		return orderDTO;
 	}
 
