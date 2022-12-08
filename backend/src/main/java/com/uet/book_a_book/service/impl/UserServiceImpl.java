@@ -26,6 +26,7 @@ import com.uet.book_a_book.email.EmailSenderService;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Order;
 import com.uet.book_a_book.entity.Role;
+import com.uet.book_a_book.entity.constant.Const;
 import com.uet.book_a_book.entity.constant.Gender;
 import com.uet.book_a_book.entity.constant.OrderStatus;
 import com.uet.book_a_book.entity.constant.RoleName;
@@ -195,9 +196,21 @@ public class UserServiceImpl implements UserSevice {
 		} else {
 			throw new NotFoundGenderException("Not found gender: " + updateUser.getGender());
 		}
-		user.setPhoneNumber(updateUser.getPhoneNumber());
-		user.setAddress(updateUser.getAddress().trim());
-		user.setAvatar(updateUser.getAvatar());
+		if (updateUser.getPhoneNumber() != null && updateUser.getPhoneNumber().trim().matches(Const.PHONE_NUMBER_REGEX)) {
+			user.setPhoneNumber(updateUser.getPhoneNumber().trim());
+		} else {
+			user.setPhoneNumber(null);
+		}
+		if (updateUser.getAddress() != null && updateUser.getAddress().trim() != "") {
+			user.setAddress(updateUser.getAddress().trim());
+		} else {
+			user.setAddress(null);
+		}
+		if (updateUser.getAvatar() != null && updateUser.getAvatar().trim() != "") {
+			user.setAvatar(updateUser.getAvatar().trim());
+		} else {
+			user.setAvatar(null);
+		}
 		user.setUpdatedAt(new Date());
 		userRepository.save(user);
 		UserInfo userInfo = new UserInfo();
