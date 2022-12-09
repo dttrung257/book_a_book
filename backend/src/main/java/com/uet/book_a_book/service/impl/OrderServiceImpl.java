@@ -61,7 +61,10 @@ public class OrderServiceImpl implements OrderService {
 		AppUser user = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
+		List<OrderDTO> orderDTOs = orders.stream()
+				//.sorted(Comparator.comparing(Order::getOrderDate).reversed())
+				.map(o -> orderMapper.mapToOrderDTO(o))
+				.collect(Collectors.toList());
 		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
 	}
 
@@ -81,7 +84,9 @@ public class OrderServiceImpl implements OrderService {
 			Date orderDate, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
-		List<OrderDTO> orderDTOs = orders.stream().map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
+		List<OrderDTO> orderDTOs = orders.stream()
+				//.sorted(Comparator.comparing(Order::getOrderDate).reversed())
+				.map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
 		if (userId.matches(Const.UUID_REGEX)) {
 			orderDTOs = orderDTOs.stream()
 					.filter(oDTO -> (oDTO.getUserId() != null && oDTO.getUserId().equals(UUID.fromString(userId))))
