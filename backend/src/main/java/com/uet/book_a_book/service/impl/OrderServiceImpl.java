@@ -1,6 +1,7 @@
 package com.uet.book_a_book.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -62,9 +63,14 @@ public class OrderServiceImpl implements OrderService {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
 		List<OrderDTO> orderDTOs = orders.stream()
-				//.sorted(Comparator.comparing(Order::getOrderDate).reversed())
+				.sorted(Comparator.comparing(Order::getOrderDate).reversed())
 				.map(o -> orderMapper.mapToOrderDTO(o))
 				.collect(Collectors.toList());
+		Integer start = (int) pageable.getOffset();
+		Integer end = Math.min((start + pageable.getPageSize()), orderDTOs.size());
+		if (start <= orderDTOs.size()) {
+			return new PageImpl<>(orderDTOs.subList(start, end), pageable, orderDTOs.size());
+		}
 		return new PageImpl<>(orderDTOs, pageable, orderDTOs.size());
 	}
 
@@ -85,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Order> orders = orderRepository.findAll();
 		List<OrderDTO> orderDTOs = orders.stream()
-				//.sorted(Comparator.comparing(Order::getOrderDate).reversed())
+				.sorted(Comparator.comparing(Order::getOrderDate).reversed())
 				.map(o -> orderMapper.mapToOrderDTO(o)).collect(Collectors.toList());
 		if (userId.matches(Const.UUID_REGEX)) {
 			orderDTOs = orderDTOs.stream()
