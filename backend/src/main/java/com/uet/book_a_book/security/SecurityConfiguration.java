@@ -15,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.uet.book_a_book.security.filter.JwtFilter;
-import com.uet.book_a_book.security.filter.StaticContentFilter;
 import com.uet.book_a_book.security.provider.CustomAuthenticationProvider;
 
 @Configuration
@@ -30,8 +29,8 @@ public class SecurityConfiguration {
 	private JwtAuthenEntryPoint jwtAuthenEntryPoint;
 	@Autowired
 	private CustomAccessDeniedHandler customAccessDeniedHandler;
-	@Autowired
-	private StaticContentFilter staticContentFilter;
+//	@Autowired
+//	private StaticContentFilter staticContentFilter;
 
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -59,7 +58,7 @@ public class SecurityConfiguration {
 									.anyRequest().authenticated();
 						})
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.addFilterBefore(staticContentFilter, UsernamePasswordAuthenticationFilter.class);
+		//http.addFilterBefore(staticContentFilter, UsernamePasswordAuthenticationFilter.class);
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
