@@ -23,4 +23,7 @@ public interface OrderdetailRepository extends JpaRepository<Orderdetail, UUID> 
 	
 	@Query("SELECT SUM(od.quantityOrdered * od.priceEach) FROM Orderdetail od WHERE od.order.id = :orderId")
 	Double calculateTotalPrice(@Param("orderId") UUID orderId);
+	
+	@Query("SELECT COUNT(o) FROM Orderdetail od INNER JOIN Order o ON od.order.id = o.id WHERE od.book.id = :bookId AND o.status != :status")
+	Long calculateTotalOrderOfBook(@Param("bookId") Long bookId, @Param("status") String status);
 }

@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 import com.uet.book_a_book.dto.book.NewBook;
 import com.uet.book_a_book.entity.AppUser;
 import com.uet.book_a_book.entity.Book;
+import com.uet.book_a_book.entity.constant.OrderStatus;
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
+import com.uet.book_a_book.exception.book.CannotDeleteBookException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 import com.uet.book_a_book.repository.BookRepository;
+import com.uet.book_a_book.repository.OrderdetailRepository;
 import com.uet.book_a_book.service.BookService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 public class BookServiceImpl implements BookService {
 	@Autowired
 	private BookRepository bookRepository;
+	@Autowired
+	private OrderdetailRepository orderdetailRepository;
 
 	/** Get book by id. **/
 	@Override
@@ -80,7 +85,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public List<Book> getBooksInCart(Set<Long> ids) {
 		List<Book> books = bookRepository.findAll();
-		return books.stream().filter(b -> ids.contains(b.getId())).collect(Collectors.toList());
+		return books.stream().filter(b -> ids.contains(b.getId())).filter(b -> (!b.isStopSelling())).collect(Collectors.toList());
 	}
 
 	/** Add a new book. **/
@@ -95,8 +100,12 @@ public class BookServiceImpl implements BookService {
 		book.setName(newBook.getName().trim());
 		book.setAuthor(newBook.getAuthor().trim());
 		book.setCategory(newBook.getCategory().trim().toUpperCase());
-		book.setIsbn(newBook.getIsbn().trim());
-		book.setPublisher(newBook.getPublisher().trim());
+		if (newBook.getIsbn() != null) {
+			book.setIsbn(newBook.getIsbn().trim());
+		}
+		if (newBook.getPublisher() != null) {
+			book.setPublisher(newBook.getPublisher().trim());
+		}
 		book.setBuyPrice(newBook.getBuyPrice());
 		book.setSellingPrice(newBook.getSellingPrice());
 		book.setNumberOfPages(newBook.getNumberOfPages());
@@ -107,7 +116,9 @@ public class BookServiceImpl implements BookService {
 		book.setAvailableQuantity(newBook.getQuantityInStock());
 		book.setQuantitySold(0L);
 		book.setStopSelling(false);
-		book.setDescription(newBook.getDescription().trim());
+		if (newBook.getDescription() != null) {
+			book.setDescription(newBook.getDescription().trim());
+		}
 		book.setRating(null);
 		book.setOrderdetails(new ArrayList<>());
 		book.setComments(new ArrayList<>());
@@ -178,6 +189,9 @@ public class BookServiceImpl implements BookService {
 		Book book = bookRepository.findById(id).orElse(null);
 		if (book == null) {
 			throw new NotFoundBookException("Not found book id: " + id);
+		}
+		if (orderdetailRepository.calculateTotalOrderOfBook(id, OrderStatus.STATUS_CANCELED) > 0) {
+			throw new CannotDeleteBookException("Book id: " + id + " cannot be deleted while there is an order pending or shipping or success");
 		}
 		log.info("Admin id: {} deleted book id: {}.",
 				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.uet.book_a_book.exception.book.BookAlreadyExistsException;
+import com.uet.book_a_book.exception.book.CannotDeleteBookException;
 import com.uet.book_a_book.exception.book.NotFoundBookException;
 
 @ControllerAdvice
@@ -26,6 +27,13 @@ public class BookExceptionHandler {
 	public ResponseEntity<ErrorDetails> handleBookAlreadyExistsException(BookAlreadyExistsException e) {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
 				"Book already exists", e.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+	}
+	
+	@ExceptionHandler(CannotDeleteBookException.class)
+	public ResponseEntity<ErrorDetails> handleCannotDeleteBookException(CannotDeleteBookException e) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.BAD_REQUEST.value(),
+				"Book cannot be deleted while there is an order pending or shipping or success", e.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
 	}
 }
