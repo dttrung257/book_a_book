@@ -146,9 +146,12 @@ public class BookServiceImpl implements BookService {
 		book.setName(updateBook.getName().trim());
 		book.setAuthor(updateBook.getAuthor().trim());
 		book.setCategory(updateBook.getCategory().trim().toUpperCase());
-		book.setIsbn(updateBook.getIsbn().trim());
-		book.setWidth(updateBook.getWidth());
-		book.setPublisher(updateBook.getPublisher().trim());
+		if (updateBook.getIsbn() != null) {
+			book.setIsbn(updateBook.getIsbn().trim());
+		}
+		if (updateBook.getPublisher() != null) {
+			book.setPublisher(updateBook.getPublisher().trim());
+		}
 		book.setBuyPrice(updateBook.getBuyPrice());
 		book.setSellingPrice(updateBook.getSellingPrice());
 		book.setNumberOfPages(updateBook.getNumberOfPages());
@@ -156,7 +159,9 @@ public class BookServiceImpl implements BookService {
 		book.setHeight(updateBook.getHeight());
 		book.setImage(updateBook.getImage());
 		book.setQuantityInStock(updateBook.getQuantityInStock());
-		book.setDescription(updateBook.getDescription().trim());
+		if (updateBook.getDescription() != null) {
+			book.setDescription(updateBook.getDescription().trim());
+		}
 		bookRepository.save(book);
 		log.info("Admin id: {} updated book id: {}.",
 				((AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId(), book.getId());
