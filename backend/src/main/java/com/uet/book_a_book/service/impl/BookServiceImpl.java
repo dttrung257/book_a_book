@@ -85,7 +85,9 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public List<Book> getBooksInCart(Set<Long> ids) {
 		List<Book> books = bookRepository.findAll();
-		return books.stream().filter(b -> ids.contains(b.getId())).filter(b -> (!b.isStopSelling())).collect(Collectors.toList());
+		return books.stream().filter(b -> ids.contains(b.getId()))
+				//.filter(b -> (!b.isStopSelling()))
+				.collect(Collectors.toList());
 	}
 
 	/** Add a new book. **/
