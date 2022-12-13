@@ -10,6 +10,7 @@ public final class Const {
 	
 	public static final String DEFAULT_DATE_FORMAT = "dd-MM-yyyy";
 	public static final String DEFAULT_DATETIME_FORMAT = "dd-MM-yyyy hh:mm:ss";
+	public static final String COMMENT_DATETIME_FORMAT = "hh:mm:ss dd-MM-yyyy";
 	public static final String DEFAULT_TIMEZONE = "GMT+7";
 	
 	public static final String PHONE_NUMBER_REGEX = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";

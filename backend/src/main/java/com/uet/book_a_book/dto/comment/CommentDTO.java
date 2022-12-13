@@ -24,8 +24,8 @@ public class CommentDTO {
 	private String bookName;
 	private Integer star;
 	private String content;
-	@JsonFormat(pattern = Const.DEFAULT_DATETIME_FORMAT, timezone = Const.DEFAULT_TIMEZONE)
+	@JsonFormat(pattern = Const.COMMENT_DATETIME_FORMAT, timezone = Const.DEFAULT_TIMEZONE)
 	private Date createdAt;
-	@JsonFormat(pattern = Const.DEFAULT_DATETIME_FORMAT, timezone = Const.DEFAULT_TIMEZONE)
+	@JsonFormat(pattern = Const.COMMENT_DATETIME_FORMAT, timezone = Const.DEFAULT_TIMEZONE)
 	private Date updatedAt;
 }
