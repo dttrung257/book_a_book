@@ -55,9 +55,9 @@ public class AccountExceptionHandler {
 	
 	@ExceptionHandler(LockedAccountException.class)
 	public ResponseEntity<ErrorDetails> handleLockedAccountException(LockedAccountException e) {
-		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.UNAUTHORIZED.value(),
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), HttpStatus.FORBIDDEN.value(),
 				"Account has been locked", e.getMessage());
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
 	}
 	
 	@ExceptionHandler(EmailSendingErrorException.class)
