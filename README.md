@@ -27,16 +27,26 @@
 ● RDBMS: MySQL
 
 
-## 4. Modules
+## 4. Database
+
+https://flic.kr/p/2o5NQ13
+
+![](https://live.staticflickr.com/65535/52562944050_5bc64b02f2_n.jpg)
+
+## 5. Modules
 
 
 ## **Account:**
 
 ● register
 
+https://flic.kr/p/2o5GQzD
+
 ![](https://live.staticflickr.com/65535/52561775327_01a426d119_z.jpg)
 
 ● log in
+
+https://flic.kr/p/2o5GQzi
 
 ![](https://live.staticflickr.com/65535/52561775307_8e2818ac88.jpg)
 
@@ -46,43 +56,63 @@
 
 ● forget password
 
+https://flic.kr/p/2o5MVJc
+
 ![](https://live.staticflickr.com/65535/52562768203_ca5209030e_z.jpg)
 
 ● change password
+
+https://flic.kr/p/2o5LDzr
 
 ![](https://live.staticflickr.com/65535/52562518759_8a55ab7e5a_z.jpg)
 
 ● update user's information
 
+https://flic.kr/p/2o5GQAF
+
 ![](https://live.staticflickr.com/65535/52561775387_2baa5e520f.jpg)
 
 ● create account (Admin)
+
+https://flic.kr/p/2o5Myit
 
 ![](https://live.staticflickr.com/65535/52562696125_8a02f2f73d_z.jpg)
 
 ● view all accounts (Admin)
 
+https://flic.kr/p/2o5Kb2K
+
 ![](https://live.staticflickr.com/65535/52562230981_a43eabc4b6.jpg)
 
 ● view user's information (Admin)
+
+https://flic.kr/p/2o5Kb2K
 
 ![](https://live.staticflickr.com/65535/52562768383_af87f4d867.jpg)
 
 ● update user's information (Admin)
 
+https://flic.kr/p/2o5MVLr
+
 ![](https://live.staticflickr.com/65535/52562768333_4f9df06f71_z.jpg)
 
 ● lock, unlock account (Admin)
 
+https://flic.kr/p/2o5LDBf
+
 ![](https://live.staticflickr.com/65535/52562518864_e0a93a323c_z.jpg)
 
 ● delete account (Admin)
+
+https://flic.kr/p/2o5LDC2
 
 ![](https://live.staticflickr.com/65535/52562518909_cc13c8a142_z.jpg)
 
 ## **Book:**
 
 ● view book
+
+https://flic.kr/p/2o5GQED
 
 ![](https://live.staticflickr.com/65535/52561775617_805ab79586.jpg)
 
@@ -98,15 +128,23 @@
 
   - search by best selling
 
+https://flic.kr/p/2o5KbSc
+
 ![](https://live.staticflickr.com/65535/52562233791_3047938610_n.jpg)
 
 ● add book (admin)
+
+https://flic.kr/p/2o5GRtT
 
 ![](https://live.staticflickr.com/65535/52561778357_69451230ba_w.jpg)
 
 ● update book (admin)
 
+https://flic.kr/p/2o5Mze6
+
 ![](https://live.staticflickr.com/65535/52562699235_3aec3e3f5c_w.jpg)
+
+https://flic.kr/p/2o5KbS7
 
 ![](https://live.staticflickr.com/65535/52562699375_88e2886a70.jpg)
 
@@ -114,37 +152,51 @@
 
 ● Add to cart
 
-![]()
-
 ● order
+
+https://flic.kr/p/2o5MWDP
 
 ![](https://live.staticflickr.com/65535/52562771313_148d271423.jpg)
 
 ● view order history
 
+https://flic.kr/p/2o5MWEk
+
 ![](https://live.staticflickr.com/65535/52562771343_6801bf0268_n.jpg)
 
 ● view order details
+
+https://flic.kr/p/2o5MVPY
 
 ![](https://live.staticflickr.com/65535/52562699285_0e7dbee119_n.jpg)
 
 ● delete order
 
+https://flic.kr/p/2o5LDH2
+
 ![](https://live.staticflickr.com/65535/52562519199_a4cb1f5898_z.jpg)
 
 ● add order (Admin)
+
+https://flic.kr/p/2o5GQGC
 
 ![](https://live.staticflickr.com/65535/52561775732_6e6bcfc37f.jpg)
 
 ● view all orders (Admin)
 
+https://flic.kr/p/2o5KbTe
+
 ![](https://live.staticflickr.com/65535/52562233851_594d3f70f1_n.jpg)
 
 ● update order (Admin)
 
+https://flic.kr/p/2o5MWEv
+
 ![](https://live.staticflickr.com/65535/52562771353_caecf50e37_w.jpg)
 
 ● delete order (Admin)
+
+https://flic.kr/p/2o5MVQe
 
 ![](https://live.staticflickr.com/65535/52562768553_e3059fb818_z.jpg)
 
@@ -152,19 +204,29 @@
 
 ● comment (user)
 
+https://flic.kr/p/2o5MVRM
+
 ![](https://live.staticflickr.com/65535/52562768643_05f69ae4d0_z.jpg)
 
 ● view comment (user)
 
+https://flic.kr/p/2o5GQKJ
+
 ![](https://live.staticflickr.com/65535/52562522049_97a740a970_w.jpg)
+
+https://flic.kr/p/2o5MWCG
 
 ![](https://live.staticflickr.com/65535/52562771248_76014e241b_w.jpg)
 
 ● update comment (user)
 
+https://flic.kr/p/2o5GQHe
+
 ![](https://live.staticflickr.com/65535/52561775767_fac63ba527_z.jpg)
 
 ● delete comment (user)
+
+https://flic.kr/p/2o5LDKb
 
 ![](https://live.staticflickr.com/65535/52562519324_f6fe04d373_z.jpg)
 
@@ -174,17 +236,23 @@
 
 ● view comment (admin)
 
+https://flic.kr/p/2o5MWCG
+
+https://flic.kr/p/2o5Kb9U
+
 ![](https://live.staticflickr.com/65535/52562699265_8350c05749_w.jpg)
 
 ![](https://live.staticflickr.com/65535/52561775912_050ccf0205.jpg)
 
 ● delete comment (admin)
 
+https://flic.kr/p/2o5GQJX
+
 ![](https://live.staticflickr.com/65535/52561775867_b7c26f21cf_z.jpg)
 
 
 
-## 5. Các giao diện
+## 6. Các giao diện
 
 #### Home
 <img src="https://live.staticflickr.com/65535/52561940857_e60ffaa233_n.jpg">
