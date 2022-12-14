@@ -5,17 +5,17 @@
 
 ## 2. Thành viên nhóm:
 
-● *Nhóm trưởng:* Đặng Thành Trung
+● *Nhóm trưởng:* Đặng Thành Trung - 20021455
 
-● Nguyễn Anh Đức
+● Nguyễn Anh Đức - 20021336
 
-● Phạm Minh Quang
+● Phạm Minh Quang - 20021413
 
-● Trần Minh Dương
+● Trần Minh Dương - 20021323
 
-● Trần Duy Hưng
+● Trần Duy Hưng - 20021371
 
-● Nguyễn Thị Thúy Quỳnh
+● Nguyễn Thị Thúy Quỳnh - 20021426
 
 
 ## 3. Frameworks / Technology
@@ -87,6 +87,8 @@
 ![](https://live.staticflickr.com/65535/52561775617_805ab79586.jpg)
 
 ● search book
+  
+  - search by name
 
   - search by category
     
@@ -176,18 +178,16 @@
 
 ![](https://live.staticflickr.com/65535/52561775912_050ccf0205.jpg)
 
-● update comment (admin)
-
-![]()
-
 ● delete comment (admin)
 
 ![](https://live.staticflickr.com/65535/52561775867_b7c26f21cf_z.jpg)
 
+
+
 ## 5. Các giao diện
 
 #### Home
-<img src="https://live.staticflickr.com/65535/52560352941_f9ac082971_n.jpg">
+<img src="https://live.staticflickr.com/65535/52561940857_e60ffaa233_n.jpg">
 <img src="https://live.staticflickr.com/65535/52560897838_9916438444_n.jpg">
 <img src="https://live.staticflickr.com/65535/52560647659_6b357aa2e0_n.jpg">
 
@@ -196,6 +196,9 @@
 
 #### Register
 <img src="https://live.staticflickr.com/65535/52560861553_e672bf3dcb_c.jpg">
+
+#### Activate Account
+<img src="https://live.staticflickr.com/65535/52562676109_c7ff09eef0.jpg">
 
 #### Forgot Password
 <img src="https://live.staticflickr.com/65535/52561647208_8877765263_z.jpg">
@@ -209,10 +212,10 @@
 <img src="https://live.staticflickr.com/65535/52559864152_effc60cec5.jpg">
 
 #### Collections
-<img src="https://live.staticflickr.com/65535/52560315951_c0b1d71985_w.jpg">
+<img src="https://live.staticflickr.com/65535/52561932717_0e64b84839_n.jpg">
 
 #### Book Details
-<img src="https://live.staticflickr.com/65535/52560611634_8143fcbd9e_w.jpg">
+<img src="https://live.staticflickr.com/65535/52562675959_e46cf94722.jpg">
 
 #### Comment
 <img src="https://live.staticflickr.com/65535/52561647178_c6fa0e45f3_z.jpg">
@@ -223,8 +226,8 @@
 #### Check Out
 <img src="https://live.staticflickr.com/65535/52560316036_75fa19debd.jpg">
 
-#### Orders History
-<img src="https://live.staticflickr.com/65535/52561009378_a9c3879df3.jpg">
+#### Personal Orders
+<img src="https://live.staticflickr.com/65535/52562388576_53f36a710b_n.jpg">
 
 #### About Us
 <img src="https://live.staticflickr.com/65535/52560457691_903338d138_n.jpg">
@@ -232,7 +235,7 @@
 ## Dashboard
 
 #### Users List
-<img src="https://live.staticflickr.com/65535/52560789660_70e96d6111_z.jpg">
+<img src="https://live.staticflickr.com/65535/52562675999_084e6e6742_z.jpg">
 
 #### Add User
 <img src="https://live.staticflickr.com/65535/52560861733_d2e0f2d6c2_z.jpg">
@@ -253,7 +256,7 @@
 <img src="https://live.staticflickr.com/65535/52560789770_ce79f80d27_z.jpg">
 
 #### Comments List
-<img src="https://live.staticflickr.com/65535/52560861773_ae14733f81_z.jpg">
+<img src="https://live.staticflickr.com/65535/52562388726_1f1b4663ff_z.jpg">
 
 #### Order Details
 <img src="https://live.staticflickr.com/65535/52560861788_88ac153090_w.jpg">
