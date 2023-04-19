@@ -1,21 +1,21 @@
-package com.uet.book_a_book.security.filter;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-
+//package com.uet.book_a_book.security.filter;
+//
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.util.Arrays;
+//import java.util.List;
+//
+//import javax.servlet.Filter;
+//import javax.servlet.FilterChain;
+//import javax.servlet.ServletException;
+//import javax.servlet.ServletRequest;
+//import javax.servlet.ServletResponse;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//
+//import org.springframework.http.HttpStatus;
+//import org.springframework.stereotype.Component;
+//
 //@Component
 //public class StaticContentFilter implements Filter {
 //

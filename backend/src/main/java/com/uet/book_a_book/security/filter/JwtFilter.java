@@ -7,23 +7,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.repository.UserRepository;
+import com.uet.book_a_book.models.AppUser;
+import com.uet.book_a_book.repositories.UserRepository;
 import com.uet.book_a_book.security.jwt.JwtUtil;
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-	@Autowired
-	private JwtUtil jwtUtil;
-	@Autowired
-	private UserRepository userRepository;
+	private final JwtUtil jwtUtil;
+	private final UserRepository userRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

@@ -2,23 +2,24 @@ package com.uet.book_a_book.config;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.entity.Role;
-import com.uet.book_a_book.entity.constant.Gender;
-import com.uet.book_a_book.entity.constant.RoleName;
-import com.uet.book_a_book.service.RoleService;
-import com.uet.book_a_book.service.UserSevice;
+import com.uet.book_a_book.models.AppUser;
+import com.uet.book_a_book.models.Role;
+import com.uet.book_a_book.models.constant.Gender;
+import com.uet.book_a_book.models.constant.RoleName;
+import com.uet.book_a_book.services.RoleService;
+import com.uet.book_a_book.services.UserSevice;
 
 @Configuration
+@RequiredArgsConstructor
 public class DatabaseResource {
-    private @Autowired UserSevice userSevice;
-    private @Autowired RoleService roleService;
-    private @Autowired PasswordEncoder passwordEncoder;
+    private final UserSevice userSevice;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public void initTestDatabase() {

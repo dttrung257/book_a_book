@@ -1,19 +1,19 @@
 package com.uet.book_a_book.mapper.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import com.uet.book_a_book.dto.comment.CommentDTO;
-import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.entity.Book;
-import com.uet.book_a_book.entity.Comment;
+import com.uet.book_a_book.dtos.comment.CommentDTO;
+import com.uet.book_a_book.models.AppUser;
+import com.uet.book_a_book.models.Book;
+import com.uet.book_a_book.models.Comment;
 import com.uet.book_a_book.mapper.CommentMapper;
-import com.uet.book_a_book.repository.CommentRepository;
+import com.uet.book_a_book.repositories.CommentRepository;
 
 @Component
+@RequiredArgsConstructor
 public class CommentMapperImpl implements CommentMapper {
-	@Autowired
-	private CommentRepository commentRepository;
+	private final CommentRepository commentRepository;
 
 	@Override
 	public CommentDTO mapToCommentDTO(Comment comment) {

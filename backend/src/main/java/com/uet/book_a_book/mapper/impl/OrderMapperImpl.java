@@ -1,21 +1,20 @@
 package com.uet.book_a_book.mapper.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import com.uet.book_a_book.dto.order.OrderDTO;
-import com.uet.book_a_book.entity.AppUser;
-import com.uet.book_a_book.entity.Order;
+import com.uet.book_a_book.dtos.order.OrderDTO;
+import com.uet.book_a_book.models.AppUser;
+import com.uet.book_a_book.models.Order;
 import com.uet.book_a_book.mapper.OrderMapper;
-import com.uet.book_a_book.repository.OrderRepository;
-import com.uet.book_a_book.repository.OrderdetailRepository;
+import com.uet.book_a_book.repositories.OrderRepository;
+import com.uet.book_a_book.repositories.OrderdetailRepository;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapperImpl implements OrderMapper {
-	@Autowired
-	private OrderRepository orderRepository;
-	@Autowired
-	private OrderdetailRepository orderdetailRepository;
+	private final OrderRepository orderRepository;
+	private final OrderdetailRepository orderdetailRepository;
 
 	@Override
 	public OrderDTO mapToOrderDTO(Order order) {

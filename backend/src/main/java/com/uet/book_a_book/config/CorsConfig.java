@@ -15,11 +15,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
         		.allowedMethods("*")
         		.allowedOrigins("*")
-        		.allowedHeaders("*")
-        		.allowCredentials(false)
-        		.maxAge(-1);
+        		.allowedHeaders("*");
     }
-	
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();

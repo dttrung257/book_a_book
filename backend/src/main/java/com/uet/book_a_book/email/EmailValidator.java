@@ -16,11 +16,8 @@ public class EmailValidator {
 	public boolean checkEmailExists(String email) {
 		String url = "https://emailvalidation.abstractapi.com/v1/?api_key="+ apikey +"&email=" + email;
 		EmailChecker checker = restTemplate.getForObject(url, EmailChecker.class);
-		if (checker != null && checker.getIs_valid_format().isValue()
+		return checker != null && checker.getIs_valid_format().isValue()
 				&& checker.getIs_mx_found().isValue()
-				&& checker.getIs_smtp_valid().isValue()) {
-			return true;
-		}
-		return false;
+				&& checker.getIs_smtp_valid().isValue();
 	}
 }

@@ -1,5 +1,6 @@
 package com.uet.book_a_book.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,15 +21,12 @@ import com.uet.book_a_book.security.provider.CustomAuthenticationProvider;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfiguration {
-	@Autowired
-	private CustomAuthenticationProvider customAuthenticationProvider;
-	@Autowired
-	private JwtFilter jwtFilter;
-	@Autowired
-	private JwtAuthenEntryPoint jwtAuthenEntryPoint;
-	@Autowired
-	private CustomAccessDeniedHandler customAccessDeniedHandler;
+	private final CustomAuthenticationProvider customAuthenticationProvider;
+	private final JwtFilter jwtFilter;
+	private final JwtAuthenEntryPoint jwtAuthenEntryPoint;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 //	@Autowired
 //	private StaticContentFilter staticContentFilter;
 

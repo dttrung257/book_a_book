@@ -1,6 +1,6 @@
 package com.uet.book_a_book.security.provider;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,18 +10,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.uet.book_a_book.entity.AppUser;
+import com.uet.book_a_book.models.AppUser;
 import com.uet.book_a_book.exception.account.AccountNotActivatedException;
 import com.uet.book_a_book.exception.account.LockedAccountException;
-import com.uet.book_a_book.repository.UserRepository;
+import com.uet.book_a_book.repositories.UserRepository;
 
 @Component
+@RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
