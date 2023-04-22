@@ -12,4 +12,6 @@ public class Statistics {
     private final Integer canceledOrders;
     private final Integer pendingOrders;
     private final Integer shippingOrders;
+    private final Integer year;
+    private final Integer month;
 }
